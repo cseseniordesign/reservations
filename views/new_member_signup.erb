@@ -16,6 +16,21 @@
                 <input type="email" id="email" name="email" />
             </div>
 
+            <div class="dcf-form-group">
+                <label for="email">Relation to University of Nebraska Lincolin</label>
+                <select type="relation" id="relation" name="relation" >
+                    <option>Please Select an Option</option>
+                    <option value="Student">Student</option>
+                    <option value="Faculty_Staff">Faculty/Staff</option>
+                    <option value="Comunity_Member">Comunity Member</option>
+                </select>
+            </div>
+
+            <%# <form action="/verify">
+                <div recaptcha:render></div>
+                <input class="dcf-btn dcf-btn-primary" type="submit"/>
+            </form> %>
+
             <button class="dcf-btn dcf-btn-primary" type="submit">Sign Up</button>
         </div>
     </div>

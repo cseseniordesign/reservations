@@ -1,6 +1,14 @@
 require 'models/event'
 require 'models/event_signup'
 require 'classes/emailer'
+require 'recaptcha'
+
+Recaptcha.configure do |config|
+	config.site_key = '6LdW9kwiAAAAAJfRJfLKV1V1qaFWSCGIQF_EYOWH'
+	config.secret_key = '6LdW9kwiAAAAAGI_PjHEk7HbiL-jlakndP6MFvIW'
+end
+
+include Recaptcha::Adapters::ViewMethods
 
 get '/new_members/?' do
 	@breadcrumbs << {:text => 'New Members'}
