@@ -68,15 +68,15 @@ get '/admin/users/?' do
                 .where(:service_space_id => SS_ID)
     
     unless first_name.nil? || first_name.length == 0
-        users = users.where(:first_name => first_name)
+        users = users.where("first_name LIKE ?", "%#{first_name}%")
     end
 
     unless last_name.nil? || last_name.length == 0
-        users = users.where(:last_name => last_name)
+        users = users.where("last_name LIKE ?", "%#{last_name}%")
     end
 
     unless email.nil? || email.length == 0
-        users = users.where(:email => email)
+        users = users.where("email LIKE ?", "%#{email}%")
     end
 
     unless studio_status.nil? || studio_status.length == 0
