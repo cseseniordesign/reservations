@@ -26,12 +26,14 @@
                 </select>
             </div>
 
-            <%# <form action="/verify">
-                <div recaptcha:render></div>
-                <input class="dcf-btn dcf-btn-primary" type="submit"/>
-            </form> %>
-
-            <button class="dcf-btn dcf-btn-primary" type="submit">Sign Up</button>
+            <form action="/verify">
+                <div style="padding-bottom: 10px">
+                    <%= recaptcha %>
+                </div>
+                <div>
+                    <button class="dcf-btn dcf-btn-primary" type="submit">Sign Up</button>
+                </div>
+            </form>
         </div>
     </div>
 </form>

@@ -8,6 +8,7 @@ Recaptcha.configure do |config|
 	config.secret_key = '6LdW9kwiAAAAAGI_PjHEk7HbiL-jlakndP6MFvIW'
 end
 
+include Recaptcha::Adapters::ControllerMethods
 include Recaptcha::Adapters::ViewMethods
 
 get '/new_members/?' do
@@ -38,7 +39,8 @@ get '/new_members/sign_up/:event_id/?' do
 	end
 
 	erb :new_member_signup, :layout => :fixed, :locals => {
-		:event => event
+		:event => event,
+		:recaptcha => Recaptcha.recaptcha_tags(render)
 	}
 end
 
@@ -58,6 +60,7 @@ post '/new_members/sign_up/:event_id/?' do
 		redirect '/new_members/'
 	end
 
+	
 	EventSignup.create(
 		:event_id => params[:event_id],
 		:name => params[:name],
