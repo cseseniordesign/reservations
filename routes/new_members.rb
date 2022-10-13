@@ -79,6 +79,32 @@ post '/new_members/sign_up/:event_id/?' do
 EMAIL
 
 	Emailer.mail(params[:email], "Nebraska Innovation Studio - #{event.title}", body)
+	
+	params.delete("event_id")
+	user = User.new(params)
+
+	# Username parameters:
+	# First letter of first name
+	# First 5 letters of last name
+	# If duplicate name, append a number on the end starting at 2 rather than 1.
+	username_parameters = params[:first_name][0].downcase + params[:last_name][0...5].downcase
+
+	# Create a new user name based on the username_parameters, if the name already exists increment the name starting at 2.
+	counter = 0
+	while counter
+		if User.find_by(:username => "#{username_parameters}").nil?
+			user.username = "#{username_parameters}"
+			break
+		elsif counter > 1
+			if User.find_by(:username => "#{username_parameters + counter.to_s}").nil?
+				user.username = "#{username_parameters + counter.to_s}"
+				break
+			end
+		end
+		counter = counter + 1
+	end
+
+    user.save
 
 	# flash a message that this works
 	flash(:success, "You're signed up!", "Thanks for signing up! Don't forget, orientation is #{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}.")
