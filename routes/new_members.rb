@@ -93,8 +93,8 @@ EMAIL
 	username_parameters = params[:first_name][0].downcase + params[:last_name][0...5].downcase
 
 	# Create a new user name based on the username_parameters, if the name already exists increment the name starting at 2.
-	counter = 0
-	while counter
+	counter = 1
+	while true
 		if User.find_by(:username => "#{username_parameters}").nil?
 			user.username = "#{username_parameters}"
 			break
