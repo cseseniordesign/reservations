@@ -81,6 +81,7 @@
             <tr>
                 <th scope="col" style="max-width: 80px;">Image</th>
                 <th scope="col">Name</th>
+                <th scope="col">Username</th>
                 <th scope="col">Email</th>
                 <th scope="col">Tool Authorizations</th>
                 <th scope="col">Expiration Date</th>
@@ -98,6 +99,9 @@
                 <td>
                     <%= user.full_name %><br>
                     <span class="dcf-txt-sm"><%= user.university_status %></span>
+                </td>
+                <td>
+                    <%= user.username %>
                 </td>
                 <td>
                     <%= user.email %>
