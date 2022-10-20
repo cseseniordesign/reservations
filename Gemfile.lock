@@ -46,6 +46,7 @@ GEM
     kgio (2.11.4)
     less (2.6.0)
       commonjs (~> 0.2.7)
+    libv8 (3.16.14.19)
     libv8 (3.16.14.19-x86_64-linux)
     listen (3.7.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -118,9 +119,10 @@ GEM
     unicorn (6.1.0)
       kgio (~> 2.6)
       raindrops (~> 0.7)
-    zeitwerk (2.6.0)
+    zeitwerk (2.6.1)
 
 PLATFORMS
+  x86_64-darwin-21
   x86_64-linux
 
 DEPENDENCIES
