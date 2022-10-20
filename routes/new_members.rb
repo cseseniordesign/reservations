@@ -11,6 +11,8 @@ end
 include Recaptcha::Adapters::ControllerMethods
 include Recaptcha::Adapters::ViewMethods
 
+verify = false
+
 get '/new_members/?' do
 	@breadcrumbs << {:text => 'New Members'}
 	new_member_orientation_id = EventType.find_by(:description => 'New Member Orientation', :service_space_id => SS_ID).id
@@ -40,7 +42,7 @@ get '/new_members/sign_up/:event_id/?' do
 
 	erb :new_member_signup, :layout => :fixed, :locals => {
 		:event => event,
-		:recaptcha => Recaptcha.recaptcha_tags(render)
+		:recaptcha => Recaptcha.recaptcha_tags
 	}
 end
 
@@ -82,7 +84,8 @@ post '/new_members/sign_up/:event_id/?' do
 EMAIL
 
 	Emailer.mail(params[:email], "Nebraska Innovation Studio - #{event.title}", body)
-	
+
+	params.delete("g-recaptcha-response")
 	params.delete("event_id")
 	user = User.new(params)
 
@@ -102,7 +105,7 @@ EMAIL
 		counter = counter + 1
 	end
 
-    user.save
+	user.save
 
 	# flash a message that this works
 	flash(:success, "You're signed up!", "Thanks for signing up! Don't forget, orientation is #{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}.")
