@@ -105,6 +105,8 @@ EMAIL
 		counter = counter + 1
 	end
 
+    user.space_status = 'expired'
+    user.service_space_id = SS_ID
 	user.save
 
 	# flash a message that this works
