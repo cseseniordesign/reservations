@@ -62,6 +62,8 @@ get '/admin/users/?' do
     tool_authorization = params[:tool_authorization]
     expiration_date = params[:expiration_date]
     expiration_date_operation = params[:expiration_date_operation]
+    page = params[:page]
+    users_per_page = params[:users_per_page]
 
     # get all the users that this admin has created
     users = User.includes(:resource_authorizations => :resource)
@@ -107,6 +109,46 @@ get '/admin/users/?' do
         users = users.select { |user| user.authorized_resource_ids.include?(tool_authorization.to_i) }
     end
 
+    # page length is variable but defaults to 10
+    users_per_page = users_per_page.to_i
+    if users_per_page.nil? || users_per_page == 0
+        users_per_page = 10
+    end
+
+    # only grab the specified page of users that we want for pagination
+    page = page.to_i
+    start_of_page = (page - 1) * users_per_page
+    user_count = users.count
+
+    # can't call drop on users if start_of_page is 0 otherwise an error is thrown
+    if start_of_page > 1
+        users = users.drop(start_of_page)
+    end
+
+    # make sure if we don't have a full last page we don't miss users
+    max_page = (user_count / users_per_page).round()
+    if max_page * users_per_page < user_count
+        max_page = max_page + 1
+    end
+
+    # only display the number of users we want to show on a page
+    users = users.first(users_per_page)
+    if page == 0
+        page = 1
+    end
+
+    # figure out which pages the pagination should start and end on
+    pagination_start = page - 2
+    pagination_end = page + 2
+    # this logic is here to make sure that we always show 5 pages if we can
+    if page - 2 < 1
+        pagination_end = pagination_end + (3 - page)
+    elsif page + 2 > max_page
+        pagination_start = pagination_start - (page + 2 - max_page)
+    end
+    pagination_start = pagination_start < 1 ? 1 : pagination_start
+    pagination_end = pagination_end > max_page ? max_page : pagination_end
+
     # we need all the tools for the searching
     tools = Resource.where(:service_space_id => SS_ID).order(:name).all
 
@@ -119,7 +161,12 @@ get '/admin/users/?' do
         :studio_status => studio_status,
         :tool_authorization => tool_authorization,
         :expiration_date => expiration_date,
-        :expiration_date_operation => expiration_date_operation
+        :expiration_date_operation => expiration_date_operation,
+        :page => page,
+        :max_page => max_page,
+        :pagination_start => pagination_start,
+        :pagination_end => pagination_end,
+        :users_per_page => users_per_page
     }
 end
 
