@@ -63,8 +63,8 @@ post '/new_members/sign_up/:event_id/?' do
 		redirect '/new_members/'
 	end
 
-	if !Recaptcha.instance_eval{ verify_recaptcha(params) }
-		flash(:alert, 'Google Recaptcha Verification failed please try again.')
+	if !verify_recaptcha
+		flash(:alert, 'Google Recaptcha Verification failed', 'please try again.')
 		redirect '/new_members/'
 	end
 
@@ -90,29 +90,6 @@ post '/new_members/sign_up/:event_id/?' do
 EMAIL
 
 	Emailer.mail(params[:email], "Nebraska Innovation Studio - #{event.title}", body)
-	
-	params.delete("event_id")
-	user = User.new(params)
-
-	# Username parameters:
-	# First letter of first name
-	# First 5 letters of last name
-	# New usernames, append a number on the end starting at 2.
-	username_parameters = params[:first_name][0].downcase + params[:last_name][0...5].downcase
-
-	# Create a new user name based on the username_parameters, if the name already exists, increment the name.
-	counter = 2
-	while true
-		if User.find_by(:username => "#{username_parameters + counter.to_s}").nil?
-			user.username = "#{username_parameters + counter.to_s}"
-			break
-		end
-		counter = counter + 1
-	end
-
-    user.space_status = 'expired'
-    user.service_space_id = SS_ID
-	user.save
 
 	params.delete("g-recaptcha-response")
 	params.delete("event_id")
@@ -142,4 +119,91 @@ EMAIL
 	flash(:success, "You're signed up!", "Thanks for signing up! Don't forget, orientation is #{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}.")
 	redirect '/new_members/'
 end
+
+
+
+def verify_recaptcha(options = {})
+	options = {model: options} unless options.is_a? Hash
+	return true if Recaptcha.skip_env?(options[:env])
+
+	model = options[:model]
+	attribute = options.fetch(:attribute, :base)
+	recaptcha_response = options[:response] || recaptcha_response_token(options[:action])
+
+	begin
+	  verified = if Recaptcha.invalid_response?(recaptcha_response)
+		false
+	  else
+		unless options[:skip_remote_ip]
+		  remoteip = (request.respond_to?(:remote_ip) && request.remote_ip) || (env && env['REMOTE_ADDR'])
+		  options = options.merge(remote_ip: remoteip.to_s) if remoteip
+		end
+
+		success, @_recaptcha_reply =
+		  Recaptcha.verify_via_api_call(recaptcha_response, options.merge(with_reply: true))
+		success
+	  end
+
+	  if verified
+		flash.delete(:recaptcha_error) if recaptcha_flash_supported? && !model
+		true
+	  else
+		recaptcha_error(
+		  model,
+		  attribute,
+		  options.fetch(:message) { Recaptcha::Helpers.to_error_message(:verification_failed) }
+		)
+		false
+	  end
+	rescue Timeout::Error
+	  if Recaptcha.configuration.handle_timeouts_gracefully
+		recaptcha_error(
+		  model,
+		  attribute,
+		  options.fetch(:message) { Recaptcha::Helpers.to_error_message(:recaptcha_unreachable) }
+		)
+		false
+	  else
+		raise RecaptchaError, 'Recaptcha unreachable.'
+	  end
+	rescue StandardError => e
+	  raise RecaptchaError, e.message, e.backtrace
+	end
+  end
+
+  def verify_recaptcha!(options = {})
+	verify_recaptcha(options) || raise(VerifyError)
+  end
+
+  def recaptcha_reply
+	@_recaptcha_reply if defined?(@_recaptcha_reply)
+  end
+
+  def recaptcha_error(model, attribute, message)
+	if model
+	  model.errors.add(attribute, message)
+	elsif recaptcha_flash_supported?
+	  flash[:recaptcha_error] = message
+	end
+  end
+
+  def recaptcha_flash_supported?
+	request.respond_to?(:format) && request.format == :html && respond_to?(:flash)
+  end
+
+  # Extracts response token from params. params['g-recaptcha-response-data'] for recaptcha_v3 or
+  # params['g-recaptcha-response'] for recaptcha_tags and invisible_recaptcha_tags and should
+  # either be a string or a hash with the action name(s) as keys. If it is a hash, then `action`
+  # is used as the key.
+  # @return [String] A response token if one was passed in the params; otherwise, `''`
+  def recaptcha_response_token(action = nil)
+	response_param = params['g-recaptcha-response-data'] || params['g-recaptcha-response']
+	response_param = response_param[action] if action && response_param.respond_to?(:key?)
+
+	if response_param.is_a?(String)
+	  response_param
+	else
+	  ''
+	end
+  end
 
