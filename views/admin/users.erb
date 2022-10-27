@@ -12,13 +12,25 @@
 
 <form class="dcf-form dcf-mb-6" id="find-controls">
     <div class="dcf-grid dcf-col-gap-vw dcf-row-gap-6">
-        <div class="dcf-col-100% dcf-col-25%-start@sm">
+        <div class="dcf-col-100% dcf-col-25%-start@md">
             <label>Find users by:</label>
             <br>
             <a href="/admin/users/" class="dcf-btn dcf-btn-secondary">Clear</a>
         </div>
-        <div class="dcf-col-100% dcf-col-75%-end@sm">
+        <div class="dcf-col-100% dcf-col-75%-end@md">
             <div class="dcf-grid-full dcf-grid-halves@sm dcf-col-gap-vw">
+                <div>
+                    <label for="first-name">First Name:</label>
+                    <input id="first-name" type="text" name="first_name" value="<%= first_name != "" ? first_name : "" %>" style="width:100%;" />
+                </div>
+                <div>
+                    <label for="last-name">Last Name:</label>
+                    <input id="last-name" type="text" name="last_name" value="<%= last_name != "" ? last_name : "" %>" style="width:100%;" />
+                </div>
+                <div>
+                    <label for="email">Email:</label>
+                    <input id="email" type="text" name="email" value="<%= email != "" ? email : "" %>" style="width:100%;" />
+                </div>
                 <div>
                     <label for="studio-status">Studio Status:</label>
                     <select id="studio-status" name="studio_status" class="dcf-input-select">
@@ -33,11 +45,31 @@
                     <select id="tool-authorization" name="tool_authorization" class="dcf-input-select">
                         <option value=""></option>
                         <% tools.each do |tool| %>
-                            <option <%= 'selected="selected"' if selected_tool.to_i == tool.id %> value="<%= tool.id %>"><%= tool.name %></option>
+                            <option <%= 'selected="selected"' if tool_authorization.to_i == tool.id %> value="<%= tool.id %>"><%= tool.name %></option>
                         <% end %>
                     </select>
                 </div>
+                <div>
+                    <label for="expiration-date">Expiration Date:</label>
+                    <div class="dcf-grid dcf-col-gap-1 dcf-row-gap-2 dcf-flex-wrap">
+                        <div class="dcf-col-100% dcf-col-33%-start@sm">
+                            <select id="expiration-date-operation" name="expiration_date_operation" class="dcf-input-select">
+                                <option value=""></option>
+                                <% EXPIRATION_DATE_SEARCH_OPERATIONS.each_with_index do |operation, value| %>
+                                    <option <%= 'selected="selected"' if expiration_date_operation.to_i == (value + 1) %> value="<%= value + 1 %>"><%= operation %></option>
+                                <% end %>
+                            </select>
+                        </div>
+                        <div class="dcf-col-100% dcf-col-67%-end@sm">
+                            <div class="dcf-datepicker">
+                                <input id="start-date" value="<%= expiration_date != "" ? expiration_date : "" %>" name="expiration_date" title="Expiration Date" type="text"  style="width:100%;"/>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
             </div>
+            <button id="search-btn" class="dcf-btn dcf-btn-inverse-primary" style="margin-top:10px;">Search</button>
         </div>
     </div>
 </form>
@@ -49,6 +81,7 @@
             <tr>
                 <th scope="col" style="max-width: 80px;">Image</th>
                 <th scope="col">Name</th>
+                <th scope="col">Username</th>
                 <th scope="col">Email</th>
                 <th scope="col">Tool Authorizations</th>
                 <th scope="col">Expiration Date</th>
@@ -66,6 +99,9 @@
                 <td>
                     <%= user.full_name %><br>
                     <span class="dcf-txt-sm"><%= user.university_status %></span>
+                </td>
+                <td>
+                    <%= user.username %>
                 </td>
                 <td>
                     <%= user.email %>
@@ -100,6 +136,8 @@
 <label>No users meet this criteria, or you have not created any. Open the toolbox to get started.</label>
 <% end %>
 
+<% append_script_declaration("WDN.initializePlugin('datepickers');") %>
+
 <% append_script_declaration(%q[require(['jquery'], function($) {
     $(document).ready(function() {
         $('.delete-user').submit(function (submit) {
@@ -107,7 +145,6 @@
                 submit.preventDefault();
             }
         });
-
         $('#show-toolbox').click(function (click) {
             click.preventDefault();
             $('#show-toolbox').hide();
@@ -118,19 +155,6 @@
             $('#toolbox').slideUp(400, function () {
                 $('#show-toolbox').show();
             });
-        });
-
-        $('#studio-status, #tool-authorization').change(function (change) {
-            // construct new get URL from what we have
-            var conditions = [];
-            if ($('#studio-status').val() != '') {
-                conditions.push('studio_status=' + $('#studio-status').val())
-            }
-            if ($('#tool-authorization').val() != '') {
-                conditions.push('selected_tool=' + $('#tool-authorization').val());
-            }
-
-            window.location = '?' + conditions.join('&');
         });
     });
 });]) %>

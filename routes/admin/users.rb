@@ -2,6 +2,7 @@ require 'models/user'
 require 'models/resource'
 require 'models/permission'
 require 'csv'
+require 'date'
 
 USER_STATII = [
     'None',
@@ -21,6 +22,14 @@ STUDIO_STATII = {
     'Membership Expired' => 'expired',
     'Membership Expired (opted out of emails)' => 'expired_no_email'
 }
+
+EXPIRATION_DATE_SEARCH_OPERATIONS = [
+    '<',
+    '&le;',
+    '>',
+    '&ge;',
+    '='
+]
 
 before '/admin/users*' do
     unless has_permission?(Permission::MANAGE_USERS) || has_permission?(Permission::SUPER_USER)
@@ -46,21 +55,56 @@ end
 get '/admin/users/?' do
     @breadcrumbs << {:text => 'Admin Users'}
 
+    first_name = params[:first_name]
+    last_name = params[:last_name]
+    email = params[:email]
     studio_status = params[:studio_status]
-    selected_tool = params[:selected_tool]
+    tool_authorization = params[:tool_authorization]
+    expiration_date = params[:expiration_date]
+    expiration_date_operation = params[:expiration_date_operation]
 
     # get all the users that this admin has created
     users = User.includes(:resource_authorizations => :resource)
                 .where(:service_space_id => SS_ID)
-    unless studio_status.nil?
+    
+    unless first_name.nil? || first_name.length == 0
+        users = users.where("first_name LIKE ?", "%#{first_name}%")
+    end
+
+    unless last_name.nil? || last_name.length == 0
+        users = users.where("last_name LIKE ?", "%#{last_name}%")
+    end
+
+    unless email.nil? || email.length == 0
+        users = users.where("email LIKE ?", "%#{email}%")
+    end
+
+    unless studio_status.nil? || studio_status.length == 0
         users = users.where(:university_status => studio_status)
     end
+
+    unless expiration_date.nil? || expiration_date.length == 0 || expiration_date_operation.nil? || expiration_date_operation.to_i < 1
+        # need to convert the date string so it is in a format the database can easily understand
+        converted_date = Date.strptime(expiration_date, "%m/%d/%Y").strftime("%Y-%m-%d")
+        case expiration_date_operation.to_i
+        when 1
+            users = users.where("STR_TO_DATE(expiration_date, '%Y-%m-%d') < ?", converted_date)
+        when 2
+            users = users.where("STR_TO_DATE(expiration_date, '%Y-%m-%d') <= ?", converted_date)
+        when 3
+            users = users.where("STR_TO_DATE(expiration_date, '%Y-%m-%d') > ?", converted_date)
+        when 4
+            users = users.where("STR_TO_DATE(expiration_date, '%Y-%m-%d') >= ?", converted_date)
+        else
+            users = users.where("STR_TO_DATE(expiration_date, '%Y-%m-%d') = ?", converted_date)
+        end
+    end
+
     users = users.order(:last_name, :first_name).all.to_a
 
-    unless selected_tool.nil?
-        users.select! do |user|
-            user.authorized_resource_ids.include?(selected_tool.to_i)
-        end
+    # filtering the search results by tool authorization after ordering the names because it complicates the logic to do the ordering last
+    unless tool_authorization.nil? || tool_authorization.length == 0
+        users = users.select { |user| user.authorized_resource_ids.include?(tool_authorization.to_i) }
     end
 
     # we need all the tools for the searching
@@ -69,8 +113,13 @@ get '/admin/users/?' do
     erb :'admin/users', :layout => :fixed, :locals => {
         :users => users,
         :tools => tools,
+        :first_name => first_name,
+        :last_name => last_name,
+        :email => email,
         :studio_status => studio_status,
-        :selected_tool => selected_tool
+        :tool_authorization => tool_authorization,
+        :expiration_date => expiration_date,
+        :expiration_date_operation => expiration_date_operation
     }
 end
 

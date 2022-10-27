@@ -90,6 +90,29 @@ post '/new_members/sign_up/:event_id/?' do
 EMAIL
 
 	Emailer.mail(params[:email], "Nebraska Innovation Studio - #{event.title}", body)
+	
+	params.delete("event_id")
+	user = User.new(params)
+
+	# Username parameters:
+	# First letter of first name
+	# First 5 letters of last name
+	# New usernames, append a number on the end starting at 2.
+	username_parameters = params[:first_name][0].downcase + params[:last_name][0...5].downcase
+
+	# Create a new user name based on the username_parameters, if the name already exists, increment the name.
+	counter = 2
+	while true
+		if User.find_by(:username => "#{username_parameters + counter.to_s}").nil?
+			user.username = "#{username_parameters + counter.to_s}"
+			break
+		end
+		counter = counter + 1
+	end
+
+    user.space_status = 'expired'
+    user.service_space_id = SS_ID
+	user.save
 
 	params.delete("g-recaptcha-response")
 	params.delete("event_id")
