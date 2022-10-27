@@ -13,6 +13,7 @@ include Recaptcha::Adapters::ViewMethods
 
 verify = false
 
+
 get '/new_members/?' do
 	@breadcrumbs << {:text => 'New Members'}
 	new_member_orientation_id = EventType.find_by(:description => 'New Member Orientation', :service_space_id => SS_ID).id
@@ -59,6 +60,11 @@ post '/new_members/sign_up/:event_id/?' do
 	if !event.max_signups.nil? && event.signups.count >= event.max_signups
 		# that event is full
 		flash(:alert, 'This Orientation is Full', "Sorry, #{event.title} is full.")
+		redirect '/new_members/'
+	end
+
+	if !Recaptcha.instance_eval{ verify_recaptcha(params) }
+		flash(:alert, 'Google Recaptcha Verification failed please try again.')
 		redirect '/new_members/'
 	end
 
