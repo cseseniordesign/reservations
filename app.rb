@@ -65,10 +65,14 @@ def has_permission?(permission)
     !@user.nil? && @user.has_permission?(permission)
 end
 
-def require_login
+def require_login(redirect_after_login=nil)
   if @user.nil?
     flash(:alert, 'You Must Login', 'That page requires you to be logged in. If you don\'t have an account, please sign up for <a href="/new_members/">New&nbsp;Member&nbsp;Orientation</a>.')
-    redirect '/login/'
+    if redirect_after_login.nil?
+      redirect '/login/'
+    else
+      redirect "/login/?next_page=#{redirect_after_login}"
+    end
   end
 end
 

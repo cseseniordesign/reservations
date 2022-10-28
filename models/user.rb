@@ -71,6 +71,10 @@ class User < ActiveRecord::Base
     self.password_hash = @password
   end
 
+  def get_expiration_date
+    expiration_date
+  end
+
   def full_name
     "#{first_name} #{last_name}"
   end

@@ -7,12 +7,30 @@ get '/me/?' do
   erb :me, :layout => :fixed
 end
 
+get '/opt_out/?' do
+  require_login("me")
+  @breadcrumbs << {:text => 'My Account'}
+  redirect "/me/"
+end
+
 post '/me/?' do
   require_login
 
   @user.email = params[:email]
   @user.first_name = params[:first_name]
   @user.last_name = params[:last_name]
+
+  # figure out if space_status should be expired or current
+  status = "expired"
+  if !@user.get_expiration_date.nil? && @user.get_expiration_date >= Date.today
+    status = "current"
+  end
+
+  # if user wants to opt out then add no_email to space_status
+  if params.checked?('email_opt_out')
+    status = status + "_no_email"
+  end
+  @user.space_status = status
   @user.save
 
   flash(:success, 'Account Updated', 'Your user account has been updated.')
@@ -46,21 +64,30 @@ get '/login/?' do
     unless @user.nil?
       redirect '/home/'
     end
-    erb :login, :layout => :fixed
+    erb :login, :layout => :fixed, :locals => {
+      :next_page => params[:next_page]
+  }
 end
 
 post '/login/?' do
     user = User.where(:username => params[:username]).first
-
+    next_page = params[:next_page]
     # check user existence and password correctness
     if user.nil? || user.password != params[:password]
         flash(:danger, 'Incorrect Password', 'Username/password combination is incorrect.')
+        if !next_page.nil? && next_page.length > 0
+          redirect "/login/?next_page=#{next_page}"
+        end
         redirect '/login/'
     end
 
     # it is the user, hooray
     session[:user_id] = user.id
-    redirect '/home/'
+    if !next_page.nil? && next_page.length > 0
+      redirect "/#{next_page}/"
+    else
+      redirect '/home/'
+    end
 end
 
 get '/forgot_password/' do
