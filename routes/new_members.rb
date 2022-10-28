@@ -11,8 +11,6 @@ end
 include Recaptcha::Adapters::ControllerMethods
 include Recaptcha::Adapters::ViewMethods
 
-verify = false
-
 
 get '/new_members/?' do
 	@breadcrumbs << {:text => 'New Members'}
@@ -68,7 +66,6 @@ post '/new_members/sign_up/:event_id/?' do
 		redirect '/new_members/'
 	end
 
-	
 	EventSignup.create(
 		:event_id => params[:event_id],
 		:name => params[:name],
@@ -120,7 +117,7 @@ EMAIL
 	redirect '/new_members/'
 end
 
-
+# Code copied from Recaptcha::Adapters::ControllerMethods to resolve issue of this method being private
 
 def verify_recaptcha(options = {})
 	options = {model: options} unless options.is_a? Hash
