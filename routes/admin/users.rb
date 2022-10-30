@@ -62,6 +62,9 @@ get '/admin/users/?' do
     tool_authorization = params[:tool_authorization]
     expiration_date = params[:expiration_date]
     expiration_date_operation = params[:expiration_date_operation]
+    hidden_sort_by_name = params[:hidden_sort_by_name]
+    hidden_sort_by_email = params[:hidden_sort_by_email]
+    hidden_sort_by_expiration = params[:hidden_sort_by_expiration]
 
     # get all the users that this admin has created
     users = User.includes(:resource_authorizations => :resource)
@@ -100,7 +103,24 @@ get '/admin/users/?' do
         end
     end
 
-    users = users.order(:last_name, :first_name).all.to_a
+    if hidden_sort_by_email == "desc"
+        users = users.order(email: :desc).all.to_a
+    elsif hidden_sort_by_email == "asc"
+        users = users.order(email: :asc).all.to_a
+    elsif hidden_sort_by_expiration == "desc"
+        users = users.order(expiration_date: :desc).all.to_a
+    elsif hidden_sort_by_expiration == "asc"
+        users = users.order(expiration_date: :asc).all.to_a
+    elsif hidden_sort_by_name == "desc"
+        users = users.order(:last_name, :first_name).all.to_a.reverse
+    elsif hidden_sort_by_name == "asc"
+        users = users.order(:last_name, :first_name).all.to_a
+    else
+        # default:
+        users = users.order(:last_name, :first_name).all.to_a
+    end
+
+
 
     # filtering the search results by tool authorization after ordering the names because it complicates the logic to do the ordering last
     unless tool_authorization.nil? || tool_authorization.length == 0
@@ -119,7 +139,10 @@ get '/admin/users/?' do
         :studio_status => studio_status,
         :tool_authorization => tool_authorization,
         :expiration_date => expiration_date,
-        :expiration_date_operation => expiration_date_operation
+        :expiration_date_operation => expiration_date_operation,
+        :hidden_sort_by_name => hidden_sort_by_name,
+        :hidden_sort_by_email => hidden_sort_by_email,
+        :hidden_sort_by_expiration => hidden_sort_by_expiration
     }
 end
 
