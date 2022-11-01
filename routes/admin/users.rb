@@ -62,9 +62,9 @@ get '/admin/users/?' do
     tool_authorization = params[:tool_authorization]
     expiration_date = params[:expiration_date]
     expiration_date_operation = params[:expiration_date_operation]
-    hidden_sort_by_name = params[:hidden_sort_by_name]
-    hidden_sort_by_email = params[:hidden_sort_by_email]
-    hidden_sort_by_expiration = params[:hidden_sort_by_expiration]
+    sort_by_name = params[:sort_by_name]
+    sort_by_email = params[:sort_by_email]
+    sort_by_expiration = params[:sort_by_expiration]
 
     # get all the users that this admin has created
     users = User.includes(:resource_authorizations => :resource)
@@ -103,17 +103,17 @@ get '/admin/users/?' do
         end
     end
 
-    if hidden_sort_by_email == "desc"
+    if sort_by_email == "desc"
         users = users.order(email: :desc).all.to_a
-    elsif hidden_sort_by_email == "asc"
+    elsif sort_by_email == "asc"
         users = users.order(email: :asc).all.to_a
-    elsif hidden_sort_by_expiration == "desc"
+    elsif sort_by_expiration == "desc"
         users = users.order(expiration_date: :desc).all.to_a
-    elsif hidden_sort_by_expiration == "asc"
+    elsif sort_by_expiration == "asc"
         users = users.order(expiration_date: :asc).all.to_a
-    elsif hidden_sort_by_name == "desc"
+    elsif sort_by_name == "desc"
         users = users.order(:last_name, :first_name).all.to_a.reverse
-    elsif hidden_sort_by_name == "asc"
+    elsif sort_by_name == "asc"
         users = users.order(:last_name, :first_name).all.to_a
     else
         # default:
@@ -140,9 +140,9 @@ get '/admin/users/?' do
         :tool_authorization => tool_authorization,
         :expiration_date => expiration_date,
         :expiration_date_operation => expiration_date_operation,
-        :hidden_sort_by_name => hidden_sort_by_name,
-        :hidden_sort_by_email => hidden_sort_by_email,
-        :hidden_sort_by_expiration => hidden_sort_by_expiration
+        :sort_by_name => sort_by_name,
+        :sort_by_email => sort_by_email,
+        :sort_by_expiration => sort_by_expiration
     }
 end
 

@@ -80,12 +80,12 @@
     </div>
 </form>
 
-<button id="sort-by-name" class="dcf-btn dcf-btn-inverse-secondary" style="margin-bottom:10px;">Name Sort</button>
-<input type="hidden" name="hidden-sort-by-name" id="hidden-sort-by-name" value="<%=hidden_sort_by_name%>">
-<button id="sort-by-email" class="dcf-btn dcf-btn-inverse-secondary" style="margin-bottom:10px;">Email Sort</button>
-<input type="hidden" name="hidden-sort-by-email" id="hidden-sort-by-email" value="<%=hidden_sort_by_email%>">
-<button id="sort-by-expiration" class="dcf-btn dcf-btn-inverse-secondary" style="margin-bottom:10px;">Expiration Sort</button>
-<input type="hidden" name="hidden-sort-by-expiration" id="hidden-sort-by-expiration" value="<%=hidden_sort_by_expiration%>">
+<button id="sort-by-name-btn" class="dcf-btn dcf-btn-inverse-primary" style="margin-bottom:10px;">Name Sort</button>
+<input type="hidden" name="hidden-sort-by-name" id="sort-by-name" value="<%=sort_by_name%>">
+<button id="sort-by-email-btn" class="dcf-btn dcf-btn-inverse-primary" style="margin-bottom:10px;">Email Sort</button>
+<input type="hidden" name="hidden-sort-by-email" id="sort-by-email" value="<%=sort_by_email%>">
+<button id="sort-by-expiration-btn" class="dcf-btn dcf-btn-inverse-primary" style="margin-bottom:10px;">Expiration Sort</button>
+<input type="hidden" name="hidden-sort-by-expiration" id="sort-by-expiration" value="<%=sort_by_expiration%>">
 
 <% if users.count > 0 %>
 <div>
@@ -155,8 +155,6 @@
 
     function buildSearchFilterList() {
          let search = [];
-         // pull the values that the search filters had when the page loaded
-         // prevents a bug where a user could change the search filters without pressing the search button and switch to a page that would no longer be valid
          if ($('#hidden-first-name').val() != '') {
              search.push('first_name=' + $('#hidden-first-name').val());
          }
@@ -186,22 +184,22 @@
         let search = buildSearchFilterList();
         let new_url = "?";
         if (name){
-            if ($('#hidden-sort-by-name').val() == "asc"){
-                new_url += "hidden_sort_by_name=desc";
+            if ($('#sort-by-name').val() == "asc"){
+                new_url += "sort_by_name=desc";
             } else {
-                new_url += "hidden_sort_by_name=asc";
+                new_url += "sort_by_name=asc";
             }
         } else if(email){
-            if ($('#hidden-sort-by-email').val() == "asc"){
-                new_url += "hidden_sort_by_email=desc";
+            if ($('#sort-by-email').val() == "asc"){
+                new_url += "sort_by_email=desc";
             } else {
-                new_url += "hidden_sort_by_email=asc";
+                new_url += "sort_by_email=asc";
             }
         } else{
-            if ($('#hidden-sort-by-expiration').val() == "asc"){
-                new_url += "hidden_sort_by_expiration=desc";
+            if ($('#sort-by-expiration').val() == "asc"){
+                new_url += "sort_by_expiration=desc";
             } else {
-                new_url += "hidden_sort_by_expiration=asc";
+                new_url += "sort_by_expiration=asc";
             }
         }
         
@@ -230,14 +228,14 @@
                 $('#show-toolbox').show();
             });
         });
-        // if the users per page changes then we want to go back to the first page and begin showing the new number of users per page
-        $('#sort-by-expiration').click(function() {
+        
+        $('#sort-by-expiration-btn').click(function() {
             sort(false,false,true);
         });
-        $('#sort-by-email').click(function() {
+        $('#sort-by-email-btn').click(function() {
             sort(true,false,false);
         });
-        $('#sort-by-name').click(function() {
+        $('#sort-by-name-btn').click(function() {
             sort(false,true,false);
         });
     });
