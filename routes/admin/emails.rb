@@ -26,10 +26,7 @@ end
 
 post '/admin/email/send/?' do
 	users_to_send_to = []
-	# for testing purposes
-	all_users = User.where(:email => "adobrusky2@huskers.unl.edu").where.not("space_status LIKE ?", "%no_email").all
-	# remove above line and uncomment the line below to make this emailing work for all users
-	# all_users = User.where(:service_space_id => SS_ID).where.not("space_status LIKE ?", "%no_email").all
+	all_users = User.where(:service_space_id => SS_ID).where.not("space_status LIKE ?", "%no_email").all
 
 	# compile the list based on what was checked
 	if params.checked?('send_to_all_non_admins')
