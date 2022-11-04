@@ -391,3 +391,10 @@ post '/admin/events/:event_id/delete/?' do
 	flash(:success, 'Event Deleted', "Your event #{event.title} has been deleted. All signups on this event have also been removed, and if a reservation was attached, it also has been removed.")
 	redirect '/admin/events/'
 end
+
+post '/admin/events/autocomplete/?' do
+	content_type :json
+	trainer = params[:trainer]
+	users = User.where('first_name LIKE ?', "#{trainer}%").all
+	{ :users => users }.to_json
+end

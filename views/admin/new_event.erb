@@ -29,6 +29,11 @@
                 </div>
 
                 <div class="dcf-form-group">
+                    <label for="trainer">Trainer:</label>
+                    <input id="trainer" type="text" name="trainer" value="" style="width:100%;" />
+                </div>
+
+                <div class="dcf-form-group">
                     <div class="dcf-input-checkbox dcf-d-inline">
                         <input type="checkbox" <%= 'checked="checked"' unless event.max_signups.nil? %> id="limit-signups" name="limit_signups"><label class="dcf-label" for="limit-signups">Limit signups for this event to: </label>
                     </div>
@@ -256,4 +261,19 @@
             $('#consider-for-unl-main').attr('disabled', 'disabled');
         }
     }).change();
+
+    $('#trainer').on('input', function (change) {
+        console.log("test");
+        if ($('#trainer').val().length > 2) {       // 2 characters must be input before suggestions appear
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log(xhr.response);
+                }
+            };
+            xhr.open("POST", "/admin/events/autocomplete/", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("trainer="+$('#trainer').val());
+        }
+    });
 }]);]) %>
