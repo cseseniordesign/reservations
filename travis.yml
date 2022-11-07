@@ -13,7 +13,7 @@
   ],
   "branches": {
     "only": [
-      "staging-travis-ci"
+      "travis-ci"
     ]
   },
   "language": "ruby",
