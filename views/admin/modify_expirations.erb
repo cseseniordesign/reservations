@@ -1,0 +1,7 @@
+<h1 class="dcf-txt-h4">Modify Expirations</h1>
+
+<form class="dcf-form" action="" method="POST">
+    <label for="days-to-add">Days to add to ALL users' expiration dates:</label>
+    <input id="days-to-add" type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');" name="days_to_add" />
+    <button style="margin-top:15px;" class="dcf-btn dcf-btn-primary" type="submit">Modify</button>
+</form>
