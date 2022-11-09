@@ -7,6 +7,7 @@
         <a class="dcf-mt-1 dcf-btn dcf-btn-primary" href="/admin/users/<%= @user.id %>/edit/">Edit My User</a>
         <a class="dcf-mt-1 dcf-btn dcf-btn-secondary" href="/admin/users/<%= @user.id %>/manage/">My Tools</a>
         <a class="dcf-mt-1 dcf-btn dcf-btn-secondary" href="/admin/users/download/">Download User Data</a>
+        <a class="dcf-mt-1 dcf-btn dcf-btn-secondary" href="/admin/users/modify_expirations">Modify Expirations</a>
     </div>
 </div>
 
@@ -22,14 +23,17 @@
                 <div>
                     <label for="first-name">First Name:</label>
                     <input id="first-name" type="text" name="first_name" value="<%= first_name != "" ? first_name : "" %>" style="width:100%;" />
+                    <input type="hidden" name="hidden-first-name" id="hidden-first-name" value="<%= first_name %>">
                 </div>
                 <div>
                     <label for="last-name">Last Name:</label>
                     <input id="last-name" type="text" name="last_name" value="<%= last_name != "" ? last_name : "" %>" style="width:100%;" />
+                    <input type="hidden" name="hidden-last-name" id="hidden-last-name" value="<%= last_name %>">
                 </div>
                 <div>
                     <label for="email">Email:</label>
                     <input id="email" type="text" name="email" value="<%= email != "" ? email : "" %>" style="width:100%;" />
+                    <input type="hidden" name="hidden-email" id="hidden-email" value="<%= email %>">
                 </div>
                 <div>
                     <label for="studio-status">Studio Status:</label>
@@ -39,15 +43,7 @@
                             <option <%= 'selected="selected"' if studio_status == word %> value="<%= word %>"><%= word %></option>
                         <% end %>
                     </select>
-                </div>
-                <div>
-                    <label for="tool-authorization">Tool Authorization:</label>
-                    <select id="tool-authorization" name="tool_authorization" class="dcf-input-select">
-                        <option value=""></option>
-                        <% tools.each do |tool| %>
-                            <option <%= 'selected="selected"' if tool_authorization.to_i == tool.id %> value="<%= tool.id %>"><%= tool.name %></option>
-                        <% end %>
-                    </select>
+                    <input type="hidden" name="hidden-studio-status" id="hidden-studio-status" value="<%= studio_status %>">
                 </div>
                 <div>
                     <label for="expiration-date">Expiration Date:</label>
@@ -59,13 +55,14 @@
                                     <option <%= 'selected="selected"' if expiration_date_operation.to_i == (value + 1) %> value="<%= value + 1 %>"><%= operation %></option>
                                 <% end %>
                             </select>
+                            <input type="hidden" name="hidden-expiration-date-operation" id="hidden-expiration-date-operation" value="<%= expiration_date_operation %>">
                         </div>
                         <div class="dcf-col-100% dcf-col-67%-end@sm">
                             <div class="dcf-datepicker">
-                                <input id="start-date" value="<%= expiration_date != "" ? expiration_date : "" %>" name="expiration_date" title="Expiration Date" type="text"  style="width:100%;"/>
+                                <input id="expiration-date" value="<%= expiration_date != "" ? expiration_date : "" %>" name="expiration_date" title="Expiration Date" type="text"  style="width:100%;"/>
                             </div>
+                            <input type="hidden" name="hidden-expiration-date" id="hidden-expiration-date" value="<%= expiration_date %>">
                         </div>
-                        
                     </div>
                 </div>
             </div>
@@ -74,28 +71,49 @@
     </div>
 </form>
 
+<input type="hidden" name="hidden-sort-by-name" id="sort-by-name" value="<%=sort_by_name%>">
+<input type="hidden" name="hidden-sort-by-email" id="sort-by-email" value="<%=sort_by_email%>">
+<input type="hidden" name="hidden-sort-by-expiration" id="sort-by-expiration" value="<%=sort_by_expiration%>">
+
 <% if users.count > 0 %>
 <div>
     <table class="dcf-w-100% dcf-table dcf-table-bordered dcf-table-responsive" aria-label="Users List">
         <thead>
             <tr>
-                <th scope="col" style="max-width: 80px;">Image</th>
-                <th scope="col">Name</th>
+                <th scope="col">
+                    <div class="sort">
+                        Name
+                        <div id="sort-by-name-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" viewBox="0 0 24 24" aria-labelledby="filled-arrow-down-10-arrows-title" style="<%= sort_by_name == "desc" ? "fill: rgb(245, 138, 31);" : "fill: rgb(208, 0, 0);" %>transform: rotate(180deg);" height="20"><title id="filled-arrow-down-10-arrows-title">arrow-down-10(arrows)</title><path d="M23.936,2.255C23.848,2.098,23.681,2,23.5,2h-23C0.32,2,0.153,2.098,0.065,2.255c-0.089,0.157-0.085,0.35,0.008,0.504 l11.5,19C11.663,21.908,11.826,22,12,22s0.337-0.092,0.428-0.241l11.5-19C24.021,2.605,24.025,2.412,23.936,2.255z"></path><path fill="none" d="M0 0H24V24H0z"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" viewBox="0 0 24 24" aria-labelledby="filled-arrow-down-10-arrows-title" style="<%= sort_by_name == "asc" || (sort_by_name.nil? && sort_by_email.nil? && sort_by_expiration.nil?) ? "fill: rgb(245, 138, 31);" : "fill: rgb(208, 0, 0);" %>" height="20"><title id="filled-arrow-down-10-arrows-title">arrow-down-10(arrows)</title><path d="M23.936,2.255C23.848,2.098,23.681,2,23.5,2h-23C0.32,2,0.153,2.098,0.065,2.255c-0.089,0.157-0.085,0.35,0.008,0.504 l11.5,19C11.663,21.908,11.826,22,12,22s0.337-0.092,0.428-0.241l11.5-19C24.021,2.605,24.025,2.412,23.936,2.255z"></path><path fill="none" d="M0 0H24V24H0z"></path></svg>
+                        </div>
+                    </div>
+                </th>
                 <th scope="col">Username</th>
-                <th scope="col">Email</th>
-                <th scope="col">Tool Authorizations</th>
-                <th scope="col">Expiration Date</th>
+                <th scope="col">
+                    <div class="sort">
+                        Email
+                        <div id="sort-by-email-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" viewBox="0 0 24 24" aria-labelledby="filled-arrow-down-10-arrows-title" style="<%= sort_by_email == "desc" ? "fill: rgb(245, 138, 31);" : "fill: rgb(208, 0, 0);" %>transform: rotate(180deg);" height="20"><title id="filled-arrow-down-10-arrows-title">arrow-down-10(arrows)</title><path d="M23.936,2.255C23.848,2.098,23.681,2,23.5,2h-23C0.32,2,0.153,2.098,0.065,2.255c-0.089,0.157-0.085,0.35,0.008,0.504 l11.5,19C11.663,21.908,11.826,22,12,22s0.337-0.092,0.428-0.241l11.5-19C24.021,2.605,24.025,2.412,23.936,2.255z"></path><path fill="none" d="M0 0H24V24H0z"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" viewBox="0 0 24 24" aria-labelledby="filled-arrow-down-10-arrows-title" style="<%= sort_by_email == "asc" ? "fill: rgb(245, 138, 31);" : "fill: rgb(208, 0, 0);" %>" height="20"><title id="filled-arrow-down-10-arrows-title">arrow-down-10(arrows)</title><path d="M23.936,2.255C23.848,2.098,23.681,2,23.5,2h-23C0.32,2,0.153,2.098,0.065,2.255c-0.089,0.157-0.085,0.35,0.008,0.504 l11.5,19C11.663,21.908,11.826,22,12,22s0.337-0.092,0.428-0.241l11.5-19C24.021,2.605,24.025,2.412,23.936,2.255z"></path><path fill="none" d="M0 0H24V24H0z"></path></svg>
+                        </div>
+                    </div>
+                </th>
+                <th scope="col">
+                    <div class="sort">
+                        Expiration Date
+                        <div id="sort-by-expiration-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" viewBox="0 0 24 24" aria-labelledby="filled-arrow-down-10-arrows-title" style="<%= sort_by_expiration == "desc" ? "fill: rgb(245, 138, 31);" : "fill: rgb(208, 0, 0);" %>transform: rotate(180deg);" height="20"><title id="filled-arrow-down-10-arrows-title">arrow-down-10(arrows)</title><path d="M23.936,2.255C23.848,2.098,23.681,2,23.5,2h-23C0.32,2,0.153,2.098,0.065,2.255c-0.089,0.157-0.085,0.35,0.008,0.504 l11.5,19C11.663,21.908,11.826,22,12,22s0.337-0.092,0.428-0.241l11.5-19C24.021,2.605,24.025,2.412,23.936,2.255z"></path><path fill="none" d="M0 0H24V24H0z"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" viewBox="0 0 24 24" aria-labelledby="filled-arrow-down-10-arrows-title" style="<%= sort_by_expiration == "asc" ? "fill: rgb(245, 138, 31);" : "fill: rgb(208, 0, 0);" %>" height="20"><title id="filled-arrow-down-10-arrows-title">arrow-down-10(arrows)</title><path d="M23.936,2.255C23.848,2.098,23.681,2,23.5,2h-23C0.32,2,0.153,2.098,0.065,2.255c-0.089,0.157-0.085,0.35,0.008,0.504 l11.5,19C11.663,21.908,11.826,22,12,22s0.337-0.092,0.428-0.241l11.5-19C24.021,2.605,24.025,2.412,23.936,2.255z"></path><path fill="none" d="M0 0H24V24H0z"></path></svg>
+                        </div>
+                    </div>
+                </th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
         <% users.each do |user| %>
             <tr>
-                <td style="max-width: 80px;">
-                    <% if user.imagedata %>
-                    <img src="<%= user.image_src %>" alt="Image for User: <%= user.username %>">
-                    <% end %>
-                </td>
                 <td>
                     <%= user.full_name %><br>
                     <span class="dcf-txt-sm"><%= user.university_status %></span>
@@ -105,16 +123,6 @@
                 </td>
                 <td>
                     <%= user.email %>
-                </td>
-                <td>
-                    <% if user.authorized_resource_ids.count == 0 %>
-                        None
-                    <% else %>
-                        <%= user.resource_authorizations.map(&:resource).map(&:name).first(5).join('<br>') %>
-                        <% if user.authorized_resource_ids.count > 5 %>
-                        <br><a href="/admin/users/<%= user.id %>/manage/">... and <%= user.authorized_resource_ids.count - 5 %> more</a>
-                        <% end %>
-                    <% end %>
                 </td>
                 <td>
                 <%= user.expiration_date.strftime('%m/%d/%Y') if user.expiration_date %>
@@ -139,6 +147,62 @@
 <% append_script_declaration("WDN.initializePlugin('datepickers');") %>
 
 <% append_script_declaration(%q[require(['jquery'], function($) {
+
+    function buildSearchFilterList() {
+         let search = [];
+         if ($('#hidden-first-name').val() != '') {
+             search.push('first_name=' + $('#hidden-first-name').val());
+         }
+         if ($('#hidden-last-name').val() != '') {
+             search.push('last_name=' + $('#hidden-last-name').val());
+         }
+         if ($('#hidden-email').val() != '') {
+             search.push('email=' + $('#hidden-email').val());
+         }
+         if ($('#hidden-expiration-date').val() != '') {
+             search.push('expiration_date=' + $('#hidden-expiration-date').val());
+         }
+         if ($('#hidden-expiration-date-operation').val() != '') {
+             search.push('expiration_date_operation=' + $('#hidden-expiration-date-operation').val());
+         }
+         if ($('#hidden-studio-status').val() != '') {
+             search.push('studio_status=' + $('#hidden-studio-status').val());
+         }
+         return search;
+     }
+
+     function sort(email,name,expiration_date) {
+        // in case we have search filters we need to preserve these
+        let search = buildSearchFilterList();
+        let new_url = "?";
+        if (name){
+            if ($('#sort-by-name').val() == "desc"){
+                new_url += "sort_by_name=asc";
+            } else {
+                new_url += "sort_by_name=desc";
+            }
+        } else if(email){
+            if ($('#sort-by-email').val() == "asc"){
+                new_url += "sort_by_email=desc";
+            } else {
+                new_url += "sort_by_email=asc";
+            }
+        } else{
+            if ($('#sort-by-expiration').val() == "asc"){
+                new_url += "sort_by_expiration=desc";
+            } else {
+                new_url += "sort_by_expiration=asc";
+            }
+        }
+        
+        if (search.length > 0) {
+            new_url += "&" + search.join('&');
+        }
+        
+        
+        window.location = new_url;
+     }
+
     $(document).ready(function() {
         $('.delete-user').submit(function (submit) {
             if (!window.confirm('Are you sure you want to delete this user?')) {
@@ -155,6 +219,16 @@
             $('#toolbox').slideUp(400, function () {
                 $('#show-toolbox').show();
             });
+        });
+        
+        $('#sort-by-expiration-btn').click(function() {
+            sort(false,false,true);
+        });
+        $('#sort-by-email-btn').click(function() {
+            sort(true,false,false);
+        });
+        $('#sort-by-name-btn').click(function() {
+            sort(false,true,false);
         });
     });
 });]) %>

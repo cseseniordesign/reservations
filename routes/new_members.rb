@@ -52,7 +52,7 @@ post '/new_members/sign_up/:event_id/?' do
 
 	EventSignup.create(
 		:event_id => params[:event_id],
-		:name => params[:name],
+		:name => params[:first_name] + " " + params[:last_name],
 		:email => params[:email]
 	)
 
@@ -63,40 +63,48 @@ post '/new_members/sign_up/:event_id/?' do
 
 <p>Our main entrance is on the northwest side of the Innovation Commons building on 19th St. just off Transformation Drive. Our address is 2021 Transformation Drive, Suite 1500, Entrance B.</p>
 
-<p>For parking, use our <a href="https://innovationstudio-manager.unl.edu/pdf/new-member-orientation-parking-map.pdf">new member orientation parking</a>. Vehicles parked at any other location will be ticketed $25.00.</p>
+<p>For parking, use our <a href="https://innovationstudio-manager.unl.edu/pdf/new-member-orientation-parking-map.pdf">new member orientation parking</a>. Vehicles parked at any other location will be ticketed $50.00.</p>
 
 <p>We'll see you there!</p>
 
 <p>Nebraska Innovation Studio</p>
 EMAIL
 
-	Emailer.mail(params[:email], "Nebraska Innovation Studio - #{event.title}", body)
-	
-	params.delete("event_id")
-	user = User.new(params)
+	VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
 
-	# Username parameters:
-	# First letter of first name
-	# First 5 letters of last name
-	# New usernames, append a number on the end starting at 2.
-	username_parameters = params[:first_name][0].downcase + params[:last_name][0...5].downcase
+	if 	!VALID_EMAIL_REGEX.match(params[:email])
+		flash(:danger, "Invalid Email", "Your email address didn't match any known email")
+		redirect "new_members/sign_up/#{params[:event_id]}"
+	else
+		Emailer.mail(params[:email], "Nebraska Innovation Studio - #{event.title}", body)
 
-	# Create a new user name based on the username_parameters, if the name already exists, increment the name.
-	counter = 2
-	while true
-		if User.find_by(:username => "#{username_parameters + counter.to_s}").nil?
-			user.username = "#{username_parameters + counter.to_s}"
-			break
+		params.delete("event_id")
+		user = User.new(params)
+
+		# Username parameters:
+		# First letter of first name
+		# First 5 letters of last name
+		# New usernames, append a number on the end starting at 2.
+		username_parameters = params[:first_name][0].downcase + params[:last_name][0...5].downcase
+
+		# Create a new user name based on the username_parameters, if the name already exists, increment the name.
+		counter = 2
+		while true
+			if User.find_by(:username => "#{username_parameters + counter.to_s}").nil?
+				user.username = "#{username_parameters + counter.to_s}"
+				break
+			end
+			counter = counter + 1
 		end
-		counter = counter + 1
+
+		user.space_status = 'expired'
+		user.service_space_id = SS_ID
+		user.save
+
+		# flash a message that this works
+		flash(:success, "You're signed up!", "Thanks for signing up! Don't forget, orientation is #{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}. Check your email for more information about the event and where to park.")
+		redirect '/new_members/'
 	end
-
-    user.space_status = 'expired'
-    user.service_space_id = SS_ID
-	user.save
-
-	# flash a message that this works
-	flash(:success, "You're signed up!", "Thanks for signing up! Don't forget, orientation is #{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}.")
-	redirect '/new_members/'
+  
 end
 

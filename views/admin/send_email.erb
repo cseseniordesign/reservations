@@ -20,6 +20,28 @@
 			    <input type="checkbox" id="send-to-all-facstaff" name="send_to_all_facstaff">
 			    <label title="UNL Staff, UNL Faculty, Emeritus UNL Faculty" for="send-to-all-facstaff">All UNL Faculty/Staff</label>
 			</div>
+			<div class="dcf-form-group dcf-input-checkbox">
+			    <input type="checkbox" id="send-to-all-active-users" name="send_to_all_active_users">
+			    <label for="send-to-all-active-users">All Active Users</label>
+			</div>
+			<div class="dcf-form-group dcf-input-checkbox">
+			    <input type="checkbox" id="send-to-all-inactive-users" name="send_to_all_inactive_users">
+			    <label for="send-to-all-inactive-users">All Inactive Users</label>
+			</div>
+			<div class="dcf-form-group dcf-input-group">
+			    <div class="dcf-input-checkbox">
+			        <input type="checkbox" id="send-to-all-with-tool-authorization" name="send_to_all_with_tool_authorization">
+			        <label title="Tool Authorizations" for="send-to-all-with-tool-authorization"><span class="dcf-sr-only">Tool Authorizations</span></label>
+			    </div>
+                <div class="dcf-form-group">
+                    <label for="tool-authorization">All Users with Specific Tool Authorization(s) (use Shift or Ctrl/Cmd to select multiple):</label>
+                    <select class="dcf-txt-sm" multiple="multiple" id="tool-authorization" name="tool_authorization[]" >
+                        <% tools.each do |tool| %>
+                            <option value="<%= tool.id %>"><%= tool.name %></option>
+                        <% end %>
+                    </select>
+                </div>
+            </div>
 			<div class="dcf-form-group dcf-input-group">
 			    <div class="dcf-input-checkbox">
 			        <input type="checkbox" id="send-to-specific-user" name="send_to_specific_user">
@@ -57,7 +79,12 @@
 
 		<label for="body">Body:</label>
 		<textarea class="ckeditor" style="min-height: 150px" id="body" name="body"></textarea>
-		<br><br>
+		<br>
+		<div class="dcf-form-group dcf-input-checkbox">
+			<input type="checkbox" id="email-opt-out" name="email_opt_out" />
+			<label for="email-opt-out">Include the option for users to opt-out of future emails.</label>
+		</div>
+		<br>
 		<button type="submit" class="dcf-btn dcf-btn-primary">Send</button>
 	</fieldset>
 </form>
