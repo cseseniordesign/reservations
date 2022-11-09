@@ -18,6 +18,7 @@ GEM
     commonjs (0.2.7)
     concurrent-ruby (1.1.10)
     daemons (1.4.1)
+    diff-lcs (1.5.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     et-orbi (1.2.7)
@@ -98,6 +99,9 @@ GEM
       netrc (~> 0.8)
     rspec-core (3.12.0)
       rspec-support (~> 3.12.0)
+    rspec-expectations (3.12.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.12.0)
     rspec-support (3.12.0)
     ruby2_keywords (0.0.5)
     rufus-scheduler (3.8.2)
@@ -153,6 +157,7 @@ DEPENDENCIES
   rack-test
   rest-client
   rspec-core
+  rspec-expectations
   rufus-scheduler
   shotgun
   sinatra

@@ -17,6 +17,7 @@ gem 'rufus-scheduler'
 gem 'highlander'
 gem 'rack-test'
 gem 'rspec-core'
+gem "rspec-expectations"
 
 group :development do
   gem 'shotgun'
