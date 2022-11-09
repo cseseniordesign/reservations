@@ -1,4 +1,4 @@
-require_relative './utils/unit_test_helper'
+require_relative './utils/spec_helper'
 
 describe "Test Login Page" do
   def app
