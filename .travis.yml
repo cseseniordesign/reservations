@@ -6,7 +6,7 @@
     "sudo apt-get -y install unzip",
     "sudo apt-get -y install ruby-rspec-core",
     "touch config/config.json",
-    "sh config_setup.sh -u 'DB_USER' -p 'DB_PASS'",
+    "sh config_setup.sh -u DB_USER -p DB_PASS",
     "cd $TRAVIS_BUILD_DIR/public",
     "curl -o ~/wdn-compressed https://wdn.unl.edu/downloads/wdn.zip",
     "unzip -o ~/wdn-compressed -d wdn"
