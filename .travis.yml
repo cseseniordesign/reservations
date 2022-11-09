@@ -4,6 +4,8 @@
     "gem install rspec-core",
     "sudo apt-get -y install unzip",
     "sudo apt-get -y install ruby-rspec-core",
+    "touch config/config.json",
+    "echo '{"database":{"adapter":"mysql2","host":"$DB_HOST","username":"$DB_USERNAME","password":"$DB_PASSWORD","database":"$DB_NAME"}}' > config/config.json",
     "cd $TRAVIS_BUILD_DIR/public",
     "curl -o ~/wdn-compressed https://wdn.unl.edu/downloads/wdn.zip",
     "unzip -o ~/wdn-compressed -d wdn"
