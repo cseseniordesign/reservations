@@ -15,6 +15,8 @@ gem 'json'
 gem 'bigdecimal'
 gem 'rufus-scheduler'
 gem 'highlander'
+gem 'rack-test'
+gem 'rspec-core'
 
 group :development do
   gem 'shotgun'

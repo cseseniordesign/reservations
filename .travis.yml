@@ -1,8 +1,6 @@
 {
   "before_install": [
     "gem install bundler",
-    "gem install rspec-core",
-    "gem install rack-test",
     "bundle install",
     "sudo apt-get -y install unzip",
     "sudo apt-get -y install ruby-rspec-core",
