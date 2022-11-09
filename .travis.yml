@@ -2,7 +2,7 @@
   "before_install": [
     "gem install bundler",
     "sudo apt-get -y install unzip",
-    "sudo apt-get -y install ruby-rspec-core",
+    "",
     "cd $TRAVIS_BUILD_DIR/public",
     "curl -o ~/wdn-compressed https://wdn.unl.edu/downloads/wdn.zip",
     "unzip -o ~/wdn-compressed -d wdn"
@@ -16,5 +16,5 @@
   "rvm": [
     "2.7.0"
   ],
-  "script": "cd $TRAVIS_BUILD_DIR/;rspec -I . unit_tests_spec.rb"
+  "script": "cd $TRAVIS_BUILD_DIR/;bundle install rspec;rspec -I . unit_tests_spec.rb"
 }
