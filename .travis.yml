@@ -1,6 +1,7 @@
 {
   "before_install": [
     "gem install bundler",
+    "gem install rspec-core",
     "sudo apt-get -y install unzip",
     "sudo apt-get -y install ruby-rspec-core",
     "cd $TRAVIS_BUILD_DIR/public",
