@@ -1,11 +1,6 @@
 {
-  "before_deploy": [
-    "rvm $(travis_internal_ruby) --fuzzy do ruby -S gem install faraday -v 1.8.0",
-    "rvm $(travis_internal_ruby) --fuzzy do ruby -S gem install shotgun"
-  ],
   "before_install": [
     "gem install bundler",
-    "gem install faraday-net_http -v 2.1.0",
     "sudo apt-get -y install unzip",
     "cd $TRAVIS_BUILD_DIR/public",
     "curl -o ~/wdn-compressed https://wdn.unl.edu/downloads/wdn.zip",
@@ -20,5 +15,5 @@
   "rvm": [
     "2.7.0"
   ],
-  "script": "cd $TRAVIS_BUILD_DIR/"
+  "script": "rspec -I . unit_tests_spec.rb;cd $TRAVIS_BUILD_DIR/"
 }
