@@ -3,20 +3,34 @@
 	<span class="dcf-subhead"><%= event.start_time.in_time_zone.strftime('%m/%d/%Y @ %l:%M %P') %></span>
 </h1>
 
-<form class="dcf-form" id="signup" action="" method="POST" novalidate="novalidate">
+<form class="dcf-form" id="signup" action="" method="POST" enctype="multipart/form-data">
     <div class="dcf-grid-full dcf-grid-halves@sm dcf-col-gap-vw">
-        <div>
+        <fieldset>
             <div class="dcf-form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" />
+            <label for="first-name">First Name</label>
+            <input class="dcf-w-100%" type="text" id="first-name" name="first_name" />
             </div>
 
             <div class="dcf-form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" />
+                <label for="last-name">Last Name</label>
+                <input class="dcf-w-100%" type="text" id="last-name" name="last_name" />
             </div>
 
-            <button class="dcf-btn dcf-btn-primary" type="submit">Sign Up</button>
-        </div>
+            <div class="dcf-form-group">
+                <label for="email">Email Address</label>
+                <input class="dcf-w-100%" type="text" id="email" name="email" />
+            </div>
+
+            <div class="dcf-form-group">
+                <label for="university-status">University Status</label>
+                <select id="university-status" name="university_status">
+                    <% USER_STATII.each do |word| %>
+                        <option value="<%= word %>"><%= word %></option>
+                    <% end %>
+                </select>
+            </div>
+
+            <button class="dcf-mt-3 dcf-btn dcf-btn-primary" type="submit">Sign Up</button>
+        </fieldset>
     </div>
 </form>

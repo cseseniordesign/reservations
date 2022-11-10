@@ -11,6 +11,7 @@
 /public/wdn
 /db/scripts/private/
 .idea
+/config/config.json
 
 ## Documentation cache and generated files:
 /.yardoc/

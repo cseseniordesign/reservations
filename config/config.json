@@ -1,9 +1,0 @@
-{
-	"database" : {
-		"adapter" : "mysql2",
-		"host" : "cse.unl.edu",
-		"username" : "adobrusk",
-		"password" : "seniordesign1",
-		"database" : "reservation"
-	}
-}

@@ -99,7 +99,7 @@ class User < ActiveRecord::Base
 
   def send_membership_expiring_email
 body = <<EMAIL
-<p>Hello, #{self.full_name}. Your Innovation Studio account is expiring soon! Our records show that your account expires on
+<p>Hello, #{self.full_name.chop}. Your Innovation Studio account is expiring soon! Our records show that your account expires on
 #{self.expiration_date.strftime('%m-%d-%Y')}.
 Please contact us at
 <a href="mailto:innovationstudio@unl.edu">innovationstudio@unl.edu</a> or visit us to keep your membership active.
