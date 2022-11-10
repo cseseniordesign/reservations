@@ -52,7 +52,7 @@ post '/new_members/sign_up/:event_id/?' do
 
 	EventSignup.create(
 		:event_id => params[:event_id],
-		:name => params[:name],
+		:name => params[:first_name] + " " + params[:last_name],
 		:email => params[:email]
 	)
 
