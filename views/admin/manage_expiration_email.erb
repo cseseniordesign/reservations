@@ -1,0 +1,17 @@
+<h1 class="dcf-txt-h3">Manage Expiration Email</h1>
+
+<form action="" method="POST" class="dcf-form">
+    <fieldset>
+        <div class="dcf-form-group">
+            <h1 class="dcf-txt-h3">Current days before first reminder: <%=firstReminder%></h1>
+            <label for="days-before-sending-first-reminder">How many days out should the first reminder be sent?</label>
+            <input class="dcf-w-100%" type="number" id="days-before-sending-first-reminder" name="days_before_sending_first_reminder" min="1"/>
+        </div>
+        <div class="dcf-form-group">
+            <h1 class="dcf-txt-h3">Current days before second reminder: <%=secondReminder%></h1>
+            <label for="days-before-sending-second-reminder">How many days out should the second reminder be sent?</label>
+            <input class="dcf-w-100%" type="number" id="days-before-sending-second-reminder" name="days_before_sending_second_reminder" min="0"/>
+        </div>
+        <button class="dcf-mt-3 dcf-btn dcf-btn-primary" type="submit">Update Prefrences</button>
+    </fieldset>
+</form>
