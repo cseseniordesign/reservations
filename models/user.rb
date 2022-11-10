@@ -53,6 +53,10 @@ class User < ActiveRecord::Base
   end
   alias_method :admin?, :is_admin?
 
+  def is_trainer?
+    self.is_trainer == 1
+  end
+
   def is_super_user?
     self.permissions.include?(Permission.find(Permission::SUPER_USER))
   end

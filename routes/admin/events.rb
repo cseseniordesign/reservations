@@ -392,9 +392,12 @@ post '/admin/events/:event_id/delete/?' do
 	redirect '/admin/events/'
 end
 
-post '/admin/events/autocomplete/?' do
+get '/admin/events/autocomplete/?' do
 	content_type :json
-	trainer = params[:trainer]
-	users = User.where('first_name LIKE ?', "#{trainer}%").all
-	{ :users => users }.to_json
+	users = User.where(:service_space_id => SS_ID).all
+	userArray = []
+	users.each do |user|
+		userArray.append(user.first_name + " " + user.last_name)
+	end
+	{ :users => userArray }.to_json
 end

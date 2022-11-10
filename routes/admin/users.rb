@@ -161,6 +161,10 @@ get '/admin/users/:user_id/edit/?' do
         user = User.includes(:permissions).where(:id => params[:user_id], :service_space_id => SS_ID).first
     end
 
+    # trainers = User.where(:service_space_id => 1)
+    # if user.is_trainer
+    #     is_trainer = true
+
     if user.nil?
         flash :alert, "Not Found", "Sorry, that user was not found"
         redirect '/admin/users/'
