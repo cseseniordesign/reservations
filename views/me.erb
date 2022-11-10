@@ -17,8 +17,13 @@
     </div>
 
     <div class="dcf-form-group">
-        <label for="last-name">First Name</label>
+        <label for="last-name">Last Name</label>
         <input type="text" id="last-name" name="last_name" value="<%= @user.last_name %>" />
+    </div>
+
+    <div class="dcf-form-group dcf-input-checkbox">
+        <input type="checkbox" id="email-opt-out" name="email_opt_out" <%= 'checked="checked"' if !@user.space_status.nil? && @user.space_status.to_s.include?("no_email") %> />
+        <label for="email-opt-out">I no longer want to receive emails from Nebraska Innovation Studio.</label>
     </div>
 
     <button type="submit" class="dcf-btn dcf-btn-primary">Save</button>

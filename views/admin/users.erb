@@ -45,16 +45,6 @@
                     <input type="hidden" name="hidden-studio-status" id="hidden-studio-status" value="<%= studio_status %>">
                 </div>
                 <div>
-                    <label for="tool-authorization">Tool Authorization:</label>
-                    <select id="tool-authorization" name="tool_authorization" class="dcf-input-select">
-                        <option value=""></option>
-                        <% tools.each do |tool| %>
-                            <option <%= 'selected="selected"' if tool_authorization.to_i == tool.id %> value="<%= tool.id %>"><%= tool.name %></option>
-                        <% end %>
-                    </select>
-                    <input type="hidden" name="hidden-tool-authorization" id="hidden-tool-authorization" value="<%= tool_authorization %>">
-                </div>
-                <div>
                     <label for="expiration-date">Expiration Date:</label>
                     <div class="dcf-grid dcf-col-gap-1 dcf-row-gap-2 dcf-flex-wrap">
                         <div class="dcf-col-100% dcf-col-33%-start@sm">
@@ -92,11 +82,9 @@
     <table class="dcf-w-100% dcf-table dcf-table-bordered dcf-table-responsive" aria-label="Users List">
         <thead>
             <tr>
-                <th scope="col" style="max-width: 80px;">Image</th>
                 <th scope="col">Name</th>
                 <th scope="col">Username</th>
                 <th scope="col">Email</th>
-                <th scope="col">Tool Authorizations</th>
                 <th scope="col">Expiration Date</th>
                 <th scope="col">Actions</th>
             </tr>
@@ -104,11 +92,6 @@
         <tbody>
         <% users.each do |user| %>
             <tr>
-                <td style="max-width: 80px;">
-                    <% if user.imagedata %>
-                    <img src="<%= user.image_src %>" alt="Image for User: <%= user.username %>">
-                    <% end %>
-                </td>
                 <td>
                     <%= user.full_name %><br>
                     <span class="dcf-txt-sm"><%= user.university_status %></span>
@@ -118,16 +101,6 @@
                 </td>
                 <td>
                     <%= user.email %>
-                </td>
-                <td>
-                    <% if user.authorized_resource_ids.count == 0 %>
-                        None
-                    <% else %>
-                        <%= user.resource_authorizations.map(&:resource).map(&:name).first(5).join('<br>') %>
-                        <% if user.authorized_resource_ids.count > 5 %>
-                        <br><a href="/admin/users/<%= user.id %>/manage/">... and <%= user.authorized_resource_ids.count - 5 %> more</a>
-                        <% end %>
-                    <% end %>
                 </td>
                 <td>
                 <%= user.expiration_date.strftime('%m/%d/%Y') if user.expiration_date %>
@@ -184,10 +157,10 @@
         let search = buildSearchFilterList();
         let new_url = "?";
         if (name){
-            if ($('#sort-by-name').val() == "asc"){
-                new_url += "sort_by_name=desc";
-            } else {
+            if ($('#sort-by-name').val() == "desc"){
                 new_url += "sort_by_name=asc";
+            } else {
+                new_url += "sort_by_name=desc";
             }
         } else if(email){
             if ($('#sort-by-email').val() == "asc"){

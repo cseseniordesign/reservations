@@ -20,6 +20,7 @@ USER_STATII = [
 STUDIO_STATII = {
     'Membership Current' => 'current',
     'Membership Expired' => 'expired',
+    'Membership Current (opted out of emails)' => 'current_no_email',
     'Membership Expired (opted out of emails)' => 'expired_no_email'
 }
 
