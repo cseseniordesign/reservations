@@ -42,11 +42,11 @@ post '/admin/email/expiration_email/?' do
 	reminder = ExpirationReminder.first
 
 	if reminder.first_reminder != new_first_reminder && reminder.second_reminder != new_second_reminder
-		flash :error, 'Error', 'Failed to update prefrences please try again'
+		flash :error, 'Error', 'Failed to update preferences please try again'
 		redirect back
 	end
 
-	flash :success, 'Success', 'Your prefrences have been updated!'
+	flash :success, 'Success', 'Your preferences have been updated!'
 
 	erb :'admin/manage_expiration_email', :layout => :fixed, :locals => {
 		:firstReminder => reminder.first_reminder,
