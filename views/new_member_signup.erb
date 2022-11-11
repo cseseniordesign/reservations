@@ -3,34 +3,30 @@
 	<span class="dcf-subhead"><%= event.start_time.in_time_zone.strftime('%m/%d/%Y @ %l:%M %P') %></span>
 </h1>
 
-<form class="dcf-form" id="signup" action="" method="POST" enctype="multipart/form-data">
+<form class="dcf-form" id="signup" action="" method="POST" novalidate="novalidate">
     <div class="dcf-grid-full dcf-grid-halves@sm dcf-col-gap-vw">
-        <fieldset>
+        <div>
             <div class="dcf-form-group">
-            <label for="first-name">First Name</label>
-            <input class="dcf-w-100%" type="text" id="first-name" name="first_name" />
+                <label for="name">First and Last Name</label>
+                <input type="text" id="name" name="name" />
             </div>
 
             <div class="dcf-form-group">
-                <label for="last-name">Last Name</label>
-                <input class="dcf-w-100%" type="text" id="last-name" name="last_name" />
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" />
             </div>
 
             <div class="dcf-form-group">
-                <label for="email">Email Address</label>
-                <input class="dcf-w-100%" type="text" id="email" name="email" />
-            </div>
-
-            <div class="dcf-form-group">
-                <label for="university-status">University Status</label>
-                <select id="university-status" name="university_status">
-                    <% USER_STATII.each do |word| %>
-                        <option value="<%= word %>"><%= word %></option>
-                    <% end %>
+                <label for="email">Relation to University of Nebraska Lincolin</label>
+                <select type="relation" id="relation" name="relation" >
+                    <option>Please Select an Option</option>
+                    <option value="Student">Student</option>
+                    <option value="Faculty_Staff">Faculty/Staff</option>
+                    <option value="Comunity_Member">Comunity Member</option>
                 </select>
             </div>
 
-            <button class="dcf-mt-3 dcf-btn dcf-btn-primary" type="submit">Sign Up</button>
-        </fieldset>
+            <button class="dcf-btn dcf-btn-primary" type="submit">Sign Up</button>
+        </div>
     </div>
 </form>
