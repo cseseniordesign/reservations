@@ -1,6 +1,7 @@
 {
   "before_install": [
     "gem install bundler",
+    "bundle install",
     "sudo apt-get -y install unzip",
     "sudo apt-get -y install ruby-rspec-core",
     "touch config/config.json",
