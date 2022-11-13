@@ -15,9 +15,7 @@
   "addons": {
     "sonarcloud": {
       "organization": "cseseniordesign",
-      "token": {
-        "secure": "$SONARCLOUD_KEY"
-      }
+      "token": "$SONARCLOUD_KEY"
     }
   },
   "branches": {
@@ -29,5 +27,9 @@
   "rvm": [
     "2.7.0"
   ],
-  "script": "cd $TRAVIS_BUILD_DIR/;rspec -I . unit_tests_spec.rb"
+  "script": [
+    "cd $TRAVIS_BUILD_DIR/",
+    "rspec -I . unit_tests_spec.rb",
+    "sonar-scanner"
+  ]
 }
