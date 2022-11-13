@@ -53,10 +53,6 @@ class User < ActiveRecord::Base
   end
   alias_method :admin?, :is_admin?
 
-  def is_trainer?
-    self.is_trainer == 1
-  end
-
   def is_super_user?
     self.permissions.include?(Permission.find(Permission::SUPER_USER))
   end
@@ -103,6 +99,14 @@ class User < ActiveRecord::Base
     self.imagemime = nil
     self.imagedata = nil
     self.save
+  end
+
+  def make_trainer
+    self.is_trainer = 1
+  end
+
+  def remove_trainer
+    self.is_trainer = 0
   end
 
   def send_membership_expiring_email

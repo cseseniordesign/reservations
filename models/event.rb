@@ -89,6 +89,10 @@ class Event < ActiveRecord::Base
 		self.save
 	end
 
+	# def make_trainer
+	# 	self.is_trainer = 1;
+	# end
+
 	def remove_image_data
 		self.imagemime = nil
 		self.imagedata = nil

@@ -85,10 +85,12 @@
                     <label for="permission-<%= su_permission.id %>"><%= su_permission.name %></label>
                 </div>
             </fieldset>
-            <div class="dcf-input-checkbox">
-                <input <%= 'checked="checked"' if user.is_trainer %> type="checkbox" id="permission-<%= is_trainer.id %>" name="permission_<%= is_trainer.id %>">
-                    <label for="permission-<%= su_permission.id %>"><%= su_permission.name %></label>
-            </div>
+            <fieldset>
+                <div class="dcf-input-checkbox">
+                    <input type="checkbox" name="make_trainer" id="make-trainer">
+                    <label for="make-trainer">Make Trainer</label>
+                </div>
+            </fieldset>
         </div>
         <% end %>
     </div>
