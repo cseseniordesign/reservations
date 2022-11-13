@@ -12,6 +12,14 @@
     "mv ./wdn/wdn/templates_5.3/ ./wdn/",
     "rm -rf ./wdn/wdn"
   ],
+  "addons": {
+    "sonarcloud": {
+      "organization": "cseseniordesign",
+      "token": {
+        "secure": "$SONARCLOUD_KEY"
+      }
+    }
+  },
   "branches": {
     "only": [
       "travis-ci"
