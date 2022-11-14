@@ -15,7 +15,7 @@
   "addons": {
     "sonarcloud": {
       "organization": "cseseniordesign",
-      "token": "$SONARCLOUD_KEY"
+      "token": "$SONAR_TOKEN"
     }
   },
   "branches": {
