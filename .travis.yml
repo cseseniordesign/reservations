@@ -30,6 +30,6 @@
   "script": [
     "cd $TRAVIS_BUILD_DIR/",
     "rspec -I . unit_tests_spec.rb",
-    "sonar-scanner -X"
+    "sonar-scanner"
   ]
 }
