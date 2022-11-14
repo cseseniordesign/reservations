@@ -175,10 +175,7 @@ get '/admin/users/:user_id/edit/?' do
         :user => user,
         :permissions => Permission.where.not(:id => Permission::SUPER_USER).all,
         :su_permission => Permission.find(Permission::SUPER_USER)
-        # :is_trainer => User.is_trainer
     }
-
-    # :is_trainer => User.is_trainer
 end
 
 post '/admin/users/:user_id/edit/?' do
@@ -233,16 +230,15 @@ post '/admin/users/:user_id/edit/?' do
         end
     end
 
+    if params.checked?('make_trainer')
+        user.make_trainer_status
+    else
+        user.remove_trainer_status
+    end
+
     flash :success, 'User Updated', 'Your user has been updated.'
     redirect '/admin/users/'
 
-    # user.is_trainer = 1;
-    # if params.checked?('make_trainer')
-    if checkbox.checked?('make_trainer')
-        user.make_trainer
-    else
-        user.remove_trainer
-    end
 end
 
 post '/admin/users/:user_id/delete/?' do

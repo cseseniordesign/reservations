@@ -101,12 +101,14 @@ class User < ActiveRecord::Base
     self.save
   end
 
-  def make_trainer
+  def make_trainer_status
     self.is_trainer = 1
+    self.save
   end
 
-  def remove_trainer
+  def remove_trainer_status
     self.is_trainer = 0
+    self.save
   end
 
   def send_membership_expiring_email

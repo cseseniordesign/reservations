@@ -87,7 +87,7 @@
             </fieldset>
             <fieldset>
                 <div class="dcf-input-checkbox">
-                    <input type="checkbox" name="make_trainer" id="make-trainer">
+                    <input <%= 'checked="checked"' if user.is_trainer == 1 %> type="checkbox" name="make_trainer" id="make-trainer">
                     <label for="make-trainer">Make Trainer</label>
                 </div>
             </fieldset>
