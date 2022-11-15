@@ -30,7 +30,11 @@
 
                 <div class="dcf-form-group">
                     <label for="trainer">Trainer:</label>
-                    <input id="trainer" type="text" name="trainer" value="" style="width:100%;" />
+                    <select id="trainer" name="trainer" class="use-select2">
+                    <% trainers.each do |trainer| %>
+                        <option <%= 'selected="selected"' if event.trainer_id == trainers %> value="<%= trainer.id %>"><%= trainer.full_name %></option>
+                    <% end %>
+                    </select>
                 </div>
 
                 <div class="dcf-form-group">
@@ -261,28 +265,5 @@
             $('#consider-for-unl-main').attr('disabled', 'disabled');
         }
     }).change();
-
-            var availableNames = [];
-
-            let xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    console.log(xhr.response);
-                    availableNames = JSON.parse(xhr.response).users;
-                    $( "#trainer" ).autocomplete({
-                        // source: availableNames
-                        source: function(request, response) {
-                            var results = $.ui.autocomplete.filter(availableNames, request.term);
-
-                            response(results.slice(0, 10));
-                        }
-                    });
-                }
-            };
-            xhr.open("GET", "/admin/events/autocomplete/", true);
-            xhr.send();
-            console.log(availableNames);
-
-
 
 }]);]) %>
