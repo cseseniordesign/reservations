@@ -11,7 +11,7 @@
     "unzip -o ./wdn-compressed -d wdn",
     "mv ./wdn/wdn/templates_5.3/ ./wdn/",
     "rm -rf ./wdn/wdn",
-    "nvm install 17"
+    "nvm install 16"
   ],
   "addons": {
     "sonarcloud": {
