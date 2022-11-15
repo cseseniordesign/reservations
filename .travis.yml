@@ -10,7 +10,8 @@
     "curl -o ./wdn-compressed https://wdn.unl.edu/downloads/wdn.zip",
     "unzip -o ./wdn-compressed -d wdn",
     "mv ./wdn/wdn/templates_5.3/ ./wdn/",
-    "rm -rf ./wdn/wdn"
+    "rm -rf ./wdn/wdn",
+    "nvm install 17"
   ],
   "addons": {
     "sonarcloud": {
@@ -23,16 +24,8 @@
       "travis-ci"
     ]
   },
-  "language": [
-    "ruby",
-    "node_js"
-  ],
-  "rvm": [
-    "2.7.0"
-  ],
-  "node_js": [
-    "15"
-  ],
+  "language": "ruby",
+  "rvm": "2.7.0",
   "script": [
     "cd $TRAVIS_BUILD_DIR/",
     "rspec -I . unit_tests_spec.rb",
