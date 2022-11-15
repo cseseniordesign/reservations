@@ -5,4 +5,4 @@ do
         p) password=${OPTARG};;
     esac
 done
-echo "{\"database\":{\"adapter\":\"mysql2\",\"host\":\"cse.unl.edu\",\"username\":\"$username\",\"password\":\"$password\",\"database\":\"reservation\"}}" > config/config.json
+echo "{\"database\":{\"adapter\":\"mysql2\",\"host\":\"cse.unl.edu\",\"username\":\"$username\",\"password\":\"$password\",\"database\":\"reservation\"}}" > config/server.json
