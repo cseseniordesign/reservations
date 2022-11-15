@@ -395,13 +395,3 @@ post '/admin/events/:event_id/delete/?' do
 	flash(:success, 'Event Deleted', "Your event #{event.title} has been deleted. All signups on this event have also been removed, and if a reservation was attached, it also has been removed.")
 	redirect '/admin/events/'
 end
-
-get '/admin/events/autocomplete/?' do
-	content_type :json
-	users = User.where(:service_space_id => SS_ID).all
-	userArray = []
-	users.each do |user|
-		userArray.append(user.first_name + " " + user.last_name)
-	end
-	{ :users => userArray }.to_json
-end
