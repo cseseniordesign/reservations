@@ -4,7 +4,7 @@
     "bundle install",
     "sudo apt-get -y install unzip",
     "sudo apt-get -y install ruby-rspec-core",
-    "npm i -g npm@14",
+    "npm install npm@latest -g",
     "touch config/server.json",
     "sh config_setup.sh -u $DB_USER -p $DB_PASS",
     "cd $TRAVIS_BUILD_DIR/public",
