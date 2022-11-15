@@ -23,7 +23,10 @@
       "travis-ci"
     ]
   },
-  "language": "ruby",
+  "language": [
+    "ruby",
+    "node_js"
+  ],
   "rvm": [
     "2.7.0"
   ],
