@@ -19,8 +19,8 @@ reminder = ExpirationReminder.first
 
 # specify how many days before expiration
 # a user should receive a reminder.
-days_before_sending_first_reminder = reminder.firstReminder
-days_before_sending_second_reminder = reminder.secondReminder
+days_before_sending_first_reminder = reminder.get_first_reminder
+days_before_sending_second_reminder = reminder.get_second_reminder
 
 
 

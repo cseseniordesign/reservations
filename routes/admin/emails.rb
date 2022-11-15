@@ -18,8 +18,8 @@ get '/admin/email/expiration_email/?' do
 	reminder = ExpirationReminder.first
 
 	erb :'admin/manage_expiration_email', :layout => :fixed, :locals => {
-		:firstReminder => reminder.first_reminder,
-		:secondReminder => reminder.second_reminder,
+		:get_first_reminder => reminder.first_reminder,
+		:get_second_reminder => reminder.second_reminder,
 	}
 end
 
@@ -49,8 +49,8 @@ post '/admin/email/expiration_email/?' do
 	flash :success, 'Success', 'Your preferences have been updated!'
 
 	erb :'admin/manage_expiration_email', :layout => :fixed, :locals => {
-		:firstReminder => reminder.first_reminder,
-		:secondReminder => reminder.second_reminder,
+		:get_first_reminder => reminder.first_reminder,
+		:get_second_reminder => reminder.second_reminder,
 	}
 
 end
