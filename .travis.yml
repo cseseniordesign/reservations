@@ -4,9 +4,6 @@
     "bundle install",
     "sudo apt-get -y install unzip",
     "sudo apt-get -y install ruby-rspec-core",
-    "curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -",
-    "sudo apt install -y nodejs",
-    "npm install -g npm",
     "touch config/server.json",
     "sh config_setup.sh -u $DB_USER -p $DB_PASS",
     "cd $TRAVIS_BUILD_DIR/public",
@@ -29,6 +26,9 @@
   "language": "ruby",
   "rvm": [
     "2.7.0"
+  ],
+  "node_js": [
+    "15"
   ],
   "script": [
     "cd $TRAVIS_BUILD_DIR/",
