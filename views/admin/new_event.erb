@@ -31,6 +31,7 @@
                 <div class="dcf-form-group">
                     <label for="trainer">Trainer:</label>
                     <select id="trainer" name="trainer" class="use-select2">
+                    <option value=""></option>
                     <% trainers.each do |trainer| %>
                         <option <%= 'selected="selected"' if !event.trainer_id.nil? && event.trainer_id == trainer.id %> value="<%= trainer.id %>"><%= trainer.full_name %></option>
                     <% end %>
