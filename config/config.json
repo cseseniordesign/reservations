@@ -1,0 +1,9 @@
+{
+	"database" : {
+		"adapter" : "mysql2",
+		"host" : "localhost",
+		"username" : "root",
+		"password" : "",
+		"database" : "reservations"
+	}
+}

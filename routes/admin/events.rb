@@ -129,7 +129,7 @@ post '/admin/events/create/?' do
 		post_params = {
 			:title => params[:title],
 			:description => params[:description],
-			:trainers => params[:trainers],
+			:trainer => event.trainer_id,
 			:location => event.location.unl_events_id,
 			:start_time => event.start_time.in_time_zone.strftime('%Y-%m-%d %H:%M:%S'),
 			:end_time => event.end_time.in_time_zone.strftime('%Y-%m-%d %H:%M:%S'),
@@ -332,7 +332,7 @@ post '/admin/events/:event_id/edit/?' do
 			post_params = {
 				:title => params[:title],
 				:description => params[:description],
-				:trainers => params[:trainers],
+				:trainer => event.trainer_id,
 				:location => event.location.unl_events_id,
 				:start_time => event.start_time.in_time_zone.strftime('%Y-%m-%d %H:%M:%S'),
 				:end_time => event.end_time.in_time_zone.strftime('%Y-%m-%d %H:%M:%S'),
