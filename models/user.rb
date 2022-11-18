@@ -147,4 +147,9 @@ EMAIL
 
     Emailer.mail(self.email, 'Nebraska Innovation Studio Password Reset', body)
   end
+
+  def notify_trainer_by_email
+    
+  end
+
 end
