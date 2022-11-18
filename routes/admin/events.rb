@@ -3,6 +3,7 @@ require 'models/event'
 require 'models/event_type'
 require 'models/location'
 require 'models/resource'
+require 'models/preset_events'
 
 before '/admin/events*' do
 	unless has_permission?(Permission::MANAGE_EVENTS) || has_permission?(Permission::EVENTS_ADMIN_READ_ONLY)
@@ -390,4 +391,72 @@ post '/admin/events/:event_id/delete/?' do
 
 	flash(:success, 'Event Deleted', "Your event #{event.title} has been deleted. All signups on this event have also been removed, and if a reservation was attached, it also has been removed.")
 	redirect '/admin/events/'
+end
+
+get '/admin/events/presets/?' do
+	@breadcrumbs << {:text => 'Manage Event Presets', :href => '/admin/events/presets'}
+	preset_events = PresetEvent.order(event_name: :asc).all.to_a
+	event_type_objects = EventType.where(:service_space_id => SS_ID)
+	event_types = {}
+	event_type_objects.each do |type|
+		event_types[type.id] = type.description
+	end
+	
+	erb :'admin/event_presets', :layout => :fixed, :locals => {
+		:preset_events => preset_events,
+		:event_types => event_types
+	}
+end
+
+get '/admin/events/presets/create/?' do
+	@breadcrumbs << {:text => 'Create Event Preset', :href => '/admin/events/presets/create'}
+	event_types = EventType.where(:service_space_id => SS_ID).all
+	tools = Resource.where(:service_space_id => SS_ID).order(:name).all.to_a
+    tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
+	
+	erb :'admin/new_preset_event', :layout => :fixed, :locals => {
+		:preset_event => PresetEvent.new,
+		:event_types => event_types,
+		:tools => tools
+	}
+end
+
+post '/admin/events/presets/create/?' do
+
+	preset = PresetEvent.new
+	name = params[:name]
+	description = params[:description]
+	type = params[:type]
+	max_signups = params[:max_signups]
+	duration = params[:duration]
+
+	if name.nil? || description.nil? || type.nil? || duration.nil?
+		flash(:error, 'Preset Event Creation Failed', "Please fill out all required fields.")
+	end
+
+	preset.event_name = name
+	preset.description = description
+	preset.event_type_id = type
+	preset.max_signups = max_signups
+	preset.duration = duration
+
+	# add logic for saving tools
+
+	# notify that it worked
+	flash(:success, 'Preset Event Created', "Your preset event #{preset.event_name} has been created.")
+	redirect '/admin/events/presets'
+end
+
+post '/admin/events/presets/:preset_id/delete/?' do
+	preset = PresetEvents.find_by(:id => params[:preset_id], :service_space_id => SS_ID)
+	if preset.nil?
+		# that preset does not exist
+		flash(:danger, 'Not Found', 'That preset event does not exist')
+		redirect '/admin/events/presets'
+	end
+
+	preset.destroy
+
+	flash(:success, 'Preset Event Deleted', "Your preset event #{preset.event_name} has been deleted.")
+	redirect '/admin/events/presets'
 end
