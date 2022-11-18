@@ -213,8 +213,15 @@ post '/admin/users/:user_id/edit/?' do
         end
     end
 
+    if params.checked?('make_trainer')
+        user.make_trainer_status
+    else
+        user.remove_trainer_status
+    end
+
     flash :success, 'User Updated', 'Your user has been updated.'
     redirect '/admin/users/'
+
 end
 
 post '/admin/users/:user_id/delete/?' do

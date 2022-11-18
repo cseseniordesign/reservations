@@ -141,6 +141,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-21
+  x86_64-darwin-22
   x86_64-linux
 
 DEPENDENCIES
@@ -167,4 +168,4 @@ DEPENDENCIES
   unicorn
 
 BUNDLED WITH
-   2.3.22
+   2.3.24
