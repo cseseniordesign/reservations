@@ -6,7 +6,7 @@
 
                 <div class="dcf-form-group">
                     <label for="name">Event Name <small class="dcf-required">Required</small></label>
-                    <input class="dcf-w-100%" type="text" id="title" name="name" value="<%= preset_event.event_name %>"/>
+                    <input class="dcf-w-100%" type="text" id="name" name="name" value="<%= preset_event.event_name %>"/>
                 </div>
 
                 <div class="dcf-form-group">
@@ -40,23 +40,28 @@
         </div>
     </div>
 
-    <table class="dcf-table dcf-table-bordered" aria-describedby="manage-tools">
-        <thead>
-            <th scope="col">Tool</th>
-        </thead>
-        <tbody>
-        <% tools.each do |tool| %>
-            <tr>
-                <td>
-                    <div class="dcf-input-checkbox">
-                        <input <%= 'checked="checked"' if preset_event.get_resource_ids.include?(tool.id) type="checkbox" name="tool_<%= tool.id %>" id="tool-<%= tool.id %>">
-                        <label for="tool-<%= tool.id %>"><%=tool.category_name %> - <%= tool.name %> - <%= tool.model %></label>
-                    </div>
-                </td>
-            </tr>
-        <% end %>
-        </tbody>
-    </table>
+    <div class="dcf-grid dcf-col-gap-vw">
+        <div class="dcf-col-100% dcf-col-67%-start@sm" style="margin-top:15px">
+            <fieldset>
+                <legend>Preset Event Tools</legend>
+                <table class="dcf-table dcf-table-bordered" aria-describedby="manage-tools">
+                    <tbody style="display:block;max-height:600px;overflow-y:scroll;">
+                    <% tools.each do |tool| %>
+                        <tr>
+                            <td>
+                                <div class="dcf-input-checkbox">
+                                    <input <%= 'checked="checked"' if preset_event.get_resource_ids.include?(tool.id) %> type="checkbox" name="tool_<%= tool.id %>" id="tool-<%= tool.id %>">
+                                    <label for="tool-<%= tool.id %>"><%=tool.category_name %> - <%= tool.name %> - <%= tool.model %></label>
+                                </div>
+                            </td>
+                        </tr>
+                    <% end %>
+                    </tbody>
+                </table>
+            </fieldset>
+        </div>
+    </div>
+
 
     <div class="dcf-grid dcf-col-gap-vw" style="margin-top:20px;">
         <div class="dcf-col-100% dcf-col-67%-start@sm">

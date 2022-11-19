@@ -4,11 +4,13 @@ require 'models/resource_authorization'
 require 'models/resource_class'
 require 'models/resource_field'
 require 'models/resource_field_data'
+require 'models/preset_events_has_resource'
 
 class Resource < ActiveRecord::Base
 	has_many :reservations, dependent: :destroy
 	has_many :resource_approvers, dependent: :destroy
 	has_many :resource_authorizations, dependent: :destroy
+	has_many :preset_events_has_resources, dependent: :destroy
 	belongs_to :resource_class
 	has_many :resource_field_datas, dependent: :destroy
 	alias_method :approvers, :resource_approvers
