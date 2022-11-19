@@ -10,7 +10,7 @@ class Resource < ActiveRecord::Base
 	has_many :reservations, dependent: :destroy
 	has_many :resource_approvers, dependent: :destroy
 	has_many :resource_authorizations, dependent: :destroy
-	has_many :preset_events_has_resources, dependent: :destroy
+	has_many :preset_events_has_resources
 	belongs_to :resource_class
 	has_many :resource_field_datas, dependent: :destroy
 	alias_method :approvers, :resource_approvers

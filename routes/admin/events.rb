@@ -433,7 +433,6 @@ post '/admin/events/presets/create/?' do
 		flash(:error, 'Preset Event Creation Failed', "Please fill out all required fields.")
 		redirect back
 	else
-		# wrapping this save logic in begin/rescue so if something goes wrong the page flashes an error instead of breaking
 		begin
 			if !params.checked?('limit_signups')
 				max_signups = nil
@@ -513,7 +512,6 @@ post '/admin/events/presets/:preset_id/edit/?' do
 			max_signups = nil
 		end
 
-		# wrapping this update logic in begin/rescue so if something goes wrong the page flashes an error instead of breaking
 		begin
 			preset.update(event_name: name, description: description, event_type_id: type, max_signups: max_signups, duration: duration)
 		
@@ -555,9 +553,16 @@ post '/admin/events/presets/:preset_id/delete/?' do
 		flash(:danger, 'Not Found', 'That preset event does not exist')
 		redirect '/admin/events/presets'
 	end
-
-	preset.destroy
-
-	flash(:success, 'Preset Event Deleted', "Your preset event #{preset.event_name} has been deleted.")
-	redirect '/admin/events/presets'
+	
+	begin
+		preset.get_resource_ids.each do |resource_id|
+			PresetEventsHasResource.where(:preset_events_id => preset.id, :resources_id => resource_id).delete_all
+		end
+		preset.destroy
+		flash(:success, 'Preset Event Deleted', "Your preset event #{preset.event_name} has been deleted.")
+		redirect '/admin/events/presets'
+	rescue => exception
+		flash(:error, 'Preset Event Deletion Failed', exception.message)
+		redirect back
+	end
 end
