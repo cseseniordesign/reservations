@@ -4,8 +4,8 @@ require 'classes/emailer'
 require 'recaptcha'
 
 Recaptcha.configure do |config|
-	config.site_key = '6LdW9kwiAAAAAJfRJfLKV1V1qaFWSCGIQF_EYOWH'
-	config.secret_key = '6LdW9kwiAAAAAGI_PjHEk7HbiL-jlakndP6MFvIW'
+	config.site_key = CONFIG['reCaptcha']['site_key']
+	config.secret_key = CONFIG['reCaptcha']['secret_key']
 end
 
 include Recaptcha::Adapters::ControllerMethods
