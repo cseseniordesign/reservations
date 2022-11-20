@@ -20,6 +20,7 @@ USER_STATII = [
 STUDIO_STATII = {
     'Membership Current' => 'current',
     'Membership Expired' => 'expired',
+    'Membership Current (opted out of emails)' => 'current_no_email',
     'Membership Expired (opted out of emails)' => 'expired_no_email'
 }
 
@@ -59,9 +60,11 @@ get '/admin/users/?' do
     last_name = params[:last_name]
     email = params[:email]
     studio_status = params[:studio_status]
-    tool_authorization = params[:tool_authorization]
     expiration_date = params[:expiration_date]
     expiration_date_operation = params[:expiration_date_operation]
+    sort_by_name = params[:sort_by_name]
+    sort_by_email = params[:sort_by_email]
+    sort_by_expiration = params[:sort_by_expiration]
 
     # get all the users that this admin has created
     users = User.includes(:resource_authorizations => :resource)
@@ -100,26 +103,34 @@ get '/admin/users/?' do
         end
     end
 
-    users = users.order(:last_name, :first_name).all.to_a
-
-    # filtering the search results by tool authorization after ordering the names because it complicates the logic to do the ordering last
-    unless tool_authorization.nil? || tool_authorization.length == 0
-        users = users.select { |user| user.authorized_resource_ids.include?(tool_authorization.to_i) }
+    if sort_by_email == "desc"
+        users = users.order(email: :desc).all.to_a
+    elsif sort_by_email == "asc"
+        users = users.order(email: :asc).all.to_a
+    elsif sort_by_expiration == "desc"
+        users = users.order(expiration_date: :desc).all.to_a
+    elsif sort_by_expiration == "asc"
+        users = users.order(expiration_date: :asc).all.to_a
+    elsif sort_by_name == "desc"
+        users = users.order(:last_name, :first_name).all.to_a.reverse
+    elsif sort_by_name == "asc"
+        users = users.order(:last_name, :first_name).all.to_a
+    else
+        # default:
+        users = users.order(:last_name, :first_name).all.to_a
     end
-
-    # we need all the tools for the searching
-    tools = Resource.where(:service_space_id => SS_ID).order(:name).all
 
     erb :'admin/users', :layout => :fixed, :locals => {
         :users => users,
-        :tools => tools,
         :first_name => first_name,
         :last_name => last_name,
         :email => email,
         :studio_status => studio_status,
-        :tool_authorization => tool_authorization,
         :expiration_date => expiration_date,
-        :expiration_date_operation => expiration_date_operation
+        :expiration_date_operation => expiration_date_operation,
+        :sort_by_name => sort_by_name,
+        :sort_by_email => sort_by_email,
+        :sort_by_expiration => sort_by_expiration
     }
 end
 
@@ -202,8 +213,15 @@ post '/admin/users/:user_id/edit/?' do
         end
     end
 
+    if params.checked?('make_trainer')
+        user.make_trainer_status
+    else
+        user.remove_trainer_status
+    end
+
     flash :success, 'User Updated', 'Your user has been updated.'
     redirect '/admin/users/'
+
 end
 
 post '/admin/users/:user_id/delete/?' do
@@ -279,6 +297,25 @@ get '/admin/users/:user_id/manage/?' do
         :user => user,
         :tools => tools
     }
+end
+
+get '/admin/users/modify_expirations/?' do
+    @breadcrumbs << {:text => 'Admin Users', :href => '/admin/users/'} << {:text => 'Modify Expirations'}
+    erb :'admin/modify_expirations', :layout => :fixed
+end
+
+post '/admin/users/modify_expirations/?' do
+    days_to_add = params[:days_to_add]
+    todays_date = Date.today.strftime("%Y-%m-%d")
+    users = User.where("expiration_date IS NOT NULL AND STR_TO_DATE(expiration_date, '%Y-%m-%d') >= ?", todays_date).all
+    users_updated = users.length
+    for user in users do
+        user.expiration_date = user.expiration_date + days_to_add.to_i.day
+        user.save
+    end
+    plural = days_to_add == 1 ? "" : "s"
+    flash :success, "Save successful", "#{days_to_add} day#{plural} added to the expiration date#{plural} of #{users_updated} user#{plural}."
+    redirect '/admin/users/'
 end
 
 post '/admin/users/:user_id/manage/?' do

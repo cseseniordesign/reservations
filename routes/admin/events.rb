@@ -63,6 +63,7 @@ get '/admin/events/create/?' do
 	erb :'admin/new_event', :layout => :fixed, :locals => {
 		:event => Event.new,
 		:types => EventType.where(:service_space_id => SS_ID).all,
+		:trainers => User.where(:is_trainer => 1).all,
 		:locations => Location.where(:service_space_id => SS_ID).all,
 		:tools => tools,
 		:on_unl_events => false,
@@ -128,6 +129,7 @@ post '/admin/events/create/?' do
 		post_params = {
 			:title => params[:title],
 			:description => params[:description],
+			:trainer => event.trainer_id,
 			:location => event.location.unl_events_id,
 			:start_time => event.start_time.in_time_zone.strftime('%Y-%m-%d %H:%M:%S'),
 			:end_time => event.end_time.in_time_zone.strftime('%Y-%m-%d %H:%M:%S'),
@@ -185,6 +187,7 @@ get '/admin/events/:event_id/edit/?' do
 	erb :'admin/new_event', :layout => :fixed, :locals => {
 		:event => event,
 		:types => EventType.where(:service_space_id => SS_ID).all,
+		:trainers => User.where(:is_trainer => 1).all,
 		:locations => Location.where(:service_space_id => SS_ID).all,
 		:tools => tools,
 		:on_unl_events => on_unl_events,
@@ -329,6 +332,7 @@ post '/admin/events/:event_id/edit/?' do
 			post_params = {
 				:title => params[:title],
 				:description => params[:description],
+				:trainer => event.trainer_id,
 				:location => event.location.unl_events_id,
 				:start_time => event.start_time.in_time_zone.strftime('%Y-%m-%d %H:%M:%S'),
 				:end_time => event.end_time.in_time_zone.strftime('%Y-%m-%d %H:%M:%S'),

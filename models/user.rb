@@ -71,6 +71,10 @@ class User < ActiveRecord::Base
     self.password_hash = @password
   end
 
+  def get_expiration_date
+    expiration_date
+  end
+
   def full_name
     "#{first_name} #{last_name}"
   end
@@ -97,12 +101,21 @@ class User < ActiveRecord::Base
     self.save
   end
 
+  def make_trainer_status
+    self.is_trainer = 1
+    self.save
+  end
+
+  def remove_trainer_status
+    self.is_trainer = 0
+    self.save
+  end
+
   def send_membership_expiring_email
 body = <<EMAIL
-<p>Hello, #{self.full_name}. Your Innovation Studio account is expiring soon! Our records show that your account expires on
+<p>Hello, #{self.full_name.chop}. Your Innovation Studio account is expiring soon! Our records show that your account expires on
 #{self.expiration_date.strftime('%m-%d-%Y')}.
-Please contact us at
-<a href="mailto:innovationstudio@unl.edu">innovationstudio@unl.edu</a> or visit us to keep your membership active.
+Please visit us to keep your membership active.
 </p>
 
 <p>We hope to see you soon!</p>
