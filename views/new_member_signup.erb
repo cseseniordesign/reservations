@@ -30,7 +30,14 @@
                 </select>
             </div>
 
-            <button class="dcf-mt-3 dcf-btn dcf-btn-primary" type="submit">Sign Up</button>
+             <form action="/verify">
+                <div>
+                    <%= recaptcha %>
+                </div>
+                <div>
+                    <button class="dcf-mt-3 dcf-btn dcf-btn-primary" type="submit">Sign Up</button>
+                </div>
+            </form>
         </fieldset>
     </div>
 </form>
