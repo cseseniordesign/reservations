@@ -50,19 +50,6 @@
                 </div>
             </div>
 
-            <div class="dcf-form-group">
-                <label for="imagedata">User Image</label>
-                <div>
-                    <% unless user.imagedata.nil? %>
-                        <img src="<%= user.image_src %>" alt="Image for User <%= user.username %>">
-                        <div class="dcf-input-checkbox">
-                            <input type="checkbox" name="remove_image" id="remove-image">
-                            <label for="remove-image">Remove Image</label>
-                        </div>
-                    <% end %>
-                    <input type="file" name="imagedata" id="imagedata" title="User Image">
-                </div>
-            </div>
         </fieldset>
 
         <% if @user.is_super_user? %>
