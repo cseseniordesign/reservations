@@ -35,6 +35,11 @@
 		You have signed up for this event.<br>
 		<a href='/home/' class="dcf-btn dcf-btn-secondary">View Homepage</a>
 	<% end %>
+<% if @user && event.trainer_id == @user.id %>
+	<% # the user is a trainer for the event %>
+	You are assigned as a trainer for this event.<br>
+	<a href='/home/' class="dcf-btn dcf-btn-secondary">View Homepage</a>
+	<% end %>
 <% elsif @user %>
 	<% # the user is logged in but not signed up %>
 	<% if !event.signup_allowed_for_type? %>

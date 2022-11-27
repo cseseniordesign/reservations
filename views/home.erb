@@ -94,3 +94,7 @@
     <a href="/workshops/" class="dcf-mt-1 dcf-btn dcf-btn-secondary">View Workshops</a>
     <a href="/calendar/" class="dcf-mt-1 dcf-btn dcf-btn-secondary">View Full Calendar</a>
 </p>
+
+
+<% if user.is_trainer? %>
+<h4 id="my-events">My Trainings</h4>
