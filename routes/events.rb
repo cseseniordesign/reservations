@@ -168,3 +168,7 @@ post '/events/:event_id/remove_signup/?' do
 	flash :success, header, message
 	redirect '/home/'
 end
+
+post '/events/:event_id/notify_trainer/?' do
+	# You can view the event details on your homepage
+end

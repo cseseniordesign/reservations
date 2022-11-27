@@ -377,6 +377,25 @@ post '/admin/events/:event_id/edit/?' do
 		end
 	end
 
+	if event.trainers?
+		body = <<EMAIL
+		<p>Thank you, #{params[:name]} for signing up for #{event.title}. Don't forget that this event is</p>
+		
+		<p><strong>#{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}</strong>.</p>
+		
+		<p>We'll see you there!</p>
+		
+		<p>Nebraska Innovation Studio</p>
+		EMAIL
+		
+			Emailer.mail(params[:email], "Nebraska Innovation Studio - #{event.title}", body)
+		
+			# flash a message that this works
+			flash(:success, "You're signed up!", "Thanks for signing up! Don't forget, #{event.title} is #{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}.")
+			redirect event.info_link
+		end
+	end
+
 	# notify that it worked
 	flash(:success, 'Event Updated', "Your #{event.type.description}: #{event.title} has been updated.")
 	redirect '/admin/events/'
