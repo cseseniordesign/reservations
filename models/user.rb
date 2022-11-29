@@ -148,8 +148,42 @@ EMAIL
     Emailer.mail(self.email, 'Nebraska Innovation Studio Password Reset', body)
   end
 
-  def notify_trainer_by_email
-    
+  def notify_trainer_of_new_event(event)
+# body = <<EMAIL
+# <p>Hi #{self.full_name}, you have been assigned to #{event.title}. Don't forget that this event is</p>
+
+# <p><strong>#{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}</strong>.</p>
+
+# <p>We'll see you there!</p>
+
+# <p>Nebraska Innovation Studio</p>
+# EMAIL
+
+# 	Emailer.mail(self.email, "Nebraska Innovation Studio - #{event.title}", body)
+
+body = <<EMAIL
+<p>Hi #{self.full_name}, you have been assigned to #{event.title}. Don't forget that this event is</p>
+
+<p><strong>#{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}</strong>.</p>
+
+<p>We'll see you there!</p>
+
+<p>Nebraska Innovation Studio</p>
+EMAIL
+
+	Emailer.mail(self.email, "Nebraska Innovation Studio - #{event.title}", body)
+
+# body = <<EMAIL
+# <p>Hi #{self.full_name}, you have been assigned to. Don't forget that this event is</p>
+
+# <p><strong>time</strong>.</p>
+
+# <p>We'll see you there!</p>
+
+# <p>Nebraska Innovation Studio</p>
+# EMAIL
+
+# 	Emailer.mail(self.email, "Nebraska Innovation Studio - new training", body)
   end
 
 end

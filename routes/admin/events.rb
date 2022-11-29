@@ -1,8 +1,24 @@
+require 'active_record'
 require 'rest-client'
 require 'models/event'
 require 'models/event_type'
 require 'models/location'
 require 'models/resource'
+# require 'routes/admin/user'
+# require_relative '../../utils/language'
+# ENV['RACK_ENV'] ||= 'development'
+# # load the config file
+# require_relative '../../utils/config_loader'
+# require 'utils/database'
+require 'models/user'
+require 'classes/emailer'
+require 'bcrypt'
+require 'models/resource_authorization'
+require 'models/event_signup'
+require 'models/permission'
+require 'models/user_has_permission'
+require 'classes/emailer'
+
 
 before '/admin/events*' do
 	unless has_permission?(Permission::MANAGE_EVENTS) || has_permission?(Permission::EVENTS_ADMIN_READ_ONLY)
@@ -152,8 +168,69 @@ post '/admin/events/create/?' do
 		end
 	end
 
+	# email the assigned trainer
+	# if params.checked?('trainer')
+
+	trainer_to_email = User.where('id = ?', event.trainer_id)
+
+	# notify_trainer_of_new_event(trainer_to_email, event)
+	# notify_trainer_of_new_event(trainer_to_email, event)
+	
+	# trainer_to_email = User.where('id = ?', event.trainer_id).email
+	# trainer_to_email = User.where(:id => event.trainer_id).all
+	# trainer_to_email = User.where('id = ?', :trainer)
+		# trainer_to_email = User.where(:id => :trainer).all
+		# trainer_to_email.notify_trainer_of_new_event
+
+	trainer_to_email.each do |user|
+		user.notify_trainer_of_new_event(event)
+	end
+
+# 	body = <<EMAIL
+# <p>Hi #{params[:trainer]}, you have been assigned to #{event.title}. Don't forget that this event is</p>
+
+# <p><strong>#{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}</strong>.</p>
+
+# <p>We'll see you there!</p>
+
+# <p>Nebraska Innovation Studio</p>
+# EMAIL
+
+# 	Emailer.mail(trainer_to_email, "Nebraska Innovation Studio - #{event.title}", body)
+	
+	# Emailer.mail(params[:trainer_to_email], "Nebraska Innovation Studio - #{event.title}", body)
+
+	# Emailer.mail(params[event.trainer_id.email], "Nebraska Innovation Studio - #{event.title}", body)
+	# Emailer.mail(trainer.email, "Nebraska Innovation Studio - #{event.title}", body)
+
+	
+	# end
+
+	# trainer_to_email = User.where('id = ?', :trainer).all
+	# trainer_to_email = User.where('id = ?', event.trainer_id).all
+	# trainer_to_email = User.where(:id => :trainer).all
+	
+	# trainer_to_email.each do |user|
+	# 	user.notify_trainer_of_new_event
+	# end
+
+	# trainer_to_email.notify_trainer_of_new_event
+
+
 	# notify that it worked
-	flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created.")
+	flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created.")  # Original
+	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer's email: #{event.trainer_id.email}")
+	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer's email: #{event.trainer_id}")	# This shows the trainer id
+	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer's email: #{params[trainer_to_email].full_name}.")
+	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{params[:trainer]}")			# This shows the trainer id
+	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{params[:trainer].first_name}")
+	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{User.where('id = ?', :trainer)}")
+	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{trainer_email}")
+	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{params[:trainer => :first_name]}")
+	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{params[:first_name => :trainer]}")
+	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{params[@user.first_name => {:trainer => @user.id}]}")
+	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{params[:first_name => {:trainer => @user.id}]}")
+	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{trainer.full_name}")
 	redirect '/admin/events/'
 end
 
@@ -378,22 +455,9 @@ post '/admin/events/:event_id/edit/?' do
 	end
 
 	if event.trainers?
-		body = <<EMAIL
-		<p>Thank you, #{params[:name]} for signing up for #{event.title}. Don't forget that this event is</p>
-		
-		<p><strong>#{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}</strong>.</p>
-		
-		<p>We'll see you there!</p>
-		
-		<p>Nebraska Innovation Studio</p>
-		EMAIL
-		
-			Emailer.mail(params[:email], "Nebraska Innovation Studio - #{event.title}", body)
-		
-			# flash a message that this works
-			flash(:success, "You're signed up!", "Thanks for signing up! Don't forget, #{event.title} is #{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}.")
-			redirect event.info_link
-		end
+
+		# user.send
+
 	end
 
 	# notify that it worked
