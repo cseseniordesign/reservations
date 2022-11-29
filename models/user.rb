@@ -150,7 +150,7 @@ EMAIL
 
   def notify_trainer_of_new_event(event)
 body = <<EMAIL
-<p>Hi, #{self.full_name}. You have been assigned as a trainer for #{event.title}. Don't forget that this event is</p>
+<p>Hi, #{self.full_name}. You have been assigned as a trainer for <strong>#{event.title}</strong>. Don't forget that this event is</p>
 
 <p><strong>#{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}</strong>.</p>
 
@@ -159,7 +159,7 @@ body = <<EMAIL
 <p>Nebraska Innovation Studio</p>
 EMAIL
 
-	Emailer.mail(self.email, "Nebraska Innovation Studio - Trainer For #{event.title}", body)
+	Emailer.mail(self.email, "Nebraska Innovation Studio - Assigned as Trainer for #{event.title}", body)
   end
 
   def notify_trainer_of_modified_event(event)
@@ -168,32 +168,37 @@ body = <<EMAIL
 
 <p><strong>#{event.title}</strong></p>
 
-<p>You can see the event details on your Home Page.</p>
+<p>You can see the event details on your <a href="https://innovationstudio-manager.unl.edu/home/">Home Page</a>.</p>
+
 
 <p>Nebraska Innovation Studio</p>
 EMAIL
 
-  Emailer.mail(self.email, "Nebraska Innovation Studio - Trainer For #{event.title}", body)
+  Emailer.mail(self.email, "Nebraska Innovation Studio - Event Modified: #{event.title}", body)
   end
 
   def notify_trainer_of_removal_from_event(event)
 body = <<EMAIL
-<p>Hi, #{self.full_name}. You are receiving this email because you are no longer a trainer for the following event: #{event.title}.
+<p>Hi, #{self.full_name}. You are receiving this email because you are no longer a trainer for the following event:</p>
+
+<p><strong>#{event.title}</strong></p>
 
 <p>Nebraska Innovation Studio</p>
 EMAIL
 
-  Emailer.mail(self.email, "Nebraska Innovation Studio - Trainer For #{event.title}", body)
+  Emailer.mail(self.email, "Nebraska Innovation Studio - Event Modified: #{event.title}", body)
   end
 
   def notify_trainer_of_deleted_event(event)
 body = <<EMAIL
-<p>Hi, #{self.full_name}. You are receiving this email because the following event you are scheduled to train has been deleted: #{event.title}.
+<p>Hi, #{self.full_name}. You are receiving this email because the following event you are scheduled to train has been deleted:</p>
+
+<p><strong>#{event.title}</strong></p>
 
 <p>Nebraska Innovation Studio</p>
 EMAIL
 
-  Emailer.mail(self.email, "Nebraska Innovation Studio - Trainer For #{event.title}", body)
+  Emailer.mail(self.email, "Nebraska Innovation Studio - Event Modified: #{event.title}", body)
   end
 
 end

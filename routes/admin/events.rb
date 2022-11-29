@@ -189,9 +189,6 @@ get '/admin/events/:event_id/edit/?' do
 		redirect '/admin/events/'
 	end
 
-	# puts "here: #{:trainer}"
-	# puts event.trainer_id
-
 	on_unl_events = false
 	on_main_calendar = false
 	unless event.unl_events_id.nil?
@@ -207,9 +204,6 @@ get '/admin/events/:event_id/edit/?' do
 			end
 		end
 	end
-
-	$old_trainer_id = event.trainer_id
-	puts $old_trainer_id
 
 	tools = Resource.where(:service_space_id => SS_ID, :is_reservable => true).order(:name => :asc).all.to_a
 	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
@@ -231,6 +225,8 @@ post '/admin/events/:event_id/edit/?' do
 		flash(:danger, 'Not Found', 'That event does not exist')
 		redirect '/admin/events/'
 	end
+
+	old_trainer = User.where('id = ?', event.trainer_id)
 
     # remember original start/end times
     original_event_start_time = event.start_time
@@ -357,12 +353,6 @@ post '/admin/events/:event_id/edit/?' do
 				end
 			end
 
-			# used to check if the trainer has been changed
-			# temp_trainer = event.trainer_id;
-			# old_trainer = User.where('id = ?', event.trainer_id)
-			# old_trainer = User.where('id = ?', event.trainer_id).all
-			# :old_trainer = event.trainer_id
-
 			# send the event up
 			post_params = {
 				:title => params[:title],
@@ -373,25 +363,6 @@ post '/admin/events/:event_id/edit/?' do
 				:end_time => event.end_time.in_time_zone.strftime('%Y-%m-%d %H:%M:%S'),
 				:api_token => CONFIG['unl_events_api_token']
 			}
-
-			# trainer_to_email = User.where('id = ?', event.trainer_id)
-
-			# notify trainer if they are removed
-			# if(defined?(trainer_to_email)) {
-				# if(event.trainer_id != trainer_to_email) {
-					# if(temp_trainer != event.trainer_id)
-			# if(old_trainer != trainer_to_email)
-			# 	old_trainer.each do |user|
-			# 		user.notify_trainer_of_removal_from_event(event)
-			# 	end
-			# end
-				# }
-			# }
-				# trainer_to_email = User.where('id = ?', event.trainer_id)
-	
-			# trainer_to_email.each do |user|
-			# 	user.notify_trainer_of_modified_event(event)
-			# end
 
 			if params.checked?('consider_for_unl_main')
 				post_params['send_to_main'] =  'yes'
@@ -433,30 +404,23 @@ post '/admin/events/:event_id/edit/?' do
 
 	trainer_to_email = User.where('id = ?', event.trainer_id)
 
-	trainer_to_email.each do |user|
-		user.notify_trainer_of_modified_event(event)
-	end
+	# if trainer has changed
+	if(old_trainer != trainer_to_email)
 
-	# notify trainer if they are removed
-	# if(defined?(old_trainer_id))
-		# if(Event.find(old_trainer_id.old_trainer_id).old_trainer_id != event.trainer_id)
-			# old_trainer = User.where('id = ?', Event.find(old_trainer_id.old_trainer_id).preferences)
-		# if(Event.find(old_trainer_id).preferences != trainer_to_email)
-			# puts "entered"
-		old_trainer = User.where('id = ?', $old_trainer_id)
-		if($old_trainer_id != event.trainer_id)
-			puts "trainer has changed"
-			puts "old trainer id: #{$old_trainer_id}"
-			old_trainer.each do |user|
-				user.notify_trainer_of_removal_from_event(event)
-			end
+		# notify old trainer of their removal
+		old_trainer.each do |user|
+			user.notify_trainer_of_removal_from_event(event)
 		end
-	# end
-	# end
 
-	# old_trainer_iddd = Event.create(old_trainer_id: {"trainer_id" => event.trainer_id})
-	# puts "here: #{Event.find(old_trainer_iddd.old_trainer_id).old_trainer_id}"
-	# @old_trainer = trainer_to_email
+		# notify new trainer of their addition
+		trainer_to_email.each do |user|
+			user.notify_trainer_of_new_event(event)
+		end
+	else
+		trainer_to_email.each do |user|
+			user.notify_trainer_of_modified_event(event)
+		end
+	end
 
 	# notify that it worked
 	flash(:success, 'Event Updated', "Your #{event.type.description}: #{event.title} has been updated.")
