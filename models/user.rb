@@ -198,7 +198,7 @@ body = <<EMAIL
 <p>Nebraska Innovation Studio</p>
 EMAIL
 
-  Emailer.mail(self.email, "Nebraska Innovation Studio - Event Modified: #{event.title}", body)
+  Emailer.mail(self.email, "Nebraska Innovation Studio - Event Deleted: #{event.title}", body)
   end
 
 end

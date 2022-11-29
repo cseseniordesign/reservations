@@ -1,24 +1,8 @@
-require 'active_record'
 require 'rest-client'
 require 'models/event'
 require 'models/event_type'
 require 'models/location'
 require 'models/resource'
-# require 'routes/admin/user'
-# require_relative '../../utils/language'
-# ENV['RACK_ENV'] ||= 'development'
-# # load the config file
-# require_relative '../../utils/config_loader'
-# require 'utils/database'
-require 'models/user'
-require 'classes/emailer'
-require 'bcrypt'
-require 'models/resource_authorization'
-require 'models/event_signup'
-require 'models/permission'
-require 'models/user_has_permission'
-require 'classes/emailer'
-
 
 before '/admin/events*' do
 	unless has_permission?(Permission::MANAGE_EVENTS) || has_permission?(Permission::EVENTS_ADMIN_READ_ONLY)
@@ -176,7 +160,7 @@ post '/admin/events/create/?' do
 	end
 
 	# notify that it worked
-	flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created.")  # Original
+	flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created.")
 	redirect '/admin/events/'
 end
 
