@@ -7,6 +7,7 @@ class Event < ActiveRecord::Base
 	belongs_to :event_type
 	alias_method :type, :event_type
 	alias_method :signups, :event_signups
+	serialize :old_trainer_id
 
     EVENT_TYPE_ID_NEW_MEMBER_ORIENTATION = 1
     EVENT_TYPE_ID_MACHINE_TRAINING = 2
