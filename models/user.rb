@@ -149,20 +149,8 @@ EMAIL
   end
 
   def notify_trainer_of_new_event(event)
-# body = <<EMAIL
-# <p>Hi #{self.full_name}, you have been assigned to #{event.title}. Don't forget that this event is</p>
-
-# <p><strong>#{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}</strong>.</p>
-
-# <p>We'll see you there!</p>
-
-# <p>Nebraska Innovation Studio</p>
-# EMAIL
-
-# 	Emailer.mail(self.email, "Nebraska Innovation Studio - #{event.title}", body)
-
 body = <<EMAIL
-<p>Hi #{self.full_name}, you have been assigned to #{event.title}. Don't forget that this event is</p>
+<p>Hi, #{self.full_name}. You have been assigned as a trainer for #{event.title}. Don't forget that this event is</p>
 
 <p><strong>#{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}</strong>.</p>
 
@@ -171,19 +159,45 @@ body = <<EMAIL
 <p>Nebraska Innovation Studio</p>
 EMAIL
 
-	Emailer.mail(self.email, "Nebraska Innovation Studio - #{event.title}", body)
+	Emailer.mail(self.email, "Nebraska Innovation Studio - Trainer For #{event.title}", body)
+  end
 
-# body = <<EMAIL
-# <p>Hi #{self.full_name}, you have been assigned to. Don't forget that this event is</p>
+  def notify_trainer_of_modified_event(event)
+body = <<EMAIL
+<p>Hi, #{self.full_name}. An event you are training (#{event.title}) has been modified. You can see the event details on your Home Page.
 
-# <p><strong>time</strong>.</p>
+<p>Nebraska Innovation Studio</p>
+EMAIL
 
-# <p>We'll see you there!</p>
+  Emailer.mail(self.email, "Nebraska Innovation Studio - Trainer For #{event.title}", body)
+  end
 
-# <p>Nebraska Innovation Studio</p>
-# EMAIL
+  def notify_trainer_of_deleted_event(event)
+body = <<EMAIL
+<p>Hi, #{self.full_name}. you have been assigned as a trainer for #{event.title}. Don't forget that this event is</p>
 
-# 	Emailer.mail(self.email, "Nebraska Innovation Studio - new training", body)
+<p><strong>#{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}</strong>.</p>
+
+<p>We'll see you there!</p>
+
+<p>Nebraska Innovation Studio</p>
+EMAIL
+
+  Emailer.mail(self.email, "Nebraska Innovation Studio - Trainer For #{event.title}", body)
+  end
+
+  def notify_trainer_of_removal_from_event(event)
+body = <<EMAIL
+<p>Hi, #{self.full_name}. you have been assigned as a trainer for #{event.title}. Don't forget that this event is</p>
+
+<p><strong>#{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}</strong>.</p>
+
+<p>We'll see you there!</p>
+
+<p>Nebraska Innovation Studio</p>
+EMAIL
+
+  Emailer.mail(self.email, "Nebraska Innovation Studio - Trainer For #{event.title}", body)
   end
 
 end

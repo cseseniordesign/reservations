@@ -169,68 +169,14 @@ post '/admin/events/create/?' do
 	end
 
 	# email the assigned trainer
-	# if params.checked?('trainer')
-
 	trainer_to_email = User.where('id = ?', event.trainer_id)
-
-	# notify_trainer_of_new_event(trainer_to_email, event)
-	# notify_trainer_of_new_event(trainer_to_email, event)
-	
-	# trainer_to_email = User.where('id = ?', event.trainer_id).email
-	# trainer_to_email = User.where(:id => event.trainer_id).all
-	# trainer_to_email = User.where('id = ?', :trainer)
-		# trainer_to_email = User.where(:id => :trainer).all
-		# trainer_to_email.notify_trainer_of_new_event
 
 	trainer_to_email.each do |user|
 		user.notify_trainer_of_new_event(event)
 	end
 
-# 	body = <<EMAIL
-# <p>Hi #{params[:trainer]}, you have been assigned to #{event.title}. Don't forget that this event is</p>
-
-# <p><strong>#{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}</strong>.</p>
-
-# <p>We'll see you there!</p>
-
-# <p>Nebraska Innovation Studio</p>
-# EMAIL
-
-# 	Emailer.mail(trainer_to_email, "Nebraska Innovation Studio - #{event.title}", body)
-	
-	# Emailer.mail(params[:trainer_to_email], "Nebraska Innovation Studio - #{event.title}", body)
-
-	# Emailer.mail(params[event.trainer_id.email], "Nebraska Innovation Studio - #{event.title}", body)
-	# Emailer.mail(trainer.email, "Nebraska Innovation Studio - #{event.title}", body)
-
-	
-	# end
-
-	# trainer_to_email = User.where('id = ?', :trainer).all
-	# trainer_to_email = User.where('id = ?', event.trainer_id).all
-	# trainer_to_email = User.where(:id => :trainer).all
-	
-	# trainer_to_email.each do |user|
-	# 	user.notify_trainer_of_new_event
-	# end
-
-	# trainer_to_email.notify_trainer_of_new_event
-
-
 	# notify that it worked
 	flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created.")  # Original
-	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer's email: #{event.trainer_id.email}")
-	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer's email: #{event.trainer_id}")	# This shows the trainer id
-	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer's email: #{params[trainer_to_email].full_name}.")
-	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{params[:trainer]}")			# This shows the trainer id
-	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{params[:trainer].first_name}")
-	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{User.where('id = ?', :trainer)}")
-	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{trainer_email}")
-	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{params[:trainer => :first_name]}")
-	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{params[:first_name => :trainer]}")
-	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{params[@user.first_name => {:trainer => @user.id}]}")
-	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{params[:first_name => {:trainer => @user.id}]}")
-	# flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created. Trainer: #{trainer.full_name}")
 	redirect '/admin/events/'
 end
 
