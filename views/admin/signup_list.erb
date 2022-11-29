@@ -1,3 +1,4 @@
+<form class="dcf-form" id="attendance" action="" method="POST">
 <table class="dcf-w-100% dcf-table dcf-table-bordered">
     <thead>
         <tr>
@@ -11,8 +12,15 @@
         <tr>
             <td><%= signup.name %></td>
             <td><%= signup.email %></td>
-            <td><input id="attendance-checkbox" type="checkbox" value="0"></td>
+            <td>
+            <div class="dcf-input-checkbox">
+            <input id="attendance-checkbox" type="checkbox" value="0" name="attendace_<%= signup.id %>"  >
+            </div>
+            </td>
         </tr>
     <% end %>
     </tbody>
 </table>
+<br>
+<button class="dcf-btn dcf-btn-primary" type="submit">Save User</button>
+</form>
