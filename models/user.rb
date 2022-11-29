@@ -159,7 +159,7 @@ body = <<EMAIL
 <p>Nebraska Innovation Studio</p>
 EMAIL
 
-	Emailer.mail(self.email, "Nebraska Innovation Studio - Assigned as Trainer for #{event.title}", body)
+    Emailer.mail(self.email, "Nebraska Innovation Studio - Assigned as Trainer for #{event.title}", body)
   end
 
   def notify_trainer_of_modified_event(event)
@@ -174,7 +174,7 @@ body = <<EMAIL
 <p>Nebraska Innovation Studio</p>
 EMAIL
 
-  Emailer.mail(self.email, "Nebraska Innovation Studio - Event Modified: #{event.title}", body)
+    Emailer.mail(self.email, "Nebraska Innovation Studio - Event Modified: #{event.title}", body)
   end
 
   def notify_trainer_of_removal_from_event(event)
@@ -186,7 +186,7 @@ body = <<EMAIL
 <p>Nebraska Innovation Studio</p>
 EMAIL
 
-  Emailer.mail(self.email, "Nebraska Innovation Studio - Event Modified: #{event.title}", body)
+    Emailer.mail(self.email, "Nebraska Innovation Studio - Event Modified: #{event.title}", body)
   end
 
   def notify_trainer_of_deleted_event(event)
@@ -198,7 +198,7 @@ body = <<EMAIL
 <p>Nebraska Innovation Studio</p>
 EMAIL
 
-  Emailer.mail(self.email, "Nebraska Innovation Studio - Event Deleted: #{event.title}", body)
+    Emailer.mail(self.email, "Nebraska Innovation Studio - Event Deleted: #{event.title}", body)
   end
 
 end
