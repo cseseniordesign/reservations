@@ -23,6 +23,7 @@ get '/admin/events/?' do
 	page = page.to_i >= 1 ? page.to_i : 1
 	page_size = 10
 	tab = ['upcoming', 'past'].include?(params[:tab]) ? params[:tab] : 'upcoming'
+	preset_events = PresetEvents.order(event_name: :asc).all.to_a
 
 	case tab
 	when 'past'
@@ -34,12 +35,13 @@ get '/admin/events/?' do
 	end
 
 	iterator = Event.includes(:event_signups).where(:service_space_id => SS_ID).where(where_clause)
-
+	
 	erb :'admin/events', :layout => :fixed, :locals => {
 		:events => iterator.order(order_clause).limit(page_size).offset((page-1)*page_size).all,
 		:total_pages => (iterator.count.to_f / page_size).ceil,
 		:page => page,
-		:tab => tab
+		:tab => tab,
+		:preset_events => preset_events
 	}
 end
 
