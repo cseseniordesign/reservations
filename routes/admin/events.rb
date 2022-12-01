@@ -59,7 +59,7 @@ get '/admin/events/:event_id/signup_list/?' do
 	}
 end
 
-get '/admin/events/create/' do
+get '/admin/events/create/?' do
 	@breadcrumbs << {:text => 'Admin Events', :href => '/admin/events/'} << {text: 'Create Event'}
 	tools = Resource.where(:service_space_id => SS_ID, :is_reservable => true).order(:name => :asc).all.to_a
 	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
