@@ -153,6 +153,13 @@ post '/admin/events/create/?' do
 		end
 	end
 
+	# email the assigned trainer
+	trainer_to_email = User.where('id = ?', event.trainer_id)
+
+	trainer_to_email.each do |user|
+		user.notify_trainer_of_new_event(event)
+	end
+
 	# notify that it worked
 	flash(:success, 'Event Created', "Your #{event.type.description}: #{event.title} has been created.")
 	redirect '/admin/events/'
@@ -203,6 +210,8 @@ post '/admin/events/:event_id/edit/?' do
 		flash(:danger, 'Not Found', 'That event does not exist')
 		redirect '/admin/events/'
 	end
+
+	old_trainer = User.where('id = ?', event.trainer_id)
 
     # remember original start/end times
     original_event_start_time = event.start_time
@@ -378,6 +387,26 @@ post '/admin/events/:event_id/edit/?' do
 		end
 	end
 
+	trainer_to_email = User.where('id = ?', event.trainer_id)
+
+	# if trainer has changed
+	if(old_trainer != trainer_to_email)
+
+		# notify old trainer of their removal
+		old_trainer.each do |user|
+			user.notify_trainer_of_removal_from_event(event)
+		end
+
+		# notify new trainer of their addition
+		trainer_to_email.each do |user|
+			user.notify_trainer_of_new_event(event)
+		end
+	else
+		trainer_to_email.each do |user|
+			user.notify_trainer_of_modified_event(event)
+		end
+	end
+
 	# notify that it worked
 	flash(:success, 'Event Updated', "Your #{event.type.description}: #{event.title} has been updated.")
 	redirect '/admin/events/'
@@ -389,6 +418,12 @@ post '/admin/events/:event_id/delete/?' do
 		# that event does not exist
 		flash(:danger, 'Not Found', 'That event does not exist')
 		redirect '/admin/events/'
+	end
+
+	trainer_to_email = User.where('id = ?', event.trainer_id)
+
+	trainer_to_email.each do |user|
+		user.notify_trainer_of_deleted_event(event)
 	end
 
 	event.destroy

@@ -88,3 +88,32 @@
     <a href="/workshops/" class="dcf-mt-1 dcf-btn dcf-btn-secondary">View Workshops</a>
     <a href="/calendar/" class="dcf-mt-1 dcf-btn dcf-btn-secondary">View Full Calendar</a>
 </p>
+
+<% if @user.is_trainer == 1 %>
+    <h4 id="my-events">My Trainings</h4>
+    <% if trainer_events.empty? %>
+    <p>You have not been assigned as a trainer for any upcoming events.</p>
+    <% else %>
+    <table class="dcf-w-100% dcf-table dcf-table-bordered" aria-describedby="my-events">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Date/Location</th>
+            </tr>
+        </thead>
+        <tbody>
+        <% trainer_events.each do |event| %>
+            <tr>
+                <td>
+                    <a href="<%= event.info_link %>"><%= event.title %></a>
+                </td>
+                <td>
+                    <%= event.start_time.in_time_zone.strftime('%m/%d/%Y @ %l:%M %P') %><br>
+                    <%= event.location.name %>
+                </td>
+            </tr>
+        <% end %>
+        </tbody>
+    </table>
+    <% end %>
+<% end %>
