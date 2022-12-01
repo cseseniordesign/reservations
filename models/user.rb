@@ -101,6 +101,16 @@ class User < ActiveRecord::Base
     self.save
   end
 
+  def make_trainer_status
+    self.is_trainer = 1
+    self.save
+  end
+
+  def remove_trainer_status
+    self.is_trainer = 0
+    self.save
+  end
+
   def send_membership_expiring_email
 body = <<EMAIL
 <p>Hello, #{self.full_name.rstrip}. Your Innovation Studio account is expiring soon! Our records show that your account expires on
