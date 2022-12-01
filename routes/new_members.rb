@@ -82,5 +82,6 @@ EMAIL
 		flash(:success, "You're signed up!", "Thanks for signing up! Don't forget, orientation is #{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}. Check your email for more information about the event and where to park.")
 		redirect '/new_members/'
 	end
+  
 end
 
