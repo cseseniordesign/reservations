@@ -60,18 +60,42 @@ get '/admin/events/:event_id/signup_list/?' do
 end
 
 get '/admin/events/create/?' do
+	# Check if the preset_event value is 0:
+	#    Do nothing different than before
+	# If preset_event value is not 0:
+	#    Query the database for the preset event info
 	@breadcrumbs << {:text => 'Admin Events', :href => '/admin/events/'} << {text: 'Create Event'}
 	tools = Resource.where(:service_space_id => SS_ID, :is_reservable => true).order(:name => :asc).all.to_a
 	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
-	erb :'admin/new_event', :layout => :fixed, :locals => {
-		:event => Event.new,
-		:types => EventType.where(:service_space_id => SS_ID).all,
-		:trainers => User.where(:is_trainer => 1).all,
-		:locations => Location.where(:service_space_id => SS_ID).all,
-		:tools => tools,
-		:on_unl_events => false,
-		:on_main_calendar => false
-	}
+	if Integer(params[:preset_id]) == 0
+		erb :'admin/new_event', :layout => :fixed, :locals => {
+			:event => Event.new,
+			:types => EventType.where(:service_space_id => SS_ID).all,
+			:trainers => User.where(:is_trainer => 1).all,
+			:locations => Location.where(:service_space_id => SS_ID).all,
+			:tools => tools,
+			:on_unl_events => false,
+			:on_main_calendar => false,
+			:duration => 0
+		}
+	else
+		preset = PresetEvents.find_by(:id => params[:preset_id])
+		event = Event.new
+		event.title = preset.event_name
+		event.description = preset.description
+		event.event_type_id = preset.event_type_id
+		event.max_signups = preset.max_signups
+		erb :'admin/new_event', :layout => :fixed, :locals => {
+			:event => event,
+			:types => EventType.where(:service_space_id => SS_ID).all,
+			:trainers => User.where(:is_trainer => 1).all,
+			:locations => Location.where(:service_space_id => SS_ID).all,
+			:tools => tools,
+			:on_unl_events => false,
+			:on_main_calendar => false,
+			:duration => preset.duration
+		}
+	end	
 end
 
 post '/admin/events/create/?' do

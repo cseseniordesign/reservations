@@ -14,12 +14,12 @@
                     <a class="dcf-btn dcf-btn-primary" style="padding:11px;" href="/admin/events/presets/">Event Presets</a>
                 </div>
                 <div class="dcf-txt-center">
-                    <form id="create-from-preset">
-                        <button id="create-from-preset-btn" class="dcf-btn dcf-btn-inverse-primary" style="margin-top:10px;">+ New Event from Preset</button>
-                        <select id="preset_event" style="width:100%;margin-top:10px;" name="preset_event" class="use-select2">
+                    <form id="create-from-preset" method="GET" action="/admin/events/create">
+                        <button type="submit" id="create-from-preset-btn" class="dcf-btn dcf-btn-inverse-primary" style="margin-top:10px;">+ New Event from Preset</button>
+                        <select id="preset_id" style="width:100%;margin-top:10px;" name="preset_id" class="use-select2">
                             <option value="0" selected>None</option>
-                            <% preset_events.each do |preset_event| %>
-                                <option value="<%= preset_event.id %>"><%= preset_event.event_name %></option>
+                            <% preset_events.each do |preset_id| %>
+                                <option value="<%= preset_id.id %>"><%= preset_id.event_name %></option>
                             <% end %>
                         </select>
                     </form>
@@ -138,8 +138,8 @@
                 submit.preventDefault();
             }
         });
-        $('#create-from-preset-btn').click(function () {
-            window.location.href='/admin/events/create/?preset_id=' + $('#preset_event').val();
-        });
+        // $('#create-from-preset-btn').click(function () {
+        //     window.location.href='/admin/events/create/?preset_id=' + $('#preset_event').val();
+        // });
     });
 });]) %>

@@ -192,6 +192,7 @@
             </fieldset>
 
         </div>
+        <input type="hidden" name="hidden-duration" id="duration" value="<%=duration%>">
         <div class="dcf-col-100% dcf-col-33%-end@sm">
             <div class="visual-island">
                 <div class="vi-header">
@@ -265,6 +266,33 @@
             $('#consider-for-unl-main').attr('checked', false);
             $('#consider-for-unl-main').attr('disabled', 'disabled');
         }
+    }).change();
+
+    $('#start-time-hour').change(function (change) {
+        start_time_hour = parseInt($('#start-time-hour').val());
+        duration = parseInt($('#duration').val());
+        time = start_time_hour + ((duration - (duration % 60)) / 60);
+        time = time % 12;
+        $('#end-time-hour').val(time);
+        console.log(time);
+    }).change();
+    
+    $('#start-time-minute').change(function (change) {
+        start_time_minute = parseInt($('#start-time-minute').val());
+        duration = parseInt($('#duration').val());
+        time = start_time_minute + (duration % 60);
+        if (time >= 60){
+            $('#end-time-hour').val((parseInt($('#end-time-hour').val()) + 1) % 12);
+            time = time % 60;
+            $('#end-time-minute').val(time);
+        }
+        $('#end-time-minute').val(time);
+    }).change();
+
+    $('#start-date').change(function (change) {
+        console.log($('#start-date').val());
+        start_date = $('#start-date').val();
+        $('#end-date').val(start_date); 
     }).change();
 
 }]);]) %>
