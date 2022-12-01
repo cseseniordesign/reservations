@@ -1,0 +1,72 @@
+<form class="dcf-form" id="create-event-form" action="" method="POST" enctype="multipart/form-data">
+    <div class="dcf-grid dcf-col-gap-vw">
+        <div class="dcf-col-100% dcf-col-67%-start@sm">
+            <fieldset>
+                <legend>Preset Event Details</legend>
+
+                <div class="dcf-form-group">
+                    <label for="name">Event Name <small class="dcf-required">Required</small></label>
+                    <input class="dcf-w-100%" type="text" id="name" name="name" value="<%= preset_event.event_name %>"/>
+                </div>
+
+                <div class="dcf-form-group">
+                    <label for="description">Description <small class="dcf-required">Required</small></label>
+                    <textarea rows="4" id="description" name="description"><%= preset_event.description %></textarea>
+                </div>
+
+                <div class="dcf-form-group">
+                    <label for="type">Type <small class="dcf-required">Required</small></label>
+                    <select id="type" name="type" class="use-select2">
+                        <option value=""></option>
+                        <% event_types.each do |type| %>
+                            <option <%= 'selected="selected"' if !preset_event.event_type_id.nil? && preset_event.event_type_id == type.id %> value="<%= type.id %>"><%= type.description %></option>
+                        <% end %>
+                    </select>
+                </div>
+
+                <div class="dcf-form-group">
+                    <label for="duration">Duration (in minutes) <small class="dcf-required">Required</small></label>
+                    <input value="<%= preset_event.duration %>" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');" type="number" id="duration" name="duration" aria-label="Duration"/>
+                </div>
+
+                <div class="dcf-form-group">
+                    <div class="dcf-input-checkbox dcf-d-inline">
+                        <input type="checkbox" <%= 'checked="checked"' unless preset_event.max_signups.nil? %> id="limit-signups" name="limit_signups"><label class="dcf-label" for="limit-signups">Limit signups for this event to: </label>
+                    </div>
+                    <label for="max-signups"><span class="dcf-sr-only">Max Signups</span></label>
+                    <input value="<%= preset_event.max_signups %>" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');" type="number" id="max-signups" name="max_signups" class="dcf-d-inline dcf-w-10" aria-label="Number of signups to limit."/>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="dcf-grid dcf-col-gap-vw">
+        <div class="dcf-col-100% dcf-col-67%-start@sm" style="margin-top:15px">
+            <fieldset>
+                <legend>Preset Event Tools</legend>
+                <table class="dcf-table dcf-table-bordered" aria-describedby="manage-tools">
+                    <tbody style="display:block;max-height:600px;overflow-y:scroll;">
+                    <% tools.each do |tool| %>
+                        <tr>
+                            <td>
+                                <div class="dcf-input-checkbox">
+                                    <input <%= 'checked="checked"' if preset_event.get_resource_ids.include?(tool.id) %> type="checkbox" name="tool_<%= tool.id %>" id="tool-<%= tool.id %>">
+                                    <label for="tool-<%= tool.id %>"><%=tool.category_name %> - <%= tool.name %> - <%= tool.model %></label>
+                                </div>
+                            </td>
+                        </tr>
+                    <% end %>
+                    </tbody>
+                </table>
+            </fieldset>
+        </div>
+    </div>
+
+
+    <div class="dcf-grid dcf-col-gap-vw" style="margin-top:20px;">
+        <div class="dcf-col-100% dcf-col-67%-start@sm">
+            <button class="dcf-btn dcf-btn-primary dcf-float-left" type="submit"><%= preset_event.id.nil? ? 'Create' : 'Save' %> Preset</button>
+        </div>
+    </div>
+</form>
+</div>
