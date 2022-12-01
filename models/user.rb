@@ -168,7 +168,7 @@ body = <<EMAIL
 
 <p><strong>#{event.title}</strong></p>
 
-<p>You can see the event details on your <a href="https://innovationstudio-manager.unl.edu/home/">Home Page</a>.</p>
+<p>You can see the event details on your <a href="http://#{ENV['RACK_ENV'] == 'development' ? 'localhost:9393' : 'innovationstudio-manager.unl.edu'}/home/" target="_blank">home page</a>.</p>
 
 
 <p>Nebraska Innovation Studio</p>
