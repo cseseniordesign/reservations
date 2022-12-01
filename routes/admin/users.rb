@@ -306,7 +306,8 @@ end
 
 post '/admin/users/modify_expirations/?' do
     days_to_add = params[:days_to_add]
-    users = User.where("expiration_date IS NOT NULL").all
+    todays_date = Date.today.strftime("%Y-%m-%d")
+    users = User.where("expiration_date IS NOT NULL AND STR_TO_DATE(expiration_date, '%Y-%m-%d') >= ?", todays_date).all
     users_updated = users.length
     for user in users do
         user.expiration_date = user.expiration_date + days_to_add.to_i.day
