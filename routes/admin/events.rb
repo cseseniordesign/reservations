@@ -401,6 +401,10 @@ post '/admin/events/:event_id/edit/?' do
 		trainer_to_email.each do |user|
 			user.notify_trainer_of_new_event(event)
 		end
+
+		# remove previous trainer confirmation
+		event.trainer_confirmed = 0
+		event.save
 	else
 		trainer_to_email.each do |user|
 			user.notify_trainer_of_modified_event(event)
