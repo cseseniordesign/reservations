@@ -5,6 +5,7 @@ scheduler = Rufus::Scheduler::singleton
 
 scheduler.cron '0 12 * * * America/Chicago' do    # Every day at 12 pm Chicago time
     system("ruby ././scripts/email_expiring_users.rb")
+    system("ruby ././scripts/email_unconfirmed_trainers.rb")
 end
 
 # prevents scheduler from exiting
