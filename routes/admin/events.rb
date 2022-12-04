@@ -3,6 +3,7 @@ require 'models/event'
 require 'models/event_type'
 require 'models/location'
 require 'models/resource'
+require 'models/resource_authorization'
 
 before '/admin/events*' do
 	unless has_permission?(Permission::MANAGE_EVENTS) || has_permission?(Permission::EVENTS_ADMIN_READ_ONLY)
@@ -54,6 +55,67 @@ get '/admin/events/:event_id/signup_list/?' do
 	erb :'admin/signup_list', :layout => :fixed, :locals => {
 		:event => event
 	}
+end
+
+post '/admin/events/:event_id/signup_list/?' do
+	event = Event.includes(:event_signups).find_by(:id => params[:event_id], :service_space_id => SS_ID)
+	tools = Reservation.where(:event_id => params[:event_id])
+
+	if event.nil?
+		# that event does not exist
+		flash(:danger, 'Not Found', 'That event does not exist')
+		redirect '/admin/events/'
+	end
+
+	# remove the given tool permissions when the attended member is unchecked 
+	event.signups.each do |signup|
+		unless params.has_key?("attendance_#{signup.id}") && params["attendance_#{signup.id}"] == 'on' 
+			user_id = signup.user_id
+			if signup.attended == 1
+				tools.each do |tool|
+					tool_id =  tool.resource_id 
+					auth_tool=ResourceAuthorization.find_by(:user_id => user_id, :resource_id => tool_id)
+					if !auth_tool.authorized_event.nil? && auth_tool.authorized_event  == event.id
+					ResourceAuthorization.find_by(:user_id => user_id, :resource_id => tool_id, :authorized_event => event.id ).delete
+					end
+				end 
+				signup.attended = 0
+				signup.save
+			end 
+		end	
+	end
+	
+	# now add new permissions that are checked
+    params.each do |key, value|
+        if key.start_with?('attendance_') && value == 'on'
+
+            signup_id = key.split('attendance_')[1].to_i
+			signup_record = EventSignup.find_by(:id => signup_id)
+			user = User.find_by(:id => signup_record.user_id)
+
+			if signup_record.attended == 0
+				signup_record.attended = 1
+				signup_record.save
+			end
+            
+			tools.each do |tool|
+				tool_id =  tool.resource_id 
+				# check if the user already has permission for this tool
+				unless user.authorized_resource_ids.include?(tool_id)
+					ResourceAuthorization.create(
+						:user_id => user.id,
+						:resource_id => tool_id,
+						:authorized_date => Time.now,
+						:authorized_event => signup_record.event_id
+					)
+				end
+			end 
+			
+        end
+    end
+
+	flash :success, 'Event\'s Signup List Updated', "#{event.title.rstrip}'s Signup List have been updated."
+	redirect '/admin/events/'
 end
 
 get '/admin/events/create/?' do

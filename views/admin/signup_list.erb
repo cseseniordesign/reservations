@@ -16,7 +16,7 @@
                 <td><%= signup.email %></td>
                 <td>
                     <div class="dcf-input-checkbox">
-                        <input id="attendance-checkbox_<%= signup.id %>" type="checkbox" value="0" name="attendance_<%= signup.id %>"  >
+                        <input <%= 'checked="checked"' if signup.attended == 1 %> id="attendance-checkbox_<%= signup.id %>" type="checkbox" name="attendance_<%= signup.id %>"  >
                         <label for="attendance-checkbox_<%= signup.id %>"></label>
                     </div>
                 </td>
