@@ -85,7 +85,7 @@ post '/admin/events/:event_id/signup_list/?' do
 		end	
 	end
 	
-	# now add new permissions that are checked
+	#  add new tool permissions for checked members in signup list
     params.each do |key, value|
         if key.start_with?('attendance_') && value == 'on'
 
