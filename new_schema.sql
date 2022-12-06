@@ -357,3 +357,6 @@ INSERT INTO `reservation`.`preset_events_has_resources` (`preset_events_id`, `re
 INSERT INTO `reservation`.`preset_events_has_resources` (`preset_events_id`, `resources_id`) VALUES ('27', '815');
 INSERT INTO `reservation`.`preset_events_has_resources` (`preset_events_id`, `resources_id`) VALUES ('28', '770');
 INSERT INTO `reservation`.`preset_events_has_resources` (`preset_events_id`, `resources_id`) VALUES ('28', '771');
+
+ALTER TABLE `reservation`.`events` 
+ADD COLUMN `trainer_confirmed` TINYINT NULL DEFAULT 0 AFTER `trainer_id`;
