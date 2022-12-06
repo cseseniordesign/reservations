@@ -214,7 +214,7 @@ get '/admin/events/:event_id/edit/?' do
 		:locations => Location.where(:service_space_id => SS_ID).all,
 		:tools => tools,
 		:on_unl_events => on_unl_events,
-		:on_main_calendar => on_main_calendar
+		:on_main_calendar => on_main_calendar,
 		:duration => 0
 	}
 end
