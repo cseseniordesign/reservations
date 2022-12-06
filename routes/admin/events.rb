@@ -23,6 +23,7 @@ get '/admin/events/?' do
 	page = page.to_i >= 1 ? page.to_i : 1
 	page_size = 10
 	tab = ['upcoming', 'past'].include?(params[:tab]) ? params[:tab] : 'upcoming'
+	preset_events = PresetEvents.order(event_name: :asc).all.to_a
 
 	case tab
 	when 'past'
@@ -34,12 +35,13 @@ get '/admin/events/?' do
 	end
 
 	iterator = Event.includes(:event_signups).where(:service_space_id => SS_ID).where(where_clause)
-
+	
 	erb :'admin/events', :layout => :fixed, :locals => {
 		:events => iterator.order(order_clause).limit(page_size).offset((page-1)*page_size).all,
 		:total_pages => (iterator.count.to_f / page_size).ceil,
 		:page => page,
-		:tab => tab
+		:tab => tab,
+		:preset_events => preset_events
 	}
 end
 
@@ -61,15 +63,35 @@ get '/admin/events/create/?' do
 	@breadcrumbs << {:text => 'Admin Events', :href => '/admin/events/'} << {text: 'Create Event'}
 	tools = Resource.where(:service_space_id => SS_ID, :is_reservable => true).order(:name => :asc).all.to_a
 	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
-	erb :'admin/new_event', :layout => :fixed, :locals => {
-		:event => Event.new,
-		:types => EventType.where(:service_space_id => SS_ID).all,
-		:trainers => User.where(:is_trainer => 1).all,
-		:locations => Location.where(:service_space_id => SS_ID).all,
-		:tools => tools,
-		:on_unl_events => false,
-		:on_main_calendar => false
-	}
+	if Integer(params[:preset_id]) == 0
+		erb :'admin/new_event', :layout => :fixed, :locals => {
+			:event => Event.new,
+			:types => EventType.where(:service_space_id => SS_ID).all,
+			:trainers => User.where(:is_trainer => 1).all,
+			:locations => Location.where(:service_space_id => SS_ID).all,
+			:tools => tools,
+			:on_unl_events => false,
+			:on_main_calendar => false,
+			:duration => 0
+		}
+	else
+		preset = PresetEvents.find_by(:id => params[:preset_id])
+		event = Event.new
+		event.title = preset.event_name
+		event.description = preset.description
+		event.event_type_id = preset.event_type_id
+		event.max_signups = preset.max_signups
+		erb :'admin/new_event', :layout => :fixed, :locals => {
+			:event => event,
+			:types => EventType.where(:service_space_id => SS_ID).all,
+			:trainers => User.where(:is_trainer => 1).all,
+			:locations => Location.where(:service_space_id => SS_ID).all,
+			:tools => tools,
+			:on_unl_events => false,
+			:on_main_calendar => false,
+			:duration => preset.duration
+		}
+	end	
 end
 
 post '/admin/events/create/?' do
@@ -199,7 +221,8 @@ get '/admin/events/:event_id/edit/?' do
 		:locations => Location.where(:service_space_id => SS_ID).all,
 		:tools => tools,
 		:on_unl_events => on_unl_events,
-		:on_main_calendar => on_main_calendar
+		:on_main_calendar => on_main_calendar,
+		:duration => 0
 	}
 end
 
