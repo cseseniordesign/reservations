@@ -3,6 +3,7 @@ require 'models/event'
 require 'models/event_type'
 require 'models/location'
 require 'models/resource'
+require 'models/resource_authorization'
 require 'models/preset_event'
 
 before '/admin/events*' do
@@ -23,6 +24,7 @@ get '/admin/events/?' do
 	page = page.to_i >= 1 ? page.to_i : 1
 	page_size = 10
 	tab = ['upcoming', 'past'].include?(params[:tab]) ? params[:tab] : 'upcoming'
+	preset_events = PresetEvents.order(event_name: :asc).all.to_a
 
 	case tab
 	when 'past'
@@ -34,12 +36,13 @@ get '/admin/events/?' do
 	end
 
 	iterator = Event.includes(:event_signups).where(:service_space_id => SS_ID).where(where_clause)
-
+	
 	erb :'admin/events', :layout => :fixed, :locals => {
 		:events => iterator.order(order_clause).limit(page_size).offset((page-1)*page_size).all,
 		:total_pages => (iterator.count.to_f / page_size).ceil,
 		:page => page,
-		:tab => tab
+		:tab => tab,
+		:preset_events => preset_events
 	}
 end
 
@@ -57,19 +60,100 @@ get '/admin/events/:event_id/signup_list/?' do
 	}
 end
 
+post '/admin/events/:event_id/signup_list/?' do
+	event = Event.includes(:event_signups).find_by(:id => params[:event_id], :service_space_id => SS_ID)
+	tools = Reservation.where(:event_id => params[:event_id])
+
+	if event.nil?
+		# that event does not exist
+		flash(:danger, 'Not Found', 'That event does not exist')
+		redirect '/admin/events/'
+	end
+
+	# remove the given tool permissions when the attended member is unchecked 
+	event.signups.each do |signup|
+		unless params.has_key?("attendance_#{signup.id}") && params["attendance_#{signup.id}"] == 'on' 
+			user_id = signup.user_id
+			if signup.attended == 1
+				tools.each do |tool|
+					tool_id =  tool.resource_id 
+					auth_tool=ResourceAuthorization.find_by(:user_id => user_id, :resource_id => tool_id)
+					if !auth_tool.authorized_event.nil? && auth_tool.authorized_event  == event.id
+					ResourceAuthorization.find_by(:user_id => user_id, :resource_id => tool_id, :authorized_event => event.id ).delete
+					end
+				end 
+				signup.attended = 0
+				signup.save
+			end 
+		end	
+	end
+	
+	#  add new tool permissions for checked members in signup list
+    params.each do |key, value|
+        if key.start_with?('attendance_') && value == 'on'
+
+            signup_id = key.split('attendance_')[1].to_i
+			signup_record = EventSignup.find_by(:id => signup_id)
+			user = User.find_by(:id => signup_record.user_id)
+
+			if signup_record.attended == 0
+				signup_record.attended = 1
+				signup_record.save
+			end
+            
+			tools.each do |tool|
+				tool_id =  tool.resource_id 
+				# check if the user already has permission for this tool
+				unless user.authorized_resource_ids.include?(tool_id)
+					ResourceAuthorization.create(
+						:user_id => user.id,
+						:resource_id => tool_id,
+						:authorized_date => Time.now,
+						:authorized_event => signup_record.event_id
+					)
+				end
+			end 
+			
+        end
+    end
+
+	flash :success, 'Event\'s Signup List Updated', "#{event.title.rstrip}'s Signup List have been updated."
+	redirect '/admin/events/'
+end
+
 get '/admin/events/create/?' do
 	@breadcrumbs << {:text => 'Admin Events', :href => '/admin/events/'} << {text: 'Create Event'}
 	tools = Resource.where(:service_space_id => SS_ID, :is_reservable => true).order(:name => :asc).all.to_a
 	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
-	erb :'admin/new_event', :layout => :fixed, :locals => {
-		:event => Event.new,
-		:types => EventType.where(:service_space_id => SS_ID).all,
-		:trainers => User.where(:is_trainer => 1).all,
-		:locations => Location.where(:service_space_id => SS_ID).all,
-		:tools => tools,
-		:on_unl_events => false,
-		:on_main_calendar => false
-	}
+	if Integer(params[:preset_id]) == 0
+		erb :'admin/new_event', :layout => :fixed, :locals => {
+			:event => Event.new,
+			:types => EventType.where(:service_space_id => SS_ID).all,
+			:trainers => User.where(:is_trainer => 1).all,
+			:locations => Location.where(:service_space_id => SS_ID).all,
+			:tools => tools,
+			:on_unl_events => false,
+			:on_main_calendar => false,
+			:duration => 0
+		}
+	else
+		preset = PresetEvents.find_by(:id => params[:preset_id])
+		event = Event.new
+		event.title = preset.event_name
+		event.description = preset.description
+		event.event_type_id = preset.event_type_id
+		event.max_signups = preset.max_signups
+		erb :'admin/new_event', :layout => :fixed, :locals => {
+			:event => event,
+			:types => EventType.where(:service_space_id => SS_ID).all,
+			:trainers => User.where(:is_trainer => 1).all,
+			:locations => Location.where(:service_space_id => SS_ID).all,
+			:tools => tools,
+			:on_unl_events => false,
+			:on_main_calendar => false,
+			:duration => preset.duration
+		}
+	end	
 end
 
 post '/admin/events/create/?' do
@@ -199,7 +283,8 @@ get '/admin/events/:event_id/edit/?' do
 		:locations => Location.where(:service_space_id => SS_ID).all,
 		:tools => tools,
 		:on_unl_events => on_unl_events,
-		:on_main_calendar => on_main_calendar
+		:on_main_calendar => on_main_calendar,
+		:duration => 0
 	}
 end
 
@@ -401,6 +486,10 @@ post '/admin/events/:event_id/edit/?' do
 		trainer_to_email.each do |user|
 			user.notify_trainer_of_new_event(event)
 		end
+
+		# remove previous trainer confirmation
+		event.trainer_confirmed = 0
+		event.save
 	else
 		trainer_to_email.each do |user|
 			user.notify_trainer_of_modified_event(event)

@@ -168,3 +168,19 @@ post '/events/:event_id/remove_signup/?' do
 	flash :success, header, message
 	redirect '/home/'
 end
+
+post '/events/:event_id/confirm_trainer/?' do
+	require_login
+
+	# get the event
+	event = Event.includes(:event_type).where(:id => params[:event_id]).first
+
+	event.trainer_confirmed = 1
+	event.save
+
+	header = 'Training Confirmed'
+	message = "Your training #{event.title} has been confirmed."
+
+	flash :success, header, message
+	redirect '/home/'
+end

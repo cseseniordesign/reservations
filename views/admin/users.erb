@@ -22,22 +22,22 @@
             <div class="dcf-grid-full dcf-grid-halves@sm dcf-col-gap-vw">
                 <div>
                     <label for="first-name">First Name:</label>
-                    <input id="first-name" type="text" name="first_name" value="<%= first_name != "" ? first_name : "" %>" style="width:100%;" />
+                    <input id="first-name" tabindex="1" type="text" name="first_name" value="<%= first_name != "" ? first_name : "" %>" style="width:100%;" />
                     <input type="hidden" name="hidden-first-name" id="hidden-first-name" value="<%= first_name %>">
                 </div>
                 <div>
                     <label for="last-name">Last Name:</label>
-                    <input id="last-name" type="text" name="last_name" value="<%= last_name != "" ? last_name : "" %>" style="width:100%;" />
+                    <input id="last-name" tabindex="1" type="text" name="last_name" value="<%= last_name != "" ? last_name : "" %>" style="width:100%;" />
                     <input type="hidden" name="hidden-last-name" id="hidden-last-name" value="<%= last_name %>">
                 </div>
                 <div>
                     <label for="email">Email:</label>
-                    <input id="email" type="text" name="email" value="<%= email != "" ? email : "" %>" style="width:100%;" />
+                    <input id="email" tabindex="1" type="text" name="email" value="<%= email != "" ? email : "" %>" style="width:100%;" />
                     <input type="hidden" name="hidden-email" id="hidden-email" value="<%= email %>">
                 </div>
                 <div>
                     <label for="studio-status">Studio Status:</label>
-                    <select id="studio-status" name="studio_status" class="dcf-input-select">
+                    <select id="studio-status" tabindex="1" name="studio_status" class="dcf-input-select">
                         <option value=""></option>
                         <% USER_STATII.each do |word| %>
                             <option <%= 'selected="selected"' if studio_status == word %> value="<%= word %>"><%= word %></option>
@@ -49,7 +49,7 @@
                     <label for="expiration-date">Expiration Date:</label>
                     <div class="dcf-grid dcf-col-gap-1 dcf-row-gap-2 dcf-flex-wrap">
                         <div class="dcf-col-100% dcf-col-33%-start@sm">
-                            <select id="expiration-date-operation" name="expiration_date_operation" class="dcf-input-select">
+                            <select id="expiration-date-operation" tabindex="1" name="expiration_date_operation" class="dcf-input-select">
                                 <option value=""></option>
                                 <% EXPIRATION_DATE_SEARCH_OPERATIONS.each_with_index do |operation, value| %>
                                     <option <%= 'selected="selected"' if expiration_date_operation.to_i == (value + 1) %> value="<%= value + 1 %>"><%= operation %></option>
@@ -59,14 +59,14 @@
                         </div>
                         <div class="dcf-col-100% dcf-col-67%-end@sm">
                             <div class="dcf-datepicker">
-                                <input id="expiration-date" value="<%= expiration_date != "" ? expiration_date : "" %>" name="expiration_date" title="Expiration Date" type="text"  style="width:100%;"/>
+                                <input id="expiration-date" tabindex="1" value="<%= expiration_date != "" ? expiration_date : "" %>" name="expiration_date" title="Expiration Date" type="text"  style="width:100%;"/>
                             </div>
                             <input type="hidden" name="hidden-expiration-date" id="hidden-expiration-date" value="<%= expiration_date %>">
                         </div>
                     </div>
                 </div>
             </div>
-            <button id="search-btn" class="dcf-btn dcf-btn-inverse-primary" style="margin-top:10px;">Search</button>
+            <button id="search-btn" tabindex="1" class="dcf-btn dcf-btn-inverse-primary" style="margin-top:10px;">Search</button>
         </div>
     </div>
 </form>
@@ -140,8 +140,10 @@
     </table>
 </div>
 <% else %>
-<br>
-<label>No users meet this criteria, or you have not created any. Open the toolbox to get started.</label>
+    <% if params.count > 0 %>
+        <br>
+        <label>No users meet this criteria, or you have not created any. Open the toolbox to get started.</label>
+    <% end %>
 <% end %>
 
 <% append_script_declaration("WDN.initializePlugin('datepickers');") %>
@@ -199,7 +201,6 @@
             new_url += "&" + search.join('&');
         }
         
-        
         window.location = new_url;
      }
 
@@ -212,15 +213,21 @@
         $('#show-toolbox').click(function (click) {
             click.preventDefault();
             $('#show-toolbox').hide();
-            $('#toolbox').slideDown();
-        });
-        $('#hide-toolbox').click(function (click) {
+            $('#toolbox').slideDown();     $('#hide-toolbox').click(function (click) {
             click.preventDefault();
             $('#toolbox').slideUp(400, function () {
                 $('#show-toolbox').show();
             });
         });
-        
+
+        // submit search form when "enter" is pressed
+        $('#find-controls').keypress(function(e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                $('#find-controls').submit();
+            }
+        });
+
         $('#sort-by-expiration-btn').click(function() {
             sort(false,false,true);
         });
