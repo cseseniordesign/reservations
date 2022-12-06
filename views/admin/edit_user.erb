@@ -35,11 +35,10 @@
             </div>
 
             <div class="dcf-form-group">
-                <label for="studio-status">Studio Status</label>
-                <select id="studio-status" name="studio_status">
-                <% STUDIO_STATII.each do |desc, value| %>
-                    <option <%= 'selected="selected"' if user.space_status == value %> value="<%= value %>"><%= desc %></option>
-                <% end %>
+                <label for="email-preference">Email Preference</label>
+                <select id="email-preference" name="email_preference">
+                    <option <%= 'selected="selected"' if !user.space_status.include? "no_email" %> value="email">Opt-in</option>
+                    <option <%= 'selected="selected"' if user.space_status.include? "no_email" %> value="no_email">Opt-out</option>
                 </select>
             </div>
 
