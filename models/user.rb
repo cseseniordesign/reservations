@@ -154,7 +154,7 @@ body = <<EMAIL
 
 <p><strong>#{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}</strong>.</p>
 
-<p>We'll see you there!</p>
+<p>Please visit your <a href="http://#{ENV['RACK_ENV'] == 'development' ? 'localhost:9393' : 'innovationstudio-manager.unl.edu'}/home/" target="_blank">home page</a> to confirm your assignment.</p>
 
 <p>Nebraska Innovation Studio</p>
 EMAIL
@@ -199,6 +199,16 @@ body = <<EMAIL
 EMAIL
 
     Emailer.mail(self.email, "Nebraska Innovation Studio - Event Deleted: #{event.title}", body)
+  end
+
+  def send_trainer_confirmation_reminder
+body = <<EMAIL
+<p>Hi, #{self.full_name}. You are receiving this email because you have not confirmed your trainer assignment for one or more events. Please visit your <a href="http://#{ENV['RACK_ENV'] == 'development' ? 'localhost:9393' : 'innovationstudio-manager.unl.edu'}/home/" target="_blank">home page</a> to confirm an event.</p>
+
+<p>Nebraska Innovation Studio</p>
+EMAIL
+
+    Emailer.mail(self.email, "Nebraska Innovation Studio - Unconfirmed Training", body)
   end
 
 end
