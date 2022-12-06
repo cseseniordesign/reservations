@@ -113,10 +113,6 @@ post '/events/:event_id/sign_up/?' do
         redirect back
 	end
 
-	if event.machine_training_event_type?
-		check_membership
-	end
-
 	EventSignup.create(
 		:event_id => params[:event_id],
 		:name => @user.full_name,
