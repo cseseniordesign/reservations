@@ -278,12 +278,19 @@
     
     $('#start-time-minute').change(function (change) {
         start_time_minute = parseInt($('#start-time-minute').val());
+        start_time_hour = parseInt($('#start-time-hour').val());
         duration = parseInt($('#duration').val());
         time = start_time_minute + (duration % 60);
+        hour_time = start_time_hour + ((duration - (duration % 60)) / 60);
+        hour_time = hour_time % 12;
+        hour = hour_time + Math.floor(time/60);
         if (time >= 60){
-            $('#end-time-hour').val((parseInt($('#end-time-hour').val()) + 1) % 12);
+            $('#end-time-hour').val(hour % 12);
             time = time % 60;
             $('#end-time-minute').val(time);
+        }
+        else {
+            $('#end-time-hour').val(hour);
         }
         $('#end-time-minute').val(time);
     }).change();
