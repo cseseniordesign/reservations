@@ -140,8 +140,10 @@
     </table>
 </div>
 <% else %>
-<br>
-<label>No users meet this criteria, or you have not created any. Open the toolbox to get started.</label>
+    <% if params.count > 0 %>
+        <br>
+        <label>No users meet this criteria, or you have not created any. Open the toolbox to get started.</label>
+    <% end %>
 <% end %>
 
 <% append_script_declaration("WDN.initializePlugin('datepickers');") %>
@@ -198,7 +200,6 @@
         if (search.length > 0) {
             new_url += "&" + search.join('&');
         }
-        
         
         window.location = new_url;
      }
