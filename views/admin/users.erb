@@ -213,7 +213,9 @@
         $('#show-toolbox').click(function (click) {
             click.preventDefault();
             $('#show-toolbox').hide();
-            $('#toolbox').slideDown();     $('#hide-toolbox').click(function (click) {
+            $('#toolbox').slideDown();
+        });
+        $('#hide-toolbox').click(function (click) {
             click.preventDefault();
             $('#toolbox').slideUp(400, function () {
                 $('#show-toolbox').show();
