@@ -10,7 +10,7 @@ Using local resources
 3. You probably do not have the `bundler` gem. Check with `bundle`. If not, install it with `gem install bundler`.
 4. In the project root, install the gems using `bundle install`.
 5. Create a mysql database you'd like to use, you can typically use one on your computer. `brew install mysql` if necessary. 
-6. `config/config.json` is a committed file, and a template for the configuration. Create a copy in the same directoy named `server.json` and edit it to match your database.
+6. `config/config.json` is a committed file, and a template for the configuration. Create a copy in the same directoy named `server.json` and edit it to match your database. You will also need to include your site keys for google reCaptcha which can be generated at https://www.google.com/recaptcha/ for the V2 checkbox.
 7. Your database is currently blank. Import the production database or copy https://git.unl.edu/iim/unl-resource-scheduler/tree/master/db/migrate into this project and run the migrations from the root of the project using `rake migrate` to bring in all the tables and columns.
 8. Install the WDN Framework into the `public/wdn` directory...see [WDN Documentation](http://wdn.unl.edu/documentation).
 9. Start the server by going to the root directory and doing `bundle exec shotgun -o 0.0.0.0 -p 9393`. This launches the server on localhost port 9393, listening everywhere (you can use your iimlemburg.unl.edu or whichever), and the server will automatically update to new code. If you add gems to the bundle, you will need to re-execute this command.

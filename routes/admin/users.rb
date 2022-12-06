@@ -17,13 +17,6 @@ USER_STATII = [
     'Community Member'
 ]
 
-STUDIO_STATII = {
-    'Membership Current' => 'current',
-    'Membership Expired' => 'expired',
-    'Membership Current (opted out of emails)' => 'current_no_email',
-    'Membership Expired (opted out of emails)' => 'expired_no_email'
-}
-
 EXPIRATION_DATE_SEARCH_OPERATIONS = [
     '<',
     '&le;',
@@ -66,9 +59,11 @@ get '/admin/users/?' do
     sort_by_email = params[:sort_by_email]
     sort_by_expiration = params[:sort_by_expiration]
 
-    # get all the users that this admin has created
-    users = User.includes(:resource_authorizations => :resource)
-                .where(:service_space_id => SS_ID)
+    # get all the users unless the page has initially loaded (params = 0)
+    users = []
+    if params.length > 0
+        users = User.includes(:resource_authorizations => :resource).where(:service_space_id => SS_ID)
+    end
     
     unless first_name.nil? || first_name.length == 0
         users = users.where("first_name LIKE ?", "%#{first_name}%")
@@ -103,21 +98,24 @@ get '/admin/users/?' do
         end
     end
 
-    if sort_by_email == "desc"
-        users = users.order(email: :desc).all.to_a
-    elsif sort_by_email == "asc"
-        users = users.order(email: :asc).all.to_a
-    elsif sort_by_expiration == "desc"
-        users = users.order(expiration_date: :desc).all.to_a
-    elsif sort_by_expiration == "asc"
-        users = users.order(expiration_date: :asc).all.to_a
-    elsif sort_by_name == "desc"
-        users = users.order(:last_name, :first_name).all.to_a.reverse
-    elsif sort_by_name == "asc"
-        users = users.order(:last_name, :first_name).all.to_a
-    else
-        # default:
-        users = users.order(:last_name, :first_name).all.to_a
+    # sort the users
+    if users.length > 0
+        if sort_by_email == "desc"
+            users = users.order(email: :desc).all.to_a
+        elsif sort_by_email == "asc"
+            users = users.order(email: :asc).all.to_a
+        elsif sort_by_expiration == "desc"
+            users = users.order(expiration_date: :desc).all.to_a
+        elsif sort_by_expiration == "asc"
+            users = users.order(expiration_date: :asc).all.to_a
+        elsif sort_by_name == "desc"
+            users = users.order(:last_name, :first_name).all.to_a.reverse
+        elsif sort_by_name == "asc"
+            users = users.order(:last_name, :first_name).all.to_a
+        else
+            # default:
+            users = users.order(:last_name, :first_name).all.to_a
+        end
     end
 
     erb :'admin/users', :layout => :fixed, :locals => {
@@ -180,21 +178,29 @@ post '/admin/users/:user_id/edit/?' do
         redirect back
     end
 
+    # save everything except status first so that an accurate expiration date is used when building the status
     user.update({
         :first_name => params[:first_name],
         :last_name => params[:last_name],
         :email => params[:email],
         :username => params[:username],
         :university_status => params[:university_status],
-        :space_status => params[:studio_status],
         :expiration_date => params[:expiration_date].nil? || params[:expiration_date].empty? ? nil : calculate_time(params[:expiration_date], 0, 0, 'am')
     })
 
-    if params.checked?('remove_image')
-        user.remove_image_data
-    else
-        user.set_image_data(params)
+    # figure out if space_status should be expired or current
+    status = "expired"
+    if !user.get_expiration_date.nil? && user.get_expiration_date >= Date.today
+        status = "current"
     end
+
+    # if user wants to opt out then add no_email to space_status
+    if params[:email_preference] == "no_email"
+        status = status + "_no_email"
+    end
+
+    user.space_status = status
+    user.save
 
     # check the permissions, check for new ones
     params.select {|k,v| k =~ /permission_*/}.each do |k,v|
@@ -213,8 +219,15 @@ post '/admin/users/:user_id/edit/?' do
         end
     end
 
+    if params.checked?('make_trainer')
+        user.make_trainer_status
+    else
+        user.remove_trainer_status
+    end
+
     flash :success, 'User Updated', 'Your user has been updated.'
     redirect '/admin/users/'
+
 end
 
 post '/admin/users/:user_id/delete/?' do
@@ -299,7 +312,8 @@ end
 
 post '/admin/users/modify_expirations/?' do
     days_to_add = params[:days_to_add]
-    users = User.where("expiration_date IS NOT NULL").all
+    todays_date = Date.today.strftime("%Y-%m-%d")
+    users = User.where("expiration_date IS NOT NULL AND STR_TO_DATE(expiration_date, '%Y-%m-%d') >= ?", todays_date).all
     users_updated = users.length
     for user in users do
         user.expiration_date = user.expiration_date + days_to_add.to_i.day

@@ -29,6 +29,16 @@
                 </div>
 
                 <div class="dcf-form-group">
+                    <label for="trainer">Trainer:</label>
+                    <select id="trainer" name="trainer" class="use-select2">
+                    <option value=""></option>
+                    <% trainers.each do |trainer| %>
+                        <option <%= 'selected="selected"' if !event.trainer_id.nil? && event.trainer_id == trainer.id %> value="<%= trainer.id %>"><%= trainer.full_name %></option>
+                    <% end %>
+                    </select>
+                </div>
+
+                <div class="dcf-form-group">
                     <div class="dcf-input-checkbox dcf-d-inline">
                         <input type="checkbox" <%= 'checked="checked"' unless event.max_signups.nil? %> id="limit-signups" name="limit_signups"><label class="dcf-label" for="limit-signups">Limit signups for this event to: </label>
                     </div>
@@ -182,6 +192,7 @@
             </fieldset>
 
         </div>
+        <input type="hidden" name="hidden-duration" id="duration" value="<%=duration%>">
         <div class="dcf-col-100% dcf-col-33%-end@sm">
             <div class="visual-island">
                 <div class="vi-header">
@@ -256,4 +267,37 @@
             $('#consider-for-unl-main').attr('disabled', 'disabled');
         }
     }).change();
+
+    $('#start-time-hour').change(function (change) {
+        start_time_hour = parseInt($('#start-time-hour').val());
+        duration = parseInt($('#duration').val());
+        time = start_time_hour + ((duration - (duration % 60)) / 60);
+        time = time % 12;
+        $('#end-time-hour').val(time);
+    }).change();
+    
+    $('#start-time-minute').change(function (change) {
+        start_time_minute = parseInt($('#start-time-minute').val());
+        start_time_hour = parseInt($('#start-time-hour').val());
+        duration = parseInt($('#duration').val());
+        time = start_time_minute + (duration % 60);
+        hour_time = start_time_hour + ((duration - (duration % 60)) / 60);
+        hour_time = hour_time % 12;
+        hour = hour_time + Math.floor(time/60);
+        if (time >= 60){
+            $('#end-time-hour').val(hour % 12);
+            time = time % 60;
+            $('#end-time-minute').val(time);
+        }
+        else {
+            $('#end-time-hour').val(hour);
+        }
+        $('#end-time-minute').val(time);
+    }).change();
+
+    $('#start-date').change(function (change) {
+        start_date = $('#start-date').val();
+        $('#end-date').val(start_date); 
+    }).change();
+
 }]);]) %>

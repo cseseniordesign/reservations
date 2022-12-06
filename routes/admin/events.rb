@@ -4,6 +4,7 @@ require 'models/event_type'
 require 'models/location'
 require 'models/resource'
 require 'models/resource_authorization'
+require 'models/preset_event'
 
 before '/admin/events*' do
 	unless has_permission?(Permission::MANAGE_EVENTS) || has_permission?(Permission::EVENTS_ADMIN_READ_ONLY)
@@ -23,6 +24,7 @@ get '/admin/events/?' do
 	page = page.to_i >= 1 ? page.to_i : 1
 	page_size = 10
 	tab = ['upcoming', 'past'].include?(params[:tab]) ? params[:tab] : 'upcoming'
+	preset_events = PresetEvents.order(event_name: :asc).all.to_a
 
 	case tab
 	when 'past'
@@ -34,12 +36,13 @@ get '/admin/events/?' do
 	end
 
 	iterator = Event.includes(:event_signups).where(:service_space_id => SS_ID).where(where_clause)
-
+	
 	erb :'admin/events', :layout => :fixed, :locals => {
 		:events => iterator.order(order_clause).limit(page_size).offset((page-1)*page_size).all,
 		:total_pages => (iterator.count.to_f / page_size).ceil,
 		:page => page,
-		:tab => tab
+		:tab => tab,
+		:preset_events => preset_events
 	}
 end
 
@@ -122,14 +125,35 @@ get '/admin/events/create/?' do
 	@breadcrumbs << {:text => 'Admin Events', :href => '/admin/events/'} << {text: 'Create Event'}
 	tools = Resource.where(:service_space_id => SS_ID, :is_reservable => true).order(:name => :asc).all.to_a
 	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
-	erb :'admin/new_event', :layout => :fixed, :locals => {
-		:event => Event.new,
-		:types => EventType.where(:service_space_id => SS_ID).all,
-		:locations => Location.where(:service_space_id => SS_ID).all,
-		:tools => tools,
-		:on_unl_events => false,
-		:on_main_calendar => false
-	}
+	if Integer(params[:preset_id]) == 0
+		erb :'admin/new_event', :layout => :fixed, :locals => {
+			:event => Event.new,
+			:types => EventType.where(:service_space_id => SS_ID).all,
+			:trainers => User.where(:is_trainer => 1).all,
+			:locations => Location.where(:service_space_id => SS_ID).all,
+			:tools => tools,
+			:on_unl_events => false,
+			:on_main_calendar => false,
+			:duration => 0
+		}
+	else
+		preset = PresetEvents.find_by(:id => params[:preset_id])
+		event = Event.new
+		event.title = preset.event_name
+		event.description = preset.description
+		event.event_type_id = preset.event_type_id
+		event.max_signups = preset.max_signups
+		erb :'admin/new_event', :layout => :fixed, :locals => {
+			:event => event,
+			:types => EventType.where(:service_space_id => SS_ID).all,
+			:trainers => User.where(:is_trainer => 1).all,
+			:locations => Location.where(:service_space_id => SS_ID).all,
+			:tools => tools,
+			:on_unl_events => false,
+			:on_main_calendar => false,
+			:duration => preset.duration
+		}
+	end	
 end
 
 post '/admin/events/create/?' do
@@ -190,6 +214,7 @@ post '/admin/events/create/?' do
 		post_params = {
 			:title => params[:title],
 			:description => params[:description],
+			:trainer => event.trainer_id,
 			:location => event.location.unl_events_id,
 			:start_time => event.start_time.in_time_zone.strftime('%Y-%m-%d %H:%M:%S'),
 			:end_time => event.end_time.in_time_zone.strftime('%Y-%m-%d %H:%M:%S'),
@@ -210,6 +235,13 @@ post '/admin/events/create/?' do
 				flash :error, 'Event Not Posted to UNL Events', "There was a problem posting to UNL Events. You should check out your UNL Events calendar to see if your event made it."
 			end
 		end
+	end
+
+	# email the assigned trainer
+	trainer_to_email = User.where('id = ?', event.trainer_id)
+
+	trainer_to_email.each do |user|
+		user.notify_trainer_of_new_event(event)
 	end
 
 	# notify that it worked
@@ -247,10 +279,12 @@ get '/admin/events/:event_id/edit/?' do
 	erb :'admin/new_event', :layout => :fixed, :locals => {
 		:event => event,
 		:types => EventType.where(:service_space_id => SS_ID).all,
+		:trainers => User.where(:is_trainer => 1).all,
 		:locations => Location.where(:service_space_id => SS_ID).all,
 		:tools => tools,
 		:on_unl_events => on_unl_events,
-		:on_main_calendar => on_main_calendar
+		:on_main_calendar => on_main_calendar,
+		:duration => 0
 	}
 end
 
@@ -261,6 +295,8 @@ post '/admin/events/:event_id/edit/?' do
 		flash(:danger, 'Not Found', 'That event does not exist')
 		redirect '/admin/events/'
 	end
+
+	old_trainer = User.where('id = ?', event.trainer_id)
 
     # remember original start/end times
     original_event_start_time = event.start_time
@@ -391,6 +427,7 @@ post '/admin/events/:event_id/edit/?' do
 			post_params = {
 				:title => params[:title],
 				:description => params[:description],
+				:trainer => event.trainer_id,
 				:location => event.location.unl_events_id,
 				:start_time => event.start_time.in_time_zone.strftime('%Y-%m-%d %H:%M:%S'),
 				:end_time => event.end_time.in_time_zone.strftime('%Y-%m-%d %H:%M:%S'),
@@ -435,6 +472,26 @@ post '/admin/events/:event_id/edit/?' do
 		end
 	end
 
+	trainer_to_email = User.where('id = ?', event.trainer_id)
+
+	# if trainer has changed
+	if(old_trainer != trainer_to_email)
+
+		# notify old trainer of their removal
+		old_trainer.each do |user|
+			user.notify_trainer_of_removal_from_event(event)
+		end
+
+		# notify new trainer of their addition
+		trainer_to_email.each do |user|
+			user.notify_trainer_of_new_event(event)
+		end
+	else
+		trainer_to_email.each do |user|
+			user.notify_trainer_of_modified_event(event)
+		end
+	end
+
 	# notify that it worked
 	flash(:success, 'Event Updated', "Your #{event.type.description}: #{event.title} has been updated.")
 	redirect '/admin/events/'
@@ -448,8 +505,188 @@ post '/admin/events/:event_id/delete/?' do
 		redirect '/admin/events/'
 	end
 
+	trainer_to_email = User.where('id = ?', event.trainer_id)
+
+	trainer_to_email.each do |user|
+		user.notify_trainer_of_deleted_event(event)
+	end
+
 	event.destroy
 
 	flash(:success, 'Event Deleted', "Your event #{event.title} has been deleted. All signups on this event have also been removed, and if a reservation was attached, it also has been removed.")
 	redirect '/admin/events/'
+end
+
+get '/admin/events/presets/?' do
+	@breadcrumbs << {:text => 'Manage Event Presets', :href => '/admin/events/presets'}
+	preset_events = PresetEvents.order(event_name: :asc).all.to_a
+	event_type_objects = EventType.where(:service_space_id => SS_ID)
+	event_types = {}
+	event_type_objects.each do |type|
+		event_types[type.id] = type.description
+	end
+	
+	erb :'admin/event_presets', :layout => :fixed, :locals => {
+		:preset_events => preset_events,
+		:event_types => event_types
+	}
+end
+
+get '/admin/events/presets/create/?' do
+	@breadcrumbs << {:text => 'Manage Event Presets', :href => '/admin/events/presets/'}  << {text: 'Create Preset Event'}
+	event_types = EventType.where(:service_space_id => SS_ID).all
+	tools = Resource.where(:service_space_id => SS_ID).order(:name).all.to_a
+    tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
+	
+	erb :'admin/new_preset_event', :layout => :fixed, :locals => {
+		:preset_event => PresetEvents.new,
+		:event_types => event_types,
+		:tools => tools
+	}
+end
+
+post '/admin/events/presets/create/?' do
+	preset = PresetEvents.new
+	name = params[:name]
+	description = params[:description]
+	type = params[:type]
+	max_signups = params[:max_signups]
+	duration = params[:duration]
+
+	if name.blank? || description.blank? || type.to_i == 0 || duration.to_i == 0
+		flash(:error, 'Preset Event Creation Failed', "Please fill out all required fields.")
+		redirect back
+	else
+		begin
+			if !params.checked?('limit_signups')
+				max_signups = nil
+			end
+
+			preset.event_name = name
+			preset.description = description
+			preset.event_type_id = type
+			preset.max_signups = max_signups
+			preset.duration = duration
+			preset.save
+
+			# tie the tools that are checked to the preset event
+			params.each do |key, value|
+				if key.start_with?('tool_') && value == 'on'
+					id = key.split('tool_')[1].to_i
+					PresetEventsHasResource.create(
+						:preset_events_id => preset.id,
+						:resources_id => id
+					)
+				end
+			end
+
+			# notify that it worked
+			flash(:success, 'Preset Event Created', "Your preset event #{preset.event_name} has been created.")
+			redirect '/admin/events/presets'
+		rescue => exception
+			flash(:error, 'Preset Event Creation Failed', exception.message)
+			redirect back
+		end
+	end
+end
+
+get '/admin/events/presets/:preset_id/edit/?' do
+	@breadcrumbs << {:text => 'Manage Event Presets', :href => '/admin/events/presets/'}  << {text: 'Edit Preset Event'}
+	event_types = EventType.where(:service_space_id => SS_ID).all
+	preset = PresetEvents.find_by(:id => params[:preset_id])
+	if preset.nil?
+		# that preset does not exist
+		flash(:danger, 'Not Found', 'That preset event does not exist')
+		redirect '/admin/events/presets'
+	end
+
+	tools = Resource.where(:service_space_id => SS_ID).order(:name).all.to_a
+    tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
+	
+	erb :'admin/new_preset_event', :layout => :fixed, :locals => {
+		:preset_event => preset,
+		:event_types => event_types,
+		:tools => tools
+	}
+end
+
+post '/admin/events/presets/:preset_id/edit/?' do
+	name = params[:name]
+	description = params[:description]
+	type = params[:type]
+	limit_signups = params[:limit_signups]
+	max_signups = params[:max_signups]
+	duration = params[:duration]
+
+	preset = PresetEvents.find_by(:id => params[:preset_id])
+
+	# make sure preset exists
+	if preset.nil?
+		flash(:danger, 'Not Found', 'That preset event does not exist')
+		redirect '/admin/events/presets'
+	end
+
+	# make sure all required fields are supplied
+	if name.blank? || description.blank? || type.to_i == 0 || duration.to_i == 0
+		flash(:error, 'Preset Event Update Failed', "Please fill out all required fields.")
+		redirect back
+	else
+		# all required information is present so update the preset
+		if !params.checked?('limit_signups')
+			max_signups = nil
+		end
+
+		begin
+			preset.update(event_name: name, description: description, event_type_id: type, max_signups: max_signups, duration: duration)
+		
+			# check for removed tools
+			preset.get_resource_ids.each do |resource_id|
+				unless params.has_key?("tool_#{resource_id}") && params["tool_#{resource_id}"] == 'on'
+					PresetEventsHasResource.where(:preset_events_id => preset.id, :resources_id => resource_id).delete_all
+				end
+			end
+		
+			# add new tools that are checked
+			params.each do |key, value|
+				if key.start_with?('tool_') && value == 'on'
+					id = key.split('tool_')[1].to_i
+					# check if the preset event already has this tool and if not then add it
+					unless preset.get_resource_ids.include?(id)
+						PresetEventsHasResource.create(
+							:preset_events_id => preset.id,
+							:resources_id => id
+						)
+					end
+				end
+			end
+
+			# notify that it worked
+			flash(:success, 'Preset Event Updated', "Your preset event #{preset.event_name} has been updated.")
+			redirect '/admin/events/presets'
+		rescue => exception
+			flash(:error, 'Preset Event Update Failed', exception.message)
+			redirect back
+		end
+	end
+end
+
+post '/admin/events/presets/:preset_id/delete/?' do
+	preset = PresetEvents.find_by(:id => params[:preset_id])
+	if preset.nil?
+		# that preset does not exist
+		flash(:danger, 'Not Found', 'That preset event does not exist')
+		redirect '/admin/events/presets'
+	end
+	
+	begin
+		preset.get_resource_ids.each do |resource_id|
+			PresetEventsHasResource.where(:preset_events_id => preset.id, :resources_id => resource_id).delete_all
+		end
+		preset.destroy
+		flash(:success, 'Preset Event Deleted', "Your preset event #{preset.event_name} has been deleted.")
+		redirect '/admin/events/presets'
+	rescue => exception
+		flash(:error, 'Preset Event Deletion Failed', exception.message)
+		redirect back
+	end
 end

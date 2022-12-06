@@ -35,11 +35,10 @@
             </div>
 
             <div class="dcf-form-group">
-                <label for="studio-status">Studio Status</label>
-                <select id="studio-status" name="studio_status">
-                <% STUDIO_STATII.each do |desc, value| %>
-                    <option <%= 'selected="selected"' if user.space_status == value %> value="<%= value %>"><%= desc %></option>
-                <% end %>
+                <label for="email-preference">Email Preference</label>
+                <select id="email-preference" name="email_preference">
+                    <option <%= 'selected="selected"' if !user.space_status.include? "no_email" %> value="email">Opt-in</option>
+                    <option <%= 'selected="selected"' if user.space_status.include? "no_email" %> value="no_email">Opt-out</option>
                 </select>
             </div>
 
@@ -47,20 +46,6 @@
                 <div class="dcf-datepicker">
                     <label for="expiration-date">Membership Expiration Date</label>
                     <input id="expiration-date" name="expiration_date" title="Membership Expiration Date" type="text" value="<%= user.expiration_date.strftime('%m/%d/%Y') if user.expiration_date %>" />
-                </div>
-            </div>
-
-            <div class="dcf-form-group">
-                <label for="imagedata">User Image</label>
-                <div>
-                    <% unless user.imagedata.nil? %>
-                        <img src="<%= user.image_src %>" alt="Image for User <%= user.username %>">
-                        <div class="dcf-input-checkbox">
-                            <input type="checkbox" name="remove_image" id="remove-image">
-                            <label for="remove-image">Remove Image</label>
-                        </div>
-                    <% end %>
-                    <input type="file" name="imagedata" id="imagedata" title="User Image">
                 </div>
             </div>
         </fieldset>
@@ -83,6 +68,12 @@
                 <div class="dcf-mt-3 dcf-input-checkbox">
                     <input <%= 'checked="checked"' if user.permissions.include?(su_permission) %> type="checkbox" id="permission-<%= su_permission.id %>" name="permission_<%= su_permission.id %>">
                     <label for="permission-<%= su_permission.id %>"><%= su_permission.name %></label>
+                </div>
+            </fieldset>
+            <fieldset>
+                <div class="dcf-input-checkbox">
+                    <input <%= 'checked="checked"' if user.is_trainer == 1 %> type="checkbox" name="make_trainer" id="make-trainer">
+                    <label for="make-trainer">Make Trainer</label>
                 </div>
             </fieldset>
         </div>
