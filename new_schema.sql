@@ -360,3 +360,6 @@ INSERT INTO `reservation`.`preset_events_has_resources` (`preset_events_id`, `re
 
 ALTER TABLE `reservation`.`events` 
 ADD COLUMN `trainer_confirmed` TINYINT NULL DEFAULT 0 AFTER `trainer_id`;
+
+-- Fix one of the durations of the preset_events
+UPDATE `preset_events` SET `duration`=60 where `id`=10; 
