@@ -17,8 +17,5 @@ else
   set :cookie_options, :domain => 'innovationstudio-manager.unl.edu'
 end
 
-# start scheduler on new thread so program doesn't hang waiting for it to finish
-Thread.start{system("ruby config/initializers/scheduler.rb")}
-
 # run it
 run Sinatra::Application

@@ -14,7 +14,6 @@ gem 'rest-client'
 gem 'json'
 gem 'bigdecimal'
 gem 'rufus-scheduler'
-gem 'highlander'
 
 group :development do
   gem 'shotgun'
