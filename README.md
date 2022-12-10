@@ -35,7 +35,7 @@ $ systemctl --user restart unicorn
 
 Running the scheduler for automated emails
 ===============================
-1. Start the scheduler by running this command `ruby config/initializers/scheduler.rb`
-2. To check if the scheduler is already running run `ps -u` and look for a process with the COMMAND name as above.
-3. To kill the scheduler run `kill <pid>` where `<pid>` is the process ID for the scheduler which you can get from the `ps -u` command.
-4. If the terminal starts throwing errors about gems not being found then run this command to install the gems `gem install activerecord mysql2 bcrypt pony json bigdecimal rufus-scheduler`
+1. Run this command to install the dependencies `gem install activerecord mysql2 bcrypt pony json bigdecimal rufus-scheduler` 
+2. Start the scheduler by running this command `ruby config/initializers/scheduler.rb`
+3. To check if the scheduler is already running run `ps -u` and look for a process with the COMMAND name as above.
+4. To kill the scheduler run `kill <pid>` where `<pid>` is the process ID for the scheduler which you can get from the `ps -u` command.
