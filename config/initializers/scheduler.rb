@@ -4,8 +4,8 @@ p = Proc.new do
     
     scheduler = Rufus::Scheduler::singleton
     
-    scheduler.every '20s' do    # Every day at 12 pm Chicago time
-        if Time.new.hour == 14
+    scheduler.cron '0 12 * * * America/Chicago' do    # Every day at 12 pm Chicago time
+        if Time.new.hour == 12
             system("ruby ././scripts/email_expiring_users.rb")
             system("ruby ././scripts/email_unconfirmed_trainers.rb")
         end
