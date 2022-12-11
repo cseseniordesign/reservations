@@ -69,6 +69,12 @@ CREATE TABLE IF NOT EXISTS `reservation`.`preset_events` (
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
+--Update preset_events table
+ALTER TABLE `reservation`.`preset_events` 
+CHANGE COLUMN `id` `id` INT(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `reservation`.`preset_events` 
+CHANGE COLUMN `description` `description` VARCHAR(4000) NULL DEFAULT NULL;
+
 --Add preset_events_has_resources table
 CREATE TABLE IF NOT EXISTS `reservation`.`preset_events_has_resources` (
   `preset_events_id` INT(11) NOT NULL,
@@ -86,11 +92,6 @@ CREATE TABLE IF NOT EXISTS `reservation`.`preset_events_has_resources` (
     REFERENCES `reservation`.`resources` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
-
---Update preset_events table
-ALTER TABLE `reservation`.`preset_events` 
-CHANGE COLUMN `id` `id` INT(11) NOT NULL AUTO_INCREMENT;
-CHANGE COLUMN `description` `description` VARCHAR(4000) NULL DEFAULT NULL;
 
 --Insert preset events into preset_events table
 INSERT INTO `reservation`.`preset_events` (`event_name`, `description`, `event_type_id`, `max_signups`, `duration`) VALUES (
