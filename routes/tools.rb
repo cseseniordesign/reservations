@@ -8,7 +8,6 @@ require 'models/space_hour'
 get '/tools/?' do
 	@breadcrumbs << {:text => 'Tools'}
 	require_login
-	check_membership
 
 	# show tools that the user is authorized to use, as well as all those that do not require authorization
 	tools = Resource.where(:service_space_id => SS_ID).all.to_a
@@ -23,7 +22,6 @@ end
 get '/tools/trainings/?' do
 	@breadcrumbs << {:text => 'Tools', :href => '/tools/'} << {:text => 'Upcoming Trainings'}
 	require_login
-	check_membership
 
 	WHERE_CLAUSE = 'start_time >= ?'
 
@@ -54,7 +52,6 @@ end
 
 post '/tools/trainings/sign_up/:event_id/?' do
 	require_login
-	check_membership
 
 	# check that is a valid event
 	machine_training_id = EventType.find_by(:description => 'Machine Training', :service_space_id => SS_ID).id
@@ -99,7 +96,6 @@ end
 get '/tools/:resource_id/reserve/?' do
 	@breadcrumbs << {:text => 'Tools', :href => '/tools/'} << {:text => 'Reserve'}
 	require_login
-	check_membership
 
 	# check that the user has authorization to reserve this tool, if tool requires auth
 	tool = Resource.find_by(:service_space_id => SS_ID, :id => params[:resource_id])
@@ -299,7 +295,6 @@ end
 
 post '/tools/:resource_id/reserve/?' do
 	require_login
-	check_membership
 
 	# check that the user has authorization to reserve this tool, if tool requires auth
 	tool = Resource.find_by(:service_space_id => SS_ID, :id => params[:resource_id])
