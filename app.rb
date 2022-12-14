@@ -76,13 +76,6 @@ def require_login(redirect_after_login=nil)
   end
 end
 
-def check_membership
-  if @user.space_status != 'current'
-    flash :alert, 'Membership Expired', 'Sorry, your membership must be current to reserve tools and sign up for trainings. Please contact us at <a href="mailto:innovationstudio@unl.edu">innovationstudio@unl.edu</a>.'
-    redirect back
-  end
-end
-
 def drupal_node_lookup(key)
     nodes = {
         material_pricing: 79,

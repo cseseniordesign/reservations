@@ -8,7 +8,6 @@ require 'models/space_hour'
 get '/workshops/?' do
 	@breadcrumbs << {:text => 'Workshops'}
 	require_login
-	check_membership
 
 	workshop_id = EventType.find_by(:description => 'Advanced Skill-Based Workshop', :service_space_id => SS_ID).id
 	events_advanced = Event.includes(:event_signups).where(:service_space_id => SS_ID, :event_type_id => workshop_id).
@@ -29,7 +28,6 @@ end
 
 post '/workshops/sign_up/:event_id/?' do
 	require_login
-	check_membership
 
 	# check that is a valid event
 	workshop_id_advanced = EventType.find_by(:description => 'Advanced Skill-Based Workshop', :service_space_id => SS_ID).id
