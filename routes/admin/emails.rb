@@ -69,8 +69,12 @@ end
 
 post '/admin/email/send/?' do
 	users_to_send_to = []
-	all_users = User.where(:service_space_id => SS_ID).where.not("space_status LIKE ?", "%no_email").all
+	# uncomment line below when done testing
+	# all_users = User.where(:service_space_id => SS_ID).where.not("space_status LIKE ?", "%no_email").all
 
+	# remove this line below when done testing
+	all_users = User.where("username LIKE ?", "%emailtest%").all
+	
 	# compile the list based on what was checked
 	if params.checked?('send_to_all_non_admins')
 		users = all_users.where(:is_admin => false)
@@ -113,10 +117,20 @@ post '/admin/email/send/?' do
 			end
 		end
 	end
+
+	invalid_emails = []
 	
 	# compact and uniqify the list
 	users_to_send_to = users_to_send_to.compact.uniq do |user|
 		user.id
+	end
+
+	# remove invalid emails from list of users
+	users_to_send_to.delete_if do |user|
+		if !user.email.ascii_only?
+			invalid_emails << (user.first_name + " " + user.last_name + " " + user.email)
+			true
+		end
 	end
 
 	# check on attachments
@@ -133,6 +147,12 @@ post '/admin/email/send/?' do
 		#{body}
 		<hr>If you no longer want to receive emails from us you can adjust your email preferences <a href="http://#{ENV['RACK_ENV'] == 'development' ? 'localhost:9393' : 'innovationstudio-manager.unl.edu'}/opt_out/" target="_blank">here</a>.
 		EMAIL
+	end
+
+	if invalid_emails.count > 0
+		invalid_emails_body = "Invalid emails were found in the member database: " + invalid_emails.join(',')
+		# change the email to innovationstudio@unl.edu when done testing
+		Emailer.mail("adobrusky2@huskers.unl.edu", "Invalid Emails Found", invalid_emails_body, '', nil)
 	end
 
 	# correctly choose how to send

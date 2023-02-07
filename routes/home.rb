@@ -3,6 +3,8 @@ require 'models/event'
 require 'routes/admin/events'
 
 get '/home/?' do
+	require_login
+
 	reservations = Reservation.joins(:resource).includes(:event).
 		where(:resources => {:service_space_id => SS_ID}).
 		where(:user_id => @user.id).

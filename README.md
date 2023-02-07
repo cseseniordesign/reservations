@@ -28,7 +28,20 @@ Quick Tutorial
 
 Deploying Updates on Production
 ===============================
+1. Run these commands to restart the unicorn server.
 ```
 $ sudo -u innovationstudio -s -H
 $ systemctl --user restart unicorn
+```
+2. After restarting the unicorn server make sure that there are only two scheduler processes running. The scheduler processes handle sending out automated emails on a daily basis. There should be one for the staging environment and one for the production environment. If more than 2 processes are running then users will receive duplicate emails. Run the command below to check if multiple processes are running. You should only get 2 process IDs back.
+```
+pgrep ruby
+```
+3. If you get more than 2 processes IDs then you need to check which users started each process. There should be one process started by the innovationstudio-test user(the staging user) and one process started by the innovationstudio user. You can check the user of a process with this command where pid is the process ID.
+```
+ps -o user= -p pid
+```
+4. Once you determine which processes are extra (if any) then kill them with this command.
+```
+kill -9 pid
 ```

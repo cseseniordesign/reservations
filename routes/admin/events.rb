@@ -170,6 +170,12 @@ post '/admin/events/create/?' do
 	event.set_image_data(params)
 	event.set_data(params)
 
+	if event.end_time.in_time_zone < event.start_time.in_time_zone
+		event.delete
+		flash :alert, "Start and end times create a negative duration.", "Sorry, the selected times cannot be used to create an event. Please try different day or time. Please double check your event information."
+		redirect back
+	end 
+
 	if params.has_key?('reserve_tool') && params['reserve_tool'] == 'on'
         # check for possible other reservations during this time period
         date = event.start_time.midnight.in_time_zone
@@ -284,7 +290,7 @@ get '/admin/events/:event_id/edit/?' do
 		:tools => tools,
 		:on_unl_events => on_unl_events,
 		:on_main_calendar => on_main_calendar,
-		:duration => 0
+		:duration => ((event.end_time - event.start_time)/60.0).round
 	}
 end
 
@@ -316,6 +322,12 @@ post '/admin/events/:event_id/edit/?' do
 		event.set_image_data(params)
 	end
 	event.set_data(params)
+
+	if event.end_time.in_time_zone < event.start_time.in_time_zone
+		event.update(start_time: original_event_start_time, end_time: original_event_end_time)
+		flash :alert, "Start and end times create a negative duration.", "Sorry, the selected times cannot be used to create an event. Please try different day or time. Please double check your event information."
+		redirect back
+	end 
 
 	# check the tool reservation for this
 	checked = params.checked?('reserve_tool')
