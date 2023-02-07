@@ -69,11 +69,7 @@ end
 
 post '/admin/email/send/?' do
 	users_to_send_to = []
-	# uncomment line below when done testing
-	# all_users = User.where(:service_space_id => SS_ID).where.not("space_status LIKE ?", "%no_email").all
-
-	# remove this line below when done testing
-	all_users = User.where("username LIKE ?", "%emailtest%").all
+	all_users = User.where(:service_space_id => SS_ID).where.not("space_status LIKE ?", "%no_email").all
 	
 	# compile the list based on what was checked
 	if params.checked?('send_to_all_non_admins')
@@ -151,8 +147,7 @@ post '/admin/email/send/?' do
 
 	if invalid_emails.count > 0
 		invalid_emails_body = "Invalid emails were found in the member database: " + invalid_emails.join(',')
-		# change the email to innovationstudio@unl.edu when done testing
-		Emailer.mail("adobrusky2@huskers.unl.edu", "Invalid Emails Found", invalid_emails_body, '', nil)
+		Emailer.mail("innovationstudio@unl.edu", "Invalid Emails Found", invalid_emails_body, '', nil)
 	end
 
 	# correctly choose how to send
