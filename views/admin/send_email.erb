@@ -44,6 +44,20 @@
             </div>
 			<div class="dcf-form-group dcf-input-group">
 			    <div class="dcf-input-checkbox">
+			        <input type="checkbox" id="send-to-specific-group" name="send_to_specific_group">
+			        <label title="Specific Groups" for="send-to-specific-group"><span class="dcf-sr-only">Alert Group</span></label>
+			    </div>
+                <div class="dcf-form-group">
+                    <label for="specific-group">Alert Group(s) (use Shift or Ctrl/Cmd to select multiple):</label>
+                    <select class="dcf-txt-sm" multiple="multiple" id="specific-group" name="specific_group[]" >
+                        <% alerts.each do |alert| %>
+                            <option value="<%= alert.id %>"><%= alert.name %></option>
+                        <% end %>
+                    </select>
+                </div>
+            </div>
+			<div class="dcf-form-group dcf-input-group">
+			    <div class="dcf-input-checkbox">
 			        <input type="checkbox" id="send-to-specific-user" name="send_to_specific_user">
 			        <label title="Specific Users" for="send-to-specific-user"><span class="dcf-sr-only">Specific Users</span></label>
 			    </div>
