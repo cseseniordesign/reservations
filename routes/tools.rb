@@ -42,7 +42,6 @@ get '/tools/?' do
 	require_login
 
 	workshop_category = params[:workshop_category]
-	workshop_category_name = params[:workshop_category_name]
 	
 	tools = []
 	
@@ -56,14 +55,8 @@ get '/tools/?' do
 		tools = Resource.where(:category_id => workshop_category)
 	end
 
-	def tool_category_name(workshop_category)
-		return Resource.category_options[workshop_category]
-		'Other'
-	end
-
 	erb :tools, :layout => :fixed, :locals => {
 		:workshop_category => workshop_category,
-		:workshop_category_name => Resource.category_options[workshop_category],
 		:available_tools => tools
 	}
 end

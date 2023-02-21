@@ -8,8 +8,8 @@
                     <label for="workshop-category">Workshop Category:</label>
                     <select id="workshop-category" style="width:25%;margin-top:10px;" tabindex="1" name="workshop_category" class="dcf-input-select">
                         <option value=""></option>
-                        <% @tools.category_name.each do |tool| %>
-                            <option <%= 'selected="selected"' if tool.category_name.downcase == workshop_category_name %> value="<%= workshop_category_name %>"><%= workshop_category_name %></option>
+                        <% Resource.category_options.each do |cat_id, name| %>
+                            <option <%= 'selected="selected"' if cat_id == workshop_category.to_i %> value="<%= cat_id %>"><%= name %></option>
                         <% end %>
                     </select>
                     <input type="hidden" name="hidden-workshop-category" id="hidden-workshop-category" value="<%= workshop_category %>">
@@ -59,15 +59,3 @@
     completed a training on that machine. Perhaps you'd like to <a href="/tools/trainings/">sign up for some upcoming trainings</a>?
 </p>
 <% end %>
-
-<% append_script_declaration(%q[require(['jquery'], function($) {
-
-    function buildSearchFilterList() {
-        let search = [];
-        if ($('#hidden-workshop-category').val() != '') {
-            search.push('workshop_category=' + $('#hidden-workshop-category').val());
-        }
-        return search;
-    }
-
-});]) %>
