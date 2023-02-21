@@ -1,5 +1,25 @@
 <h1 class="dcf-txt-h3" id="tools-list-table">Tools You Can Reserve</h1>
 
+<form class="dcf-form dcf-mb-6" id="find-controls">
+    <div class="dcf-grid dcf-col-gap-vw dcf-row-gap-6">
+        <div class="dcf-col-100% dcf-col-75%-end@md">
+            <div class="dcf-grid-full dcf-grid-halves@sm dcf-col-gap-vw">
+                <div>
+                    <label for="workshop-category">Workshop Category:</label>
+                    <select id="workshop-category" style="width:25%;margin-top:10px;" tabindex="1" name="workshop_category" class="dcf-input-select">
+                        <option value=""></option>
+                        <% @tools.category_name.each do |tool| %>
+                            <option <%= 'selected="selected"' if tool.category_name.downcase == workshop_category_name %> value="<%= workshop_category_name %>"><%= workshop_category_name %></option>
+                        <% end %>
+                    </select>
+                    <input type="hidden" name="hidden-workshop-category" id="hidden-workshop-category" value="<%= workshop_category %>">
+                </div>
+            </div>
+            <button id="search-btn" tabindex="1" class="dcf-btn dcf-btn-inverse-primary" style="margin-top:10px;">Search</button>
+        </div>
+    </div>
+</form>
+
 <% if available_tools.count > 0 %>
 <table class="dcf-table dcf-table-striped dcf-table-responsive dcf-mt-6 dcf-mb-6" aria-describedby="tools-list-table">
     <thead>
@@ -39,3 +59,15 @@
     completed a training on that machine. Perhaps you'd like to <a href="/tools/trainings/">sign up for some upcoming trainings</a>?
 </p>
 <% end %>
+
+<% append_script_declaration(%q[require(['jquery'], function($) {
+
+    function buildSearchFilterList() {
+        let search = [];
+        if ($('#hidden-workshop-category').val() != '') {
+            search.push('workshop_category=' + $('#hidden-workshop-category').val());
+        }
+        return search;
+    }
+
+});]) %>

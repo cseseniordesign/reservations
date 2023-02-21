@@ -5,16 +5,65 @@ require 'models/event_type'
 require 'models/event_signup'
 require 'models/space_hour'
 
+# WORKSHOP_CATEGORY = [
+#     # 'None',
+#     'Art Studio',
+#     'General',
+#     'Metal Shop',	
+#     'Rapid Prototyping',
+#     'Textiles',
+#     'Wood Shop'
+# ]
+
+CATEGORY_ART_STUDIO = 1
+CATEGORY_GENERAL = 2
+CATEGORY_METAL_SHOP = 3
+CATEGORY_RAPID_PROTOTYPING = 4
+CATEGORY_TEXTILES = 5
+CATEGORY_WOOD_SHOP = 6
+
+def category_options
+	{
+		CATEGORY_ART_STUDIO => 'Art Studio',
+		CATEGORY_GENERAL => 'General',
+		CATEGORY_METAL_SHOP => 'Metal Shop',
+		CATEGORY_RAPID_PROTOTYPING => 'Rapid Prototyping',
+		CATEGORY_TEXTILES => 'Textiles',
+		CATEGORY_WOOD_SHOP => 'Wood Shop',
+	}
+end
+
+# def valid_category_id?(category_id)
+# 	self.category_options.key?(category_id.to_i)
+# end
+
 get '/tools/?' do
 	@breadcrumbs << {:text => 'Tools'}
 	require_login
 
-	# show tools that the user is authorized to use, as well as all those that do not require authorization
-	tools = Resource.where(:service_space_id => SS_ID).all.to_a
-	tools.reject! {|tool| tool.needs_authorization && !@user.authorized_resource_ids.include?(tool.id)}
-	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
+	workshop_category = params[:workshop_category]
+	workshop_category_name = params[:workshop_category_name]
+	
+	tools = []
+	
+	# if params.length > 0
+		tools = Resource.where(:service_space_id => SS_ID).all.to_a
+		tools.reject! {|tool| tool.needs_authorization && !@user.authorized_resource_ids.include?(tool.id)}
+		tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
+	# end
+	
+	unless workshop_category.nil? || workshop_category.length == 0
+		tools = Resource.where(:category_id => workshop_category)
+	end
+
+	def tool_category_name(workshop_category)
+		return Resource.category_options[workshop_category]
+		'Other'
+	end
 
 	erb :tools, :layout => :fixed, :locals => {
+		:workshop_category => workshop_category,
+		:workshop_category_name => Resource.category_options[workshop_category],
 		:available_tools => tools
 	}
 end
