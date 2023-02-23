@@ -12,7 +12,8 @@ class User < ActiveRecord::Base
   has_many :event_signups
   has_many :user_has_permissions
   has_many :permissions, through: :user_has_permissions
-
+  has_many :alert_signups
+  
   def authorized_resource_ids
     self.resource_authorizations.map {|res_auth| res_auth.resource_id}
   end

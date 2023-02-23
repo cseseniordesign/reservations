@@ -8,7 +8,7 @@
 <% if !@user.expiration_date.nil? && @user.expiration_date > Date.today %>
     <h2 style ="<%= @user.expiration_date > (Time.now + 1.weeks) ? "" : "color:orange;" %>">Your membership will expire on: <%= @user.expiration_date.to_formatted_s(:long_ordinal)[0...-5] %></h2>
 <% else %>
-    <h2 style="color:red;">Your membership is inactive.</h2> 
+    <h2 style="color:#d00000;">Your membership is inactive.</h2> 
     <h4>Please visit Nebraska Innovation Studio to activate your membership.</h4>
 <% end %>
 
@@ -94,6 +94,80 @@
     <a href="/workshops/" class="dcf-mt-1 dcf-btn dcf-btn-secondary">View Workshops</a>
     <a href="/calendar/" class="dcf-mt-1 dcf-btn dcf-btn-secondary">View Full Calendar</a>
 </p>
+
+<h4 id="my-alerts">My Alerts</h4>
+<% if user_alerts.empty? %>
+<p>You are not signed up for any alerts. Check out the <a href="/alert_center/<%= @user.id %>/">alert center</a> to sign up for notifications or click a button below to sign up for all alerts of a category.</p>
+<p class="dcf-mt-4">
+    <form action="/home/add_all/1/" method="POST" class="dcf-form delete-form">
+		<button class="dcf-mt-1 dcf-btn dcf-btn-secondary" type="submit">General</button>
+	</form>
+    <form action="/home/add_all/2/" method="POST" class="dcf-form delete-form">
+		<button class="dcf-mt-1 dcf-btn dcf-btn-secondary" type="submit">Woodshop</button>
+	</form>
+    <form action="/home/add_all/3/" method="POST" class="dcf-form delete-form">
+		<button class="dcf-mt-1 dcf-btn dcf-btn-secondary" type="submit">Metalshop</button>
+	</form>
+     <form action="/home/add_all/4/" method="POST" class="dcf-form delete-form">
+		<button class="dcf-mt-1 dcf-btn dcf-btn-secondary" type="submit">Digital Fabrication</button>
+	</form>
+     <form action="/home/add_all/5/" method="POST" class="dcf-form delete-form">
+		<button class="dcf-mt-1 dcf-btn dcf-btn-secondary" type="submit">Art</button>
+	</form>
+</p>
+<% else %>
+<p>Check out the <a href="/alert_center/<%= @user.id %>/">alert center</a> to sign up for notifications or click a button below to sign up for all alerts of a category.</p>
+<p class="dcf-mt-4">
+    <form action="/home/add_all/1/" method="POST" class="dcf-form delete-form">
+		<button class="dcf-mt-1 dcf-btn dcf-btn-secondary" type="submit">General</button>
+	</form>
+    <form action="/home/add_all/2/" method="POST" class="dcf-form delete-form">
+		<button class="dcf-mt-1 dcf-btn dcf-btn-secondary" type="submit">Woodshop</button>
+	</form>
+    <form action="/home/add_all/3/" method="POST" class="dcf-form delete-form">
+		<button class="dcf-mt-1 dcf-btn dcf-btn-secondary" type="submit">Metalshop</button>
+	</form>
+     <form action="/home/add_all/4/" method="POST" class="dcf-form delete-form">
+		<button class="dcf-mt-1 dcf-btn dcf-btn-secondary" type="submit">Digital Fabrication</button>
+	</form>
+     <form action="/home/add_all/5/" method="POST" class="dcf-form delete-form">
+		<button class="dcf-mt-1 dcf-btn dcf-btn-secondary" type="submit">Art</button>
+	</form>
+</p>
+<table class="dcf-w-100% dcf-table dcf-table-bordered" aria-describedby="my-alerts">
+    <thead>
+        <tr>
+            <th>Alert Name</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Remove Subscription</th>
+        </tr>
+    </thead>
+    <tbody>
+    <% user_alerts.each do |alert| %>
+       <% alert_data = Alert.find_by(:id => alert.alert_id) %>
+        <tr>
+            <td>
+                <p> <%= alert_data.name %> </p>
+            </td>
+            <td>
+                <p> <%= alert_data.category_name %> </p>
+            </td>
+            <td>
+               <p> <%= alert_data.description %> </p>
+            </td>
+            <td class="table-actions">
+                <form action="/home/<%= alert.id %>/remove_signup/<%= alert_data.id %>/" method="POST" class="dcf-form delete-form">
+					<button class="dcf-btn dcf-btn-primary" type="submit">Unsubscribe</button>
+				</form>
+                
+            </td>
+        </tr>
+    <% end %>
+    </tbody>
+</table>
+<br>
+<% end %>
 
 <% if @user.is_trainer == 1 %>
     <h4 id="my-events">My Trainings</h4>

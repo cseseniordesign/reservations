@@ -1,4 +1,5 @@
 require 'models/user'
+require 'models/vehicle'
 require 'models/resource'
 require 'models/permission'
 require 'csv'
@@ -43,6 +44,24 @@ get '/admin/users/download/?' do
 
     content_type 'application/csv'
     attachment 'users.csv'
+    csv_string
+end
+
+get '/admin/users/vehicle/download/?' do
+# load up a CSV with the data
+    todays_date = Date.today.strftime("%Y-%m-%d")
+    vehicles = Vehicle.joins("INNER JOIN users ON users.id = vehicles.user_id AND users.expiration_date IS NOT NULL AND STR_TO_DATE(users.expiration_date, '%Y-%m-%d') >= #{ todays_date}").all
+    csv_string = CSV.generate do |csv|
+        csv << ["Vehicle ID", "License Plate", "State", "Make", "Model"]
+        if !vehicles.nil?
+            vehicles.each do |vehicle|
+                csv << [vehicle.id, vehicle.license_plate, vehicle.state, vehicle.make, vehicle.model]
+            end
+        end
+    end
+
+    content_type 'application/csv'
+    attachment 'vehicles.csv'
     csv_string
 end
 
