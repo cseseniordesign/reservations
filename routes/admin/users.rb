@@ -50,12 +50,17 @@ end
 get '/admin/users/vehicle/download/?' do
 # load up a CSV with the data
     todays_date = Date.today.strftime("%Y-%m-%d")
+    users = User.where(:service_space_id => SS_ID)
     vehicles = Vehicle.joins("INNER JOIN users ON users.id = vehicles.user_id AND users.expiration_date IS NOT NULL AND STR_TO_DATE(users.expiration_date, '%Y-%m-%d') >= #{ todays_date}").all
     csv_string = CSV.generate do |csv|
-        csv << ["Vehicle ID", "License Plate", "State", "Make", "Model"]
+        csv << ["First Name", "Last Name", "License Plate", "State", "Make", "Model"]
         if !vehicles.nil?
             vehicles.each do |vehicle|
-                csv << [vehicle.id, vehicle.license_plate, vehicle.state, vehicle.make, vehicle.model]
+                users.each do |user|
+                    if vehicle.user_id == user.id
+                        csv << [user.first_name, user.last_name, vehicle.license_plate, vehicle.state, vehicle.make, vehicle.model]
+                    end
+                end
             end
         end
     end
