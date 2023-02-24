@@ -137,13 +137,13 @@
                         <div id="start-time-am-pm" class="am_pm dcf-mb-0 dcf-pl-3">
                             <div class="dcf-d-flex dcf-ai-center">
                                 <div class="dcf-input-radio">
-                                    <input <%= 'checked="checked"' if event.start_time.nil? || event.start_time.in_time_zone.hour < 12 %> id="start-time-am-pm-am" title="AM" type="radio" value="am" name="start_time_am_pm" class="dcf-flex-shrink-0">
+                                    <input <%= 'checked="checked"' if !event.start_time.nil? && event.start_time.in_time_zone.hour < 12 %> id="start-time-am-pm-am" title="AM" type="radio" value="am" name="start_time_am_pm" class="dcf-flex-shrink-0">
                                     <label class="dcf-label dcf-2nd dcf-mt-0" for="start-time-am-pm-am">AM</label>
                                 </div>
                             </div>
                             <div class="dcf-d-flex dcf-ai-center">
                                 <div class="dcf-input-radio">
-                                    <input <%= 'checked="checked"' if !event.start_time.nil? && event.start_time.in_time_zone.hour >= 12 %> id="start-time-am-pm-pm" title="PM" type="radio" value="pm" name="start_time_am_pm" class="dcf-flex-shrink-0">
+                                    <input <%= 'checked="checked"' if event.start_time.nil? || event.start_time.in_time_zone.hour >= 12 %> id="start-time-am-pm-pm" title="PM" type="radio" value="pm" name="start_time_am_pm" class="dcf-flex-shrink-0">
                                     <label class="dcf-label dcf-2nd dcf-mt-0" for="start-time-am-pm-pm">PM</label>
                                 </div>
                             </div>
@@ -176,13 +176,13 @@
                         <div id="end-time-am-pm" class="am_pm dcf-mb-0 dcf-pl-3">
                             <div class="dcf-d-flex dcf-ai-center">
                                 <div class="dcf-input-radio">
-                                    <input <%= 'checked="checked"' if event.end_time.nil? || event.end_time.in_time_zone.hour < 12 %> id="end-time-am-pm-am" title="AM" type="radio" value="am" name="end_time_am_pm" class="dcf-flex-shrink-0">
+                                    <input <%= 'checked="checked"' if !event.end_time.nil? && event.end_time.in_time_zone.hour < 12 %> id="end-time-am-pm-am" title="AM" type="radio" value="am" name="end_time_am_pm" class="dcf-flex-shrink-0">
                                     <label class="dcf-label dcf-2nd dcf-mt-0" for="end-time-am-pm-am">AM</label>
                                 </div>
                             </div>
                             <div class="dcf-d-flex dcf-ai-center">
                                 <div class="dcf-input-radio">
-                                    <input <%= 'checked="checked"' if !event.end_time.nil? && event.end_time.in_time_zone.hour >= 12 %> id="end-time-am-pm-pm" title="PM" type="radio" value="pm" name="end_time_am_pm" class="dcf-flex-shrink-0">
+                                    <input <%= 'checked="checked"' if event.end_time.nil? || event.end_time.in_time_zone.hour >= 12 %> id="end-time-am-pm-pm" title="PM" type="radio" value="pm" name="end_time_am_pm" class="dcf-flex-shrink-0">
                                     <label class="dcf-label dcf-2nd dcf-mt-0" for="end-time-am-pm-pm">PM</label>
                                 </div>
                             </div>
