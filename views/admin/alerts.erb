@@ -1,0 +1,49 @@
+<h1 class="dcf-txt-h3" id="alert-list-header">All Alerts</h1>
+
+<a class="dcf-btn dcf-btn-primary" href="/admin/alerts/create/">Create Alert</a><br><br>
+<% if !alerts.empty? %>
+    <table class="dcf-table dcf-table-bordered" aria-describedby="alert-list-header">
+        <thead>
+            <tr>
+                <th scope="col">Category</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Number of Subscribers</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        <% alerts.each do |alert| %>
+            <tr>
+                <td>
+                    <%= alert.category_name %>
+                </td>
+                <td>
+                    <%= alert.name %>
+                </td>
+                <td>
+                    <%= alert.description %>
+                </td>
+                <td>
+                    <p><center><%=  alerts_signups.where(:alert_id => alert.id).all.count %></center></p>
+                </td>
+                <td class="table-actions">
+                    <a href="/admin/alerts/<%= alert.id %>/edit/" class="dcf-btn dcf-btn-primary dcf-mt-1">Edit</a>
+                    <form method="POST" action="/admin/alerts/<%= alert.id %>/delete/" class="dcf-form delete-form delete-alert">
+                        <button class="dcf-btn dcf-btn-secondary dcf-mt-1" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        <% end %>
+        </tbody>
+    </table>
+<% end %>
+<% append_script_declaration(%q[require(['jquery'], function($) {
+    $(document).ready(function() {
+        $('.delete-alert').submit(function (submit) {
+            if (!window.confirm('Are you sure you want to delete this alert?')) {
+                submit.preventDefault();
+            }
+        });
+    });
+});]) %>

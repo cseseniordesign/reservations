@@ -1,6 +1,8 @@
 require 'models/user'
 require 'models/permission'
 require 'models/expiration_reminder'
+require 'models/alert'
+require 'models/alert_signup'
 
 before '/admin/email*' do
 	unless has_permission?(Permission::MANAGE_EMAILS)
@@ -60,17 +62,20 @@ get '/admin/email/send/?' do
 	@breadcrumbs << {:text => 'Send Email'}
 	users = User.all
 	tools = Resource.where(:service_space_id => SS_ID).order(:name).all
+	alerts = Alert.order(:name).all
 
 	erb :'admin/send_email', :layout => :fixed, :locals => {
 		:users => users,
-		:tools => tools
+		:tools => tools,
+		:alerts => alerts
 	}
 end
 
 post '/admin/email/send/?' do
 	users_to_send_to = []
 	all_users = User.where(:service_space_id => SS_ID).where.not("space_status LIKE ?", "%no_email").all
-	
+	all_allerts = Alert.all
+
 	# compile the list based on what was checked
 	if params.checked?('send_to_all_non_admins')
 		users = all_users.where(:is_admin => false)
@@ -110,6 +115,15 @@ post '/admin/email/send/?' do
 				users.each do |user|
 					users_to_send_to << user
 				end
+			end
+		end
+	end
+	if params.checked?('send_to_specific_group')
+		params[:specific_group].each do |id|
+			alerts = AlertSignup.where(alert_id: id).all
+			alerts.each do |alert|
+				user = all_users.find_by(:id => alert.user_id)
+				users_to_send_to << user
 			end
 		end
 	end

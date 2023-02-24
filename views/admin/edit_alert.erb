@@ -1,0 +1,41 @@
+<h1 class="dcf-txt-h3"><%= alert.id.nil? ? 'Create Alert' : "Edit #{alert.name}" %></h1>
+
+
+<form class="dcf-form" action="" method="POST" >
+    <div class="dcf-grid dcf-col-gap-vw">
+        <div class="dcf-col-100% dcf-col-67%-start@sm">
+            <fieldset>
+                <legend>Alert Details</legend>
+                <div class="dcf-form-group">
+                    <label for="name">Name <small class="dcf-required">Required</small></label>
+                    <input class="dcf-w-100%" type="text" name="name" id="name" value='<%= alert.name %>'/>
+                </div>
+
+                <div class="dcf-form-group">
+                    <label for="category-id">Category <small class="dcf-required">Required</small></label>
+                    <select id="category-id" name="category_id">
+            
+                    <% Alert.category_options.each do |value, label|
+                    selected = ''
+                    selected = ' selected="selected" ' if alert.category_id.to_i == value
+                    %>
+                    <option value="<%= value %>"<%= selected %>><%= label %></option>
+                    <% end %>
+                    </select>
+                </div>
+
+                <div class="dcf-form-group">
+                    <label for="description">Description</label>
+                    <textarea rows="4" id="description" name="description"><%= alert.description %></textarea>
+                </div>
+
+                <div class="dcf-grid dcf-col-gap-vw" style="margin-top:20px;">
+                    <div class="dcf-col-100% dcf-col-67%-start@sm">
+                        <button class="dcf-btn dcf-btn-primary dcf-float-left" type="submit"><%= alert.id.nil? ? 'Create' : 'Save' %> Alert</button>
+                    </div>
+                </div>
+            </fieldset>
+	
+        </div>
+    </div>
+</form>

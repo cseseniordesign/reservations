@@ -1,0 +1,62 @@
+<h1>Manage Your Alert Groups</h1>
+
+<form method="POST">
+    <fieldset>
+        <div class="dcf-form-group">
+            <% if !generalAlerts.empty? %>
+                <h4> General Alerts </h4>
+                <% generalAlerts.each do |alert| %>
+                    <input <%= 'checked="checked"' if alert_ids.include?(alert.id)%> type="checkbox" name="alert_id_<%=alert.id%>" value=<%=alert.id%> /> <%= alert.name %> <br/>
+                    <% if !alert.description.blank? %>
+                    <p>- <%=alert.description%> </p>
+                    <% end %>
+                <% end %>
+            <% end %>
+        </div>
+        <div class="dcf-form-group">
+            <% if !woodShopAlerts.empty? %>
+                <h4> Woodshop Alerts </h4>
+                <% woodShopAlerts.each do |alert| %>
+                    <input <%= 'checked="checked"' if alert_ids.include?(alert.id)%> type="checkbox" name="alert_id_<%=alert.id%>" value=<%=alert.id%> /> <%= alert.name %> <br/>
+                    <% if !alert.description.blank? %>
+                    <p>- <%=alert.description%> </p>
+                    <% end %>
+                <% end %>
+             <% end %>
+        </div>
+        <div class="dcf-form-group">
+            <% if !metalShopAlerts.empty? %>
+                <h4> Metalshop Alerts </h4>
+                <% metalShopAlerts.each do |alert| %>
+                    <input <%= 'checked="checked"' if alert_ids.include?(alert.id)%> type="checkbox" name="alert_id_<%=alert.id%>" value=<%=alert.id%> /> <%= alert.name %> <br/>
+                    <% if !alert.description.blank? %>
+                        <p>- <%=alert.description%> </p>
+                    <% end %>
+                <% end %>
+            <% end %>
+        </div>
+        <div class="dcf-form-group">
+            <% if !digitalFabricationAlerts.empty? %>
+                <h4> Digital Fabrication Alerts </h4>
+                <% digitalFabricationAlerts.each do |alert| %>
+                    <input <%= 'checked="checked"' if alert_ids.include?(alert.id)%> type="checkbox" name="alert_id_<%=alert.id%>" value=<%=alert.id%> /> <%= alert.name %> <br/>
+                    <% if !alert.description.blank? %>
+                        <p>- <%=alert.description%> </p>
+                    <% end %>
+                <% end %>
+            <% end %>
+        </div>
+        <div class="dcf-form-group">
+            <% if !artAlerts.empty? %>
+                <h4> Art Alerts </h4>
+                <% artAlerts.each do |alert| %>
+                    <input <%= 'checked="checked"' if alert_ids.include?(alert.id)%> type="checkbox" name="alert_id_<%=alert.id%>" value=<%=alert.id%> /> <%= alert.name %> <br/>
+                    <% if !alert.description.blank? %>
+                        <p>- <%=alert.description%> </p>
+                    <% end %>
+                <% end %>
+            <% end %>
+        </div>
+        <button class="dcf-mt-3 dcf-btn dcf-btn-primary" type="submit">Update Groups</button>
+    </fieldset>
+</form>
