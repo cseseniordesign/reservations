@@ -1,10 +1,15 @@
 require 'models/user'
+require 'models/vehicle'
 
 get '/me/?' do
   require_login
   @breadcrumbs << {:text => 'My Account'}
 
-  erb :me, :layout => :fixed
+  vehicles = Vehicle.where(:user_id => @user.id).all
+
+  erb :me, :layout => :fixed, :locals => {
+    :vehicles => vehicles
+  }
 end
 
 get '/opt_out/?' do

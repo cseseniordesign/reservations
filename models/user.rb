@@ -150,7 +150,7 @@ EMAIL
 
   def notify_trainer_of_new_event(event)
 body = <<EMAIL
-<p>Hi, #{self.full_name}. You have been assigned as a trainer for <strong>#{event.title}</strong>. Don't forget that this event is</p>
+<p>Hi, #{self.full_name.rstrip}. You have been assigned as a trainer for <strong>#{event.title}</strong>. Don't forget that this event is</p>
 
 <p><strong>#{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}</strong>.</p>
 
@@ -164,7 +164,7 @@ EMAIL
 
   def notify_trainer_of_modified_event(event)
 body = <<EMAIL
-<p>Hi, #{self.full_name}. You are receiving this email because an event you are training has been modified:</p>
+<p>Hi, #{self.full_name.rstrip}. You are receiving this email because an event you are training has been modified:</p>
 
 <p><strong>#{event.title}</strong></p>
 
@@ -179,7 +179,7 @@ EMAIL
 
   def notify_trainer_of_removal_from_event(event)
 body = <<EMAIL
-<p>Hi, #{self.full_name}. You are receiving this email because you are no longer a trainer for the following event:</p>
+<p>Hi, #{self.full_name.rstrip}. You are receiving this email because you are no longer a trainer for the following event:</p>
 
 <p><strong>#{event.title}</strong></p>
 
@@ -191,7 +191,7 @@ EMAIL
 
   def notify_trainer_of_deleted_event(event)
 body = <<EMAIL
-<p>Hi, #{self.full_name}. You are receiving this email because the following event you are scheduled to train has been deleted:</p>
+<p>Hi, #{self.full_name.rstrip}. You are receiving this email because the following event you are scheduled to train has been deleted:</p>
 
 <p><strong>#{event.title}</strong></p>
 
@@ -203,7 +203,7 @@ EMAIL
 
   def send_trainer_confirmation_reminder
 body = <<EMAIL
-<p>Hi, #{self.full_name}. You are receiving this email because you have not confirmed your trainer assignment for one or more events. Please visit your <a href="http://#{ENV['RACK_ENV'] == 'development' ? 'localhost:9393' : 'innovationstudio-manager.unl.edu'}/home/" target="_blank">home page</a> to confirm an event.</p>
+<p>Hi, #{self.full_name.rstrip}. You are receiving this email because you have not confirmed your trainer assignment for one or more events. Please visit your <a href="http://#{ENV['RACK_ENV'] == 'development' ? 'localhost:9393' : 'innovationstudio-manager.unl.edu'}/home/" target="_blank">home page</a> to confirm an event.</p>
 
 <p>Nebraska Innovation Studio</p>
 EMAIL
