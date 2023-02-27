@@ -5,6 +5,7 @@ require 'models/location'
 require 'models/resource'
 require 'models/resource_authorization'
 require 'models/preset_event'
+require 'models/event_authorization'
 
 before '/admin/events*' do
 	unless has_permission?(Permission::MANAGE_EVENTS) || has_permission?(Permission::EVENTS_ADMIN_READ_ONLY)
@@ -124,6 +125,8 @@ end
 get '/admin/events/create/?' do
 	@breadcrumbs << {:text => 'Admin Events', :href => '/admin/events/'} << {text: 'Create Event'}
 	tools = Resource.where(:service_space_id => SS_ID, :is_reservable => true).order(:name => :asc).all.to_a
+	all_tools = Resource.where(:service_space_id => SS_ID).order(:name).all.to_a
+    all_tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
 	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
 	if params[:preset_id].nil? || Integer(params[:preset_id]) == 0
 		erb :'admin/new_event', :layout => :fixed, :locals => {
@@ -132,6 +135,7 @@ get '/admin/events/create/?' do
 			:trainers => User.where(:is_trainer => 1).all,
 			:locations => Location.where(:service_space_id => SS_ID).all,
 			:tools => tools,
+			:all_tools => all_tools,
 			:on_unl_events => false,
 			:on_main_calendar => false,
 			:duration => 0
@@ -201,6 +205,14 @@ post '/admin/events/create/?' do
         end
 	end
 
+	if params.checked?('authorize_tools_checkbox')
+		puts "the authorize-tools is checked !"
+		params[:specific_tools].each do |id|
+			puts "specific_tools is #{id} !"
+			event_authorization = EventAuthorization.create(:resource_id => id,:event_id => event.id)
+		end
+	end
+
 	if params.checked?('export_to_unl_events')
 		# first create the location, if necessary
 		if event.location.unl_events_id.nil?
@@ -216,6 +228,9 @@ post '/admin/events/create/?' do
 			end
 		end
 
+
+		
+		
 		# send the event up
 		post_params = {
 			:title => params[:title],

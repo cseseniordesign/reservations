@@ -113,6 +113,21 @@
                 </div>
                 <br>
 
+                <div class="dcf-form-group dcf-input-group">
+			        <div class="dcf-input-checkbox">
+			            <input type="checkbox" id="authorize_tools_checkbox" name="authorize_tools_checkbox">
+			            <label title="Authorize Tools" for="authorize_tools_checkbox"><span class="dcf-sr-only">Authorize Tools</span></label>
+			        </div>
+                    <div class="dcf-form-group">
+                        <label for="specific-group">Authorize Tool(s) (use Shift or Ctrl/Cmd to select multiple):</label>
+                        <select class="dcf-txt-sm" multiple="multiple" id="specific-tools" name="specific_tools[]" >
+                            <% all_tools.each do |tool| %>
+                                <option value="<%=tool.id%>"><%= tool.name %>- <%= tool.model %></option>
+                            <% end %>
+                        </select>
+                    </div>
+                </div>
+
                 <label for="start-date" >Start Date &amp; Time <small class="dcf-required">Required</small></label>
                 <div class="date-time-select">
                     <div class="dcf-datepicker">

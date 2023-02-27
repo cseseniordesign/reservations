@@ -3,6 +3,7 @@ require 'active_record'
 class Event < ActiveRecord::Base
 	has_many :event_signups, :dependent => :destroy
 	has_many :reservation, :dependent => :destroy
+	has_many :event_authorizations, :dependent => :destroy
 	belongs_to :location
 	belongs_to :event_type
 	alias_method :type, :event_type
@@ -63,6 +64,8 @@ class Event < ActiveRecord::Base
 	    end
 	    false
 	end
+
+	
 
 	def image_src
 		"/images/#{id}/"
