@@ -65,7 +65,9 @@ class Event < ActiveRecord::Base
 	    false
 	end
 
-	
+	def has_authorization
+		!self.event_authorizations.nil? && self.event_authorizations.count > 0
+	end
 
 	def image_src
 		"/images/#{id}/"

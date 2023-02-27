@@ -273,6 +273,16 @@ end
 get '/admin/events/:event_id/edit/?' do
 	@breadcrumbs << {:text => 'Admin Events', :href => '/admin/events/'} << {text: 'Edit Event'}
 	event = Event.includes(:event_type, :location, :reservation => :resource).find_by(:id => params[:event_id], :service_space_id => SS_ID)
+	all_tools = Resource.where(:service_space_id => SS_ID).order(:name).all.to_a
+    all_tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
+
+	event_authorized_tools = EventAuthorization.joins(:event).where('event_id = ?', event.id)
+    authorized_tools_ids = Array.new
+
+    event_authorized_tools.each do |tool|
+        authorized_tools_ids.append(tool.resource_id)
+    end
+
 	if event.nil?
 		# that event does not exist
 		flash(:danger, 'Not Found', 'That event does not exist')
@@ -303,6 +313,8 @@ get '/admin/events/:event_id/edit/?' do
 		:trainers => User.where(:is_trainer => 1).all,
 		:locations => Location.where(:service_space_id => SS_ID).all,
 		:tools => tools,
+		:all_tools => all_tools,
+		:authorized_tools_ids => authorized_tools_ids,
 		:on_unl_events => on_unl_events,
 		:on_main_calendar => on_main_calendar,
 		:duration => ((event.end_time - event.start_time)/60.0).round
@@ -418,6 +430,17 @@ post '/admin/events/:event_id/edit/?' do
             )
         end
     end
+
+	delete_old_authorizations = EventAuthorization.where(event_id: event.id).all
+    delete_old_authorizations.destroy_all
+
+	if params.checked?('authorize_tools_checkbox')
+		puts "the authorize-tools is checked !"
+		params[:specific_tools].each do |id|
+			puts "specific_tools is #{id} !"
+			event_authorization = EventAuthorization.create(:resource_id => id,:event_id => event.id)
+		end
+	end
 
 	if params.checked?('export_to_unl_events')
 		on_unl_events = false
@@ -541,6 +564,9 @@ post '/admin/events/:event_id/delete/?' do
 	trainer_to_email.each do |user|
 		user.notify_trainer_of_deleted_event(event)
 	end
+	
+	delete_old_authorizations = EventAuthorization.where(event_id: event.id).all
+    delete_old_authorizations.destroy_all
 
 	event.destroy
 
