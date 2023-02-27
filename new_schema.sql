@@ -398,3 +398,11 @@ CREATE TABLE `reservation`.`vehicles` (
     REFERENCES `reservation`.`users` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
+
+    -- Create event_authorizations table
+    CREATE TABLE IF NOT EXISTS `event_authorizations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `event_id` int(11) NOT NULL,
+  `resource_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1
