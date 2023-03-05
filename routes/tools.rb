@@ -5,16 +5,6 @@ require 'models/event_type'
 require 'models/event_signup'
 require 'models/space_hour'
 
-# WORKSHOP_CATEGORY = [
-#     # 'None',
-#     'Art Studio',
-#     'General',
-#     'Metal Shop',	
-#     'Rapid Prototyping',
-#     'Textiles',
-#     'Wood Shop'
-# ]
-
 CATEGORY_ART_STUDIO = 1
 CATEGORY_GENERAL = 2
 CATEGORY_METAL_SHOP = 3
@@ -33,26 +23,18 @@ def category_options
 	}
 end
 
-# def valid_category_id?(category_id)
-# 	self.category_options.key?(category_id.to_i)
-# end
-
 get '/tools/?' do
 	@breadcrumbs << {:text => 'Tools'}
 	require_login
 
 	workshop_category = params[:workshop_category]
-	
-	tools = []
-	
-	# if params.length > 0
-		tools = Resource.where(:service_space_id => SS_ID).all.to_a
-		tools.reject! {|tool| tool.needs_authorization && !@user.authorized_resource_ids.include?(tool.id)}
-		tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
-	# end
+		
+	tools = Resource.where(:service_space_id => SS_ID).all.to_a
+	tools.reject! {|tool| tool.needs_authorization && !@user.authorized_resource_ids.include?(tool.id)}
+	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
 	
 	unless workshop_category.nil? || workshop_category.length == 0
-		tools = Resource.where(:category_id => workshop_category)
+		tools = Resource.where(:category_id => workshop_category, :needs_authorization => false)
 	end
 
 	erb :tools, :layout => :fixed, :locals => {
