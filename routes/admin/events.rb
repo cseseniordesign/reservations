@@ -128,7 +128,9 @@ get '/admin/events/create/?' do
 	all_tools = Resource.where(:service_space_id => SS_ID).order(:name).all.to_a
     all_tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
 	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
+	create = true
 	if params[:preset_id].nil? || Integer(params[:preset_id]) == 0
+		
 		erb :'admin/new_event', :layout => :fixed, :locals => {
 			:event => Event.new,
 			:types => EventType.where(:service_space_id => SS_ID).all,
@@ -136,6 +138,8 @@ get '/admin/events/create/?' do
 			:locations => Location.where(:service_space_id => SS_ID).all,
 			:tools => tools,
 			:all_tools => all_tools,
+			:preset_event => nil,
+			:create => create,
 			:on_unl_events => false,
 			:on_main_calendar => false,
 			:duration => 0
@@ -147,12 +151,16 @@ get '/admin/events/create/?' do
 		event.description = preset.description
 		event.event_type_id = preset.event_type_id
 		event.max_signups = preset.max_signups
+		
 		erb :'admin/new_event', :layout => :fixed, :locals => {
 			:event => event,
 			:types => EventType.where(:service_space_id => SS_ID).all,
 			:trainers => User.where(:is_trainer => 1).all,
 			:locations => Location.where(:service_space_id => SS_ID).all,
 			:tools => tools,
+			:all_tools => all_tools,
+			:preset_event => preset,
+			:create => create,
 			:on_unl_events => false,
 			:on_main_calendar => false,
 			:duration => preset.duration
@@ -275,7 +283,7 @@ get '/admin/events/:event_id/edit/?' do
 	event = Event.includes(:event_type, :location, :reservation => :resource).find_by(:id => params[:event_id], :service_space_id => SS_ID)
 	all_tools = Resource.where(:service_space_id => SS_ID).order(:name).all.to_a
     all_tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
-
+	create = false 
 	event_authorized_tools = EventAuthorization.joins(:event).where('event_id = ?', event.id)
     authorized_tools_ids = Array.new
 
@@ -315,6 +323,7 @@ get '/admin/events/:event_id/edit/?' do
 		:tools => tools,
 		:all_tools => all_tools,
 		:authorized_tools_ids => authorized_tools_ids,
+		:create => create,
 		:on_unl_events => on_unl_events,
 		:on_main_calendar => on_main_calendar,
 		:duration => ((event.end_time - event.start_time)/60.0).round

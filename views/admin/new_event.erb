@@ -122,7 +122,11 @@
                         <label for="specific-group">Authorize Tool(s) (use Shift or Ctrl/Cmd to select multiple):</label>
                         <select class="dcf-txt-sm" multiple="multiple" id="specific-tools" name="specific_tools[]" >
                             <% all_tools.each do |tool| %>
-                                <option <%= 'selected="selected"' if authorized_tools_ids.include?(tool.id) %> value="<%=tool.id%>"><%= tool.name %>- <%= tool.model %></option>
+                                <% if create%>
+                                    <option <%= 'selected="selected"' if !preset_event.nil? and preset_event.get_resource_ids.include?(tool.id)  %> value="<%=tool.id%>"><%= tool.name %>- <%= tool.model %></option>
+                                <% else%>
+                                    <option <%= 'selected="selected"' if authorized_tools_ids.include?(tool.id) %> value="<%=tool.id%>"><%= tool.name %>- <%= tool.model %></option>
+                                <% end %>
                             <% end %>
                         </select>
                     </div>
