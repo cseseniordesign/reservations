@@ -128,7 +128,6 @@ get '/admin/events/create/?' do
 	all_tools = Resource.where(:service_space_id => SS_ID).order(:name).all.to_a
     all_tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
 	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
-	create = true
 	if params[:preset_id].nil? || Integer(params[:preset_id]) == 0
 		
 		erb :'admin/new_event', :layout => :fixed, :locals => {
@@ -139,7 +138,6 @@ get '/admin/events/create/?' do
 			:tools => tools,
 			:all_tools => all_tools,
 			:preset_event => nil,
-			:create => create,
 			:on_unl_events => false,
 			:on_main_calendar => false,
 			:duration => 0
@@ -160,7 +158,6 @@ get '/admin/events/create/?' do
 			:tools => tools,
 			:all_tools => all_tools,
 			:preset_event => preset,
-			:create => create,
 			:on_unl_events => false,
 			:on_main_calendar => false,
 			:duration => preset.duration
@@ -214,9 +211,7 @@ post '/admin/events/create/?' do
 	end
 
 	if params.checked?('authorize_tools_checkbox')
-		puts "the authorize-tools is checked !"
 		params[:specific_tools].each do |id|
-			puts "specific_tools is #{id} !"
 			event_authorization = EventAuthorization.create(:resource_id => id,:event_id => event.id)
 		end
 	end
@@ -283,7 +278,6 @@ get '/admin/events/:event_id/edit/?' do
 	event = Event.includes(:event_type, :location, :reservation => :resource).find_by(:id => params[:event_id], :service_space_id => SS_ID)
 	all_tools = Resource.where(:service_space_id => SS_ID).order(:name).all.to_a
     all_tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
-	create = false 
 	event_authorized_tools = EventAuthorization.joins(:event).where('event_id = ?', event.id)
     authorized_tools_ids = Array.new
 
@@ -323,7 +317,6 @@ get '/admin/events/:event_id/edit/?' do
 		:tools => tools,
 		:all_tools => all_tools,
 		:authorized_tools_ids => authorized_tools_ids,
-		:create => create,
 		:on_unl_events => on_unl_events,
 		:on_main_calendar => on_main_calendar,
 		:duration => ((event.end_time - event.start_time)/60.0).round
@@ -444,9 +437,7 @@ post '/admin/events/:event_id/edit/?' do
     delete_old_authorizations.destroy_all
 
 	if params.checked?('authorize_tools_checkbox')
-		puts "the authorize-tools is checked !"
 		params[:specific_tools].each do |id|
-			puts "specific_tools is #{id} !"
 			event_authorization = EventAuthorization.create(:resource_id => id,:event_id => event.id)
 		end
 	end

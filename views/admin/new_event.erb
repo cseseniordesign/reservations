@@ -115,14 +115,14 @@
 
                 <div class="dcf-form-group dcf-input-group">
 			        <div class="dcf-input-checkbox">
-			            <input type="checkbox" <%= 'checked="checked"' if event.has_authorization %> id="authorize_tools_checkbox" name="authorize_tools_checkbox">
+			            <input type="checkbox" <%= 'checked="checked"' if event.has_authorization || (event.id.nil? && !preset_event.nil?) %> id="authorize_tools_checkbox" name="authorize_tools_checkbox">
 			            <label title="Authorize Tools" for="authorize_tools_checkbox"><span class="dcf-sr-only">Authorize Tools</span></label>
 			        </div>
                     <div class="dcf-form-group">
                         <label for="specific-group">Authorize Tool(s) (use Shift or Ctrl/Cmd to select multiple):</label>
                         <select class="dcf-txt-sm" multiple="multiple" id="specific-tools" name="specific_tools[]" >
                             <% all_tools.each do |tool| %>
-                                <% if create%>
+                                <% if event.id.nil? %>
                                     <option <%= 'selected="selected"' if !preset_event.nil? and preset_event.get_resource_ids.include?(tool.id)  %> value="<%=tool.id%>"><%= tool.name %>- <%= tool.model %></option>
                                 <% else%>
                                     <option <%= 'selected="selected"' if authorized_tools_ids.include?(tool.id) %> value="<%=tool.id%>"><%= tool.name %>- <%= tool.model %></option>
