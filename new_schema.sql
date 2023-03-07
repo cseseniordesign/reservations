@@ -365,3 +365,150 @@ UPDATE `preset_events` SET `duration`=60 where `id`=10;
 -- Add confirmed_trainer to events
 ALTER TABLE `reservation`.`events` 
 ADD COLUMN `trainer_confirmed` TINYINT NULL DEFAULT 0 AFTER `trainer_id`;
+
+-- Add preset emails table
+CREATE TABLE IF NOT EXISTS `reservation`.`preset_emails` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NULL,
+  `subject` VARCHAR(255) NULL,
+  `body` VARCHAR(10000) NULL,
+  PRIMARY KEY (`id`));
+
+-- Add default preset emails
+INSERT INTO `reservation`.`preset_emails`
+(`name`,
+`subject`,
+`body`)
+VALUES
+('New Members',
+'New Members', ''
+);
+INSERT INTO `reservation`.`preset_emails`
+(`name`,
+`subject`,
+`body`)
+VALUES
+('Snow Day',
+'Snow Day', 'NIS is closed due to inclement weather.  All active memberships have been extended by one day. 
+
+ 
+
+Your NIS Staff'
+);
+INSERT INTO `reservation`.`preset_emails`
+(`name`,
+`subject`,
+`body`)
+VALUES
+('Wood Lathe',
+'Wood Lathe', 'Monday X/X and X/X - 6pm-9pm - Woodworking Workshop: Wood Lathes - 6 Slots Open - $50.00 
+Pre-requisite trainings:  None 
+In this two part Workshop you will learn the anatomy of a wood lathe, carbide vs high speed steel tools, the basics of spindle turning, and the basics of bowl turning.  After this workshop you will be able to make reservations and use the small wood lathes.   All materials are included.  Call or stop in to reserve your spot, payment due at registration. 
+
+ 
+
+Your NIS Staff '
+);
+INSERT INTO `reservation`.`preset_emails`
+(`name`,
+`subject`,
+`body`)
+VALUES
+('New Members',
+'New Members', ''
+);
+ INSERT INTO `reservation`.`preset_emails`
+(`name`,
+`subject`,
+`body`)
+VALUES
+('Purge',
+'Material Storage Purge', 'NIS will be purging all material storage on Wednesday X/X/X at 12pm.  Active members are allowed to store one project at a time.  Any unlabeled materials or materials belonging to expired members will be discarded on Wednesday X/X/X.  Any usable discarded material will be available for free at 5pm on Wednesday X/X/X. 
+
+ 
+
+Your NIS Staff'
+);
+INSERT INTO `reservation`.`preset_emails`
+(`name`,
+`subject`,
+`body`)
+VALUES
+('Openings in Metal Lathe/Mill/Tormach CNC Mill',
+'Openings in Metal Lathe/Mill/Tormach CNC Mill', ''
+);
+INSERT INTO `reservation`.`preset_emails`
+(`name`,
+`subject`,
+`body`)
+VALUES
+('TIG Welding Workshop ',
+'TIG Welding Workshop ', ''
+);
+INSERT INTO `reservation`.`preset_emails`
+(`name`,
+`subject`,
+`body`)
+VALUES
+('Parking Information',
+'Parking Information', 'There are volleyball and football games Thursday and Saturday this week. The parking lot in which our members park will be paid event parking both days. In order to avoid paying for parking you must stop in the studio and grab a red parking permission tag from the sign in table, then proceed to the parking lot, show the tag to the attendant, and park without paying fees. 
+Thanks for your understanding! 
+
+Your NIS staff '
+); 
+INSERT INTO `reservation`.`preset_emails`
+(`name`,
+`subject`,
+`body`)
+VALUES
+('Cleanup Reminder',
+'Cleanup Reminder', 'Dear NIS Members, We are experiencing a large increase in the number of people using the Studio.  As we see this continue to increase we wanted to remind you of two very important expectations for using The Studio.
+
+Make a reservation when you are planning to use tables or equipment.  Reservations help us track usage and more importantly make sure equipment and tables are not double booked. 
+
+Clean up after yourself.  We need everyone to plan for an appropriate amount of time to clean up after themselves to leave things cleaner than you found them.  This applies to specific areas as well as project storage. 
+
+Thank you, 
+Your NIS Staff'
+);
+=======
+-- Create alerts table
+CREATE TABLE IF NOT EXISTS `alerts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `category_id` int(11) NOT NULL,
+  `description` text DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1
+
+-- Create alert_signups table
+CREATE TABLE IF NOT EXISTS `alert_signups` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `alert_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1
+
+-- Create vehicles table
+CREATE TABLE `reservation`.`vehicles` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `license_plate` VARCHAR(255) NULL,
+  `state` VARCHAR(255) NULL,
+  `make` VARCHAR(255) NULL,
+  `model` VARCHAR(255) NULL,
+  `user_id` INT(11) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `user_id_idx` (`user_id` ASC) VISIBLE,
+  CONSTRAINT `user_id`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `reservation`.`users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE);
+
+    -- Create event_authorizations table
+    CREATE TABLE IF NOT EXISTS `event_authorizations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `event_id` int(11) NOT NULL,
+  `resource_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1

@@ -50,12 +50,17 @@ end
 get '/admin/users/vehicle/download/?' do
 # load up a CSV with the data
     todays_date = Date.today.strftime("%Y-%m-%d")
+    users = User.where(:service_space_id => SS_ID)
     vehicles = Vehicle.joins("INNER JOIN users ON users.id = vehicles.user_id AND users.expiration_date IS NOT NULL AND STR_TO_DATE(users.expiration_date, '%Y-%m-%d') >= #{ todays_date}").all
     csv_string = CSV.generate do |csv|
-        csv << ["Vehicle ID", "License Plate", "State", "Make", "Model"]
+        csv << ["First Name", "Last Name", "License Plate", "State", "Make", "Model"]
         if !vehicles.nil?
             vehicles.each do |vehicle|
-                csv << [vehicle.id, vehicle.license_plate, vehicle.state, vehicle.make, vehicle.model]
+                users.each do |user|
+                    if vehicle.user_id == user.id
+                        csv << [user.first_name, user.last_name, vehicle.license_plate, vehicle.state, vehicle.make, vehicle.model]
+                    end
+                end
             end
         end
     end
@@ -156,6 +161,41 @@ get '/admin/users/create/?' do
     erb :'admin/new_user', :layout => :fixed, :locals => {
         :user => User.new
     }
+end
+
+post '/admin/users/:user_id/renew/?' do
+    if params[:user_id].to_i == @user.id
+        user = @user
+    else
+        user = User.includes(:permissions).where(:id => params[:user_id], :service_space_id => SS_ID).first
+    end
+
+    if user.nil?
+        flash :alert, "Not Found", "Sorry, that user was not found"
+        redirect '/admin/users/'
+    end
+
+    user.update({
+        :expiration_date => Date.today + 30
+    })
+    
+    if user.space_status.include?("_no_email")
+        status = "expired_no_email"
+        if !user.get_expiration_date.nil? && user.get_expiration_date >= Date.today
+            status = "current_no_email"
+        end
+    else
+        status = "expired"
+        if !user.get_expiration_date.nil? && user.get_expiration_date >= Date.today
+            status = "current"
+        end
+    end
+    
+    user.space_status = status
+    user.save
+
+    flash :success, 'User Membership Renewed', 'Your user has been renewed.'
+    redirect '/admin/users/'
 end
 
 get '/admin/users/:user_id/edit/?' do

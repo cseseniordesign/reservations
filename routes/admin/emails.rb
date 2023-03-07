@@ -1,8 +1,10 @@
 require 'models/user'
 require 'models/permission'
 require 'models/expiration_reminder'
+require 'models/preset_email'
 require 'models/alert'
 require 'models/alert_signup'
+require 'json'
 
 before '/admin/email*' do
 	unless has_permission?(Permission::MANAGE_EMAILS)
@@ -23,6 +25,12 @@ get '/admin/email/expiration_email/?' do
 		:get_first_reminder => reminder.first_reminder,
 		:get_second_reminder => reminder.second_reminder,
 	}
+end
+
+get '/admin/email/preset_emails_json/?' do
+	presets = PresetEmail.all
+	content_type :json
+	presets.to_json
 end
 
 post '/admin/email/expiration_email/?' do
@@ -63,11 +71,13 @@ get '/admin/email/send/?' do
 	users = User.all
 	tools = Resource.where(:service_space_id => SS_ID).order(:name).all
 	alerts = Alert.order(:name).all
-
+	preset_emails = PresetEmail.all
+	
 	erb :'admin/send_email', :layout => :fixed, :locals => {
 		:users => users,
 		:tools => tools,
-		:alerts => alerts
+		:alerts => alerts,
+		:preset_emails => preset_emails
 	}
 end
 
@@ -179,4 +189,108 @@ post '/admin/email/send/?' do
 
 	flash :success, 'Email sent', "Your email was sent to #{output}."
 	redirect '/admin/email/send/'
+end
+
+get '/admin/email/presets/?' do
+	@breadcrumbs << {:text => 'Admin Emails', :href => '/admin/email/'} << {:text => 'Manage Preset Emails'}
+	preset_emails = PresetEmail.all
+
+	erb :'admin/email_presets', :layout => :fixed, :locals => {
+		:preset_emails => preset_emails
+	}
+end
+
+get '/admin/email/presets/create/?' do
+	@breadcrumbs << {:text => 'Admin Emails', :href => '/admin/email/'} << {:text => 'Manage Preset Emails', :href => '/admin/email/presets/'} << {:text => 'Create Preset Email'}
+
+	erb :'admin/new_preset_email', :layout => :fixed, :locals => {
+		:preset_email => PresetEmail.new
+	}
+end
+
+post '/admin/email/presets/create/?' do
+	preset_email = PresetEmail.new
+	name = params[:name]
+	subject = params[:subject]
+	body = params[:body]
+	if name.blank? || subject.blank? || body.blank?
+		flash(:error, 'Preset Email Creation Failed', "Please fill out all required fields.")
+		redirect back
+	else
+		begin
+			preset_email.name = name
+            preset_email.subject = subject
+			preset_email.body = body
+			preset_email.save
+
+			# notify that it worked
+			flash(:success, 'Preset Email Creation Successful', "Your preset email has been created.")
+			redirect '/admin/email/presets/'
+		rescue => exception
+			flash(:error, 'Preset Email Creation Failed', exception.message)
+			redirect back
+		end
+	end
+end
+
+get '/admin/email/presets/:preset_id/edit/?' do
+	@breadcrumbs << {:text => 'Admin Emails', :href => '/admin/email/'} << {:text => 'Manage Preset Emails', :href => '/admin/email/presets/'} << {:text => 'Edit Preset Email'}
+	preset = PresetEmail.find_by(:id => params[:preset_id])
+	if preset.nil?
+		# that preset does not exist
+		flash(:danger, 'Not Found', 'That preset email does not exist')
+		redirect '/admin/email/presets'
+	end
+	
+	erb :'admin/new_preset_email', :layout => :fixed, :locals => {
+		:preset_email => preset
+	}
+end
+
+post '/admin/email/presets/:preset_id/edit/?' do
+	name = params[:name]
+	subject = params[:subject]
+	body = params[:body]
+    preset_email = PresetEmail.find_by(:id => params[:preset_id])
+	if preset_email.nil?
+		# that preset does not exist
+		flash(:danger, 'Not Found', 'That preset email does not exist')
+		redirect '/admin/email/presets'
+	end
+	if name.blank? || subject.blank? || body.blank?
+		flash(:error, 'Preset Email Update Failed', "Please fill out all required fields.")
+		redirect back
+	else
+		begin
+			preset_email.name = name
+            preset_email.subject = subject
+			preset_email.body = body
+			preset_email.save
+
+			# notify that it worked
+			flash(:success, 'Preset Email Update Successful', "Your preset email has been updated.")
+			redirect '/admin/email/presets/'
+		rescue => exception
+			flash(:error, 'Preset Email Update Failed', exception.message)
+			redirect back
+		end
+	end
+end
+
+post '/admin/email/presets/:preset_id/delete/?' do
+	preset = PresetEmail.find_by(:id => params[:preset_id])
+	if preset.nil?
+		# that preset does not exist
+		flash(:danger, 'Not Found', 'That preset email does not exist')
+		redirect '/admin/email/presets/'
+	end
+	
+	begin
+		preset.destroy
+		flash(:success, 'Preset Email Successfully Deleted', "Your preset email has been deleted.")
+		redirect '/admin/email/presets/'
+	rescue => exception
+		flash(:error, 'Preset Email Deletion Failed', exception.message)
+		redirect back
+	end
 end
