@@ -366,7 +366,6 @@ UPDATE `preset_events` SET `duration`=60 where `id`=10;
 ALTER TABLE `reservation`.`events` 
 ADD COLUMN `trainer_confirmed` TINYINT NULL DEFAULT 0 AFTER `trainer_id`;
 
-
 -- Add preset emails table
 CREATE TABLE IF NOT EXISTS `reservation`.`preset_emails` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -472,3 +471,44 @@ Clean up after yourself.  We need everyone to plan for an appropriate amount of 
 Thank you, 
 Your NIS Staff'
 );
+=======
+-- Create alerts table
+CREATE TABLE IF NOT EXISTS `alerts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `category_id` int(11) NOT NULL,
+  `description` text DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1
+
+-- Create alert_signups table
+CREATE TABLE IF NOT EXISTS `alert_signups` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `alert_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1
+
+-- Create vehicles table
+CREATE TABLE `reservation`.`vehicles` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `license_plate` VARCHAR(255) NULL,
+  `state` VARCHAR(255) NULL,
+  `make` VARCHAR(255) NULL,
+  `model` VARCHAR(255) NULL,
+  `user_id` INT(11) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `user_id_idx` (`user_id` ASC) VISIBLE,
+  CONSTRAINT `user_id`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `reservation`.`users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE);
+
+    -- Create event_authorizations table
+    CREATE TABLE IF NOT EXISTS `event_authorizations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `event_id` int(11) NOT NULL,
+  `resource_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1

@@ -65,16 +65,16 @@ post '/home/add_all/:category_id/' do
 		end
 	end	
 
-	case params[:category_id]
-	when "1"
+	case params[:category_id].to_i
+	when Alert::ALERT_CATEGORY_GENERAL_ALERTS
 		flash(:success, 'Added All General Alerts', "You've been signed up for all General Alerts.")
-	when "2"
+	when Alert::ALERT_CATEGORY_WOODSHOP_ALERTS
 		flash(:success, 'Added All Woodshop Alerts', "You've been signed up for all Woodshop Alerts.")
-	when "3"
+	when Alert::ALERT_CATEGORY_METALSHOP_ALERTS
 		flash(:success, 'Added All Metalshop Alerts', "You've been signed up for all Metalshop Alerts.")
-	when "4"
+	when Alert::ALERT_CATEGORY_DIGITAL_FABRICATION_ALERTS
 		flash(:success, 'Added All Digital Fabrication Alerts', "You've been signed up for all Digital Fabrication Alerts.")
-	when "5"
+	when Alert::ALERT_CATEGORY_ART_ALERTS
 		flash(:success, 'Added All Art Alerts', "You've been signed up for all Art Alerts.")
 	end
 

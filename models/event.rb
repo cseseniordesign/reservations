@@ -3,6 +3,7 @@ require 'active_record'
 class Event < ActiveRecord::Base
 	has_many :event_signups, :dependent => :destroy
 	has_many :reservation, :dependent => :destroy
+	has_many :event_authorizations, :dependent => :destroy
 	belongs_to :location
 	belongs_to :event_type
 	alias_method :type, :event_type
@@ -62,6 +63,10 @@ class Event < ActiveRecord::Base
 	        return true if !r.resource.nil? && r.resource.id == tool_id
 	    end
 	    false
+	end
+
+	def has_authorization
+		!self.event_authorizations.nil? && self.event_authorizations.count > 0
 	end
 
 	def image_src

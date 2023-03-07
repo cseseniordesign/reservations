@@ -35,7 +35,7 @@ end
 post '/admin/alerts/create/?' do
 	require_login
 
-	if  params[:name] == ""
+	if  params[:name].blank?
 		flash :error, 'Error', 'Please enter alert name'
 		redirect back
 	end
@@ -95,7 +95,7 @@ post '/admin/alerts/:alert_id/edit/?' do
 		redirect '/admin/alerts/'
 	end
 
-    if  params[:name] == ""
+    if  params[:name].blank?
 		flash :error, 'Error', 'Please enter the updated alert name'
 		redirect back
 	end
