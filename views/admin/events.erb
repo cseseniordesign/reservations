@@ -32,7 +32,32 @@
         </ol>
          <section id="status-<%= tab %>" role="tabpanel" tabindex="-1" class="dcf-tabs-panel" aria-labelledby="tab-<%= tab %>">
             <div class="event-page">
-                <h4><%= tab.capitalize %> Event Items</h4>
+                <%# <div class="container" style="display:flex;"> %>
+                    <h4><%= tab.capitalize %> Event Items</h4>
+                    <form class="dcf-form dcf-mb-6" id="find-controls" style="float: right;margin-top:-55px">   <%# Move the box up to be more closely aligned with "Event Items"%>
+                    <%# I think the problem has to do with the way a form is. Maybe the form can't go farther right. I don't think it has to do with the dcf-mb-6 either. I think it has to do with the form as a whole. %>
+                        <div class="dcf-grid dcf-col-gap-vw dcf-row-gap-6" style="float: right;">
+                            <div class="dcf-col-100% dcf-col-100%-end@md">
+                                <div style="float: right;">
+                                    <label for="event-type">Event Type:</label>
+                                    <div class="dropdown-container" style="display:flex;">
+                                        <select id="event-type" style="max-width:200px;min-width:50px;margin-top:10px;" tabindex="1" name="event_type" class="dcf-input-select">
+                                            <option value=""></option>
+                                            <% Event.type_options.each do |cat_id, name| %>
+                                                <option <%= 'selected="selected"' if cat_id == event_type.to_i %> value="<%= cat_id %>"><%= name %></option>
+                                            <% end %>
+                                        </select>
+
+                                        <%# Assign the selected type to the `event_type` variable. %>
+                                        <input type="hidden" name="hidden-event-type" id="hidden-event-type" value="<%= event_type %>">
+                                            
+                                        <button id="search-btn" tabindex="1" class="dcf-btn dcf-btn-inverse-primary" style="margin-top:10px;margin-left:10px;">Search</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                <%# </div> %>
                 <table class="dcf-w-100% dcf-table dcf-table-bordered" aria-label="Event Listings">
                     <thead>
                         <tr>

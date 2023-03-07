@@ -17,6 +17,18 @@ class Event < ActiveRecord::Base
     EVENT_TYPE_ID_RSVP_ONLY_EVENT = 7
     EVENT_TYPE_ID_TOUR = 8
 
+	def self.type_options
+        {
+            EVENT_TYPE_ID_NEW_MEMBER_ORIENTATION => 'New Member Orientation',
+            EVENT_TYPE_ID_MACHINE_TRAINING => 'Machine Training',
+			EVENT_TYPE_ID_ADV_SKILL_BASED_WORKSHOP => 'Advanced Skill-Based Workshop',
+			EVENT_TYPE_ID_CREATION_WORKSHOP => 'Creation Workshop',
+			EVENT_TYPE_ID_GENERAL_WORKSHOP => 'General Workshop',
+			EVENT_TYPE_ID_FREE_EVENT => 'Free Event',
+			EVENT_TYPE_ID_RSVP_ONLY_EVENT => 'RSVP Only Event',
+        }
+    end
+
     EVENT_TYPES_NOT_ALLOWED_FOR_SIGNUP = [EVENT_TYPE_ID_CREATION_WORKSHOP]
 
 	scope :in_day, ->(time) {

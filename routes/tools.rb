@@ -14,6 +14,7 @@ get '/tools/?' do
 	# show tools that the user is authorized to use, as well as all those that do not require authorization
 	tools = Resource.where(:service_space_id => SS_ID).all.to_a
 
+	# Redefine the tools variable if there is a workshop category filter applied
 	unless workshop_category.nil? || workshop_category.length == 0
 		tools = Resource.where(:category_id => workshop_category).all.to_a
 	end
@@ -21,7 +22,6 @@ get '/tools/?' do
 	tools.reject! {|tool| tool.needs_authorization && !@user.authorized_resource_ids.include?(tool.id)}
 	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
 	
-
 
 	erb :tools, :layout => :fixed, :locals => {
 		:workshop_category => workshop_category,
