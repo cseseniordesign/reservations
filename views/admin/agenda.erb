@@ -39,7 +39,11 @@ No reservations today. Hopefully someone will still come in to use the space!<br
         <tr>
             <td>
                 <% if reservation.user %>
-                <%= reservation.user.full_name %>
+                    <% if !reservation.user.expiration_date.nil? && reservation.user.expiration_date > Date.today %>
+                        <%= reservation.user.full_name %>
+                    <% else %>
+                        <p style="color:#d00000;"><%= reservation.user.full_name %> </p>
+                    <% end %>
                 <% elsif !reservation.event.nil? %>
                 <strong>Event:</strong> <%= reservation.event.title %>
                 <% end %>
