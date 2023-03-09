@@ -7,19 +7,21 @@ end
 get '/admin/agenda/' do
 	@breadcrumbs << {:text => 'Agenda'}
 	date = params[:date].nil? ? Time.now.midnight : Time.parse(params[:date])
-	event_type = params[:event_type]
+	workshop_category = params[:workshop_category]
 
 	reservations = Reservation.includes(:user, :resource, :event).in_day(date).order(:start_time).all.to_a
+
+	# Redefine the reservations variable if there is a workshop category filter applied
+	unless workshop_category.nil? || workshop_category.length == 0
+		tool_ids = Resource.where(:category_id => workshop_category).pluck(:id)
+		reservations = reservations.select { |reservation| tool_ids.include?(reservation.resource.id)}
+	end
+
 	reservations.select! do |res|
  		(!res.event.nil? && res.event.service_space_id == SS_ID) || (!res.resource.nil? && res.resource.service_space_id == SS_ID)
  	end
 
 	events = Event.includes(:event_type).where(:service_space_id => SS_ID).in_day(date).order(:start_time)
-
-	# Redefine the events variable if there is an event type filter applied
-	unless event_type.nil? || event_type.length == 0
-		events = Event.includes(:event_type).where(:service_space_id => SS_ID).in_day(date).order(:start_time).where(:event_type_id => event_type)
-	end
 
 	# get the hours for this day to show
 	hours = SpaceHour.where(:service_space_id => SS_ID)
@@ -40,7 +42,7 @@ get '/admin/agenda/' do
 		:events => events,
 		:date => date,
 		:space_hour => correct_hour,
-		:event_type => event_type
+		:workshop_category => workshop_category
 	}
 end
 

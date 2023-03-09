@@ -16,7 +16,7 @@ get '/tools/?' do
 
 	# Redefine the tools variable if there is a workshop category filter applied
 	unless workshop_category.nil? || workshop_category.length == 0
-		tools = Resource.where(:category_id => workshop_category).all.to_a
+		tools = Resource.where(:service_space_id => SS_ID).where(:category_id => workshop_category).all.to_a
 	end
 
 	tools.reject! {|tool| tool.needs_authorization && !@user.authorized_resource_ids.include?(tool.id)}
