@@ -13,7 +13,7 @@ get '/admin/agenda/' do
 
 	# Redefine the reservations variable if there is a workshop category filter applied
 	unless workshop_category.nil? || workshop_category.length == 0
-		tool_ids = Resource.where(:category_id => workshop_category).pluck(:id)
+		tool_ids = Resource.where(:category_id => workshop_category).pluck(:id)		# Create a string of ids from all resources with matching workshop category.
 		reservations = reservations.select { |reservation| tool_ids.include?(reservation.resource.id)}
 	end
 
