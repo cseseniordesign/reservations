@@ -31,10 +31,12 @@
             <li class="dcf-tabs-list-item dcf-mb-0" role="presentation"><a id="tab-past" href="?tab=past" class="dcf-tab dcf-d-block" role="tab" <%='tabindex="-1" aria-selected="true"' if tab == 'past' %>>Past</a></li>
         </ol>
          <section id="status-<%= tab %>" role="tabpanel" tabindex="-1" class="dcf-tabs-panel" aria-labelledby="tab-<%= tab %>">
-            <div class="event-page">
-                    <h4><%= tab.capitalize %> Event Items</h4>
-                    <form class="dcf-form dcf-mb-6" id="find-controls" style="float: right;margin-top:-55px">   <%# Move the box up to be more closely aligned with "Event Items"%>
-                        <div class="dcf-grid dcf-col-gap-vw dcf-row-gap-6" style="float: right;">
+            <div class="event-page" style="margin-top:-40px;">
+                    <form class="dcf-form dcf-mb-6" id="find-controls">
+                        <div style="float: left;">
+                            <h4><%= tab.capitalize %> Event Items</h4>
+                        </div>
+                        <div class="dcf-grid dcf-col-gap-vw dcf-row-gap-6" style="float: right;margin-bottom:20px;">
                             <div class="dcf-col-100% dcf-col-100%-end@md">
                                 <div style="float: right;">
                                     <label for="event-type">Event Type:</label>
@@ -47,7 +49,7 @@
                                         </select>
 
                                         <%# Assign the selected type to the `event_type` variable. %>
-                                        <input type="hidden" name="hidden-event-type" id="hidden-event-type" value="<%= event_type %>">
+                                        <input type="hidden" name="tab" id="tab" value="<%= tab %>">
                                             
                                         <button id="search-btn" tabindex="1" class="dcf-btn dcf-btn-inverse-primary" style="margin-top:10px;margin-left:10px;">Search</button>
                                     </div>
@@ -120,7 +122,7 @@
                 <nav class="dcf-pagination dcf-mt-3">
                     <ol class="dcf-list-bare dcf-list-inline">
                     <% if page != 1 %>
-                        <li><a class="dcf-pagination-prev" href="?tab=<%= tab %>&amp;page=<%= page-1 %>"">Prev</a></li>
+                        <li><a class="dcf-pagination-prev" href="?tab=<%= tab %>&amp;page=<%= page-1 %>&amp;event_type=<%= event_type %>"">Prev</a></li>
                     <% end %>
                     <% before_ellipsis_shown = false; after_ellipsis_shown = false %>
                     <% (1..total_pages).each do |i| %>
@@ -128,7 +130,7 @@
                                 <li><span class="dcf-pagination-selected"><%= i %></span></li>
                             <% elsif (i <= 3 || i >= total_pages - 2 || i == page - 1 ||
                                         i == page - 2 || i == page + 1 || $i == page + 2) %>
-                                <li><a href="?tab=<%= tab %>&amp;page=<%= i %>"><%= i %></a></li>
+                                <li><a href="?tab=<%= tab %>&amp;page=<%= i %>&amp;event_type=<%= event_type %>"><%= i %></a></li>
                             <% elsif (i < page && !before_ellipsis_shown) %>
                                 <li><span class="dcf-pagination-ellipsis">...</span></li>
                                 <% before_ellipsis_shown = true %>
@@ -138,7 +140,7 @@
                             <% end %>
                     <% end %>
                     <% if page != total_pages %>
-                        <li><a class="dcf-pagination-next" href="?tab=<%= tab %>&amp;page=<%= page+1 %>">Next</a></li>
+                        <li><a class="dcf-pagination-next" href="?tab=<%= tab %>&amp;page=<%= page+1 %>&amp;event_type=<%= event_type %>">Next</a></li>
                     <% end %>
                     </ol>
                 </nav>
