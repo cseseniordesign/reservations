@@ -512,3 +512,11 @@ CREATE TABLE `reservation`.`vehicles` (
   `resource_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1
+
+-- Create preset_events_has_resource_reservations table
+    CREATE TABLE IF NOT EXISTS `preset_events_has_resource_reservations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `preset_event_id` int(11) NOT NULL,
+  `resource_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1
