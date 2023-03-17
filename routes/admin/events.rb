@@ -6,6 +6,7 @@ require 'models/resource'
 require 'models/resource_authorization'
 require 'models/preset_event'
 require 'models/event_authorization'
+require 'models/preset_events_has_resource_reservation'
 
 before '/admin/events*' do
 	unless has_permission?(Permission::MANAGE_EVENTS) || has_permission?(Permission::EVENTS_ADMIN_READ_ONLY)
@@ -594,10 +595,13 @@ get '/admin/events/presets/create/?' do
 	event_types = EventType.where(:service_space_id => SS_ID).all
 	tools = Resource.where(:service_space_id => SS_ID).order(:name).all.to_a
     tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
+	reservable_tools = Resource.where(:service_space_id => SS_ID, :is_reservable => true).order(:name => :asc).all.to_a
+	reservable_tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
 	
 	erb :'admin/new_preset_event', :layout => :fixed, :locals => {
 		:preset_event => PresetEvents.new,
 		:event_types => event_types,
+		:reservable_tools => reservable_tools,
 		:tools => tools
 	}
 end
@@ -626,7 +630,9 @@ post '/admin/events/presets/create/?' do
 			preset.duration = duration
 			preset.save
 
-			# tie the tools that are checked to the preset event
+	
+
+			# tie the authorization tools that are checked to the preset event
 			params.each do |key, value|
 				if key.start_with?('tool_') && value == 'on'
 					id = key.split('tool_')[1].to_i
@@ -636,6 +642,19 @@ post '/admin/events/presets/create/?' do
 					)
 				end
 			end
+
+			
+			# tie the reservation tools that are checked to the preset event
+			params.each do |key, value|
+				if key.start_with?('reservation_tool_') && value == 'on'
+					id = key.split('reservation_tool_')[1].to_i
+					PresetEventsHasResourceReservation.create(
+						:preset_events_id => preset.id,
+						:resource_id => id
+					)
+				end
+			end
+			
 
 			# notify that it worked
 			flash(:success, 'Preset Event Created', "Your preset event #{preset.event_name} has been created.")
@@ -659,10 +678,13 @@ get '/admin/events/presets/:preset_id/edit/?' do
 
 	tools = Resource.where(:service_space_id => SS_ID).order(:name).all.to_a
     tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
+	reservable_tools = Resource.where(:service_space_id => SS_ID, :is_reservable => true).order(:name => :asc).all.to_a
+	reservable_tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
 	
 	erb :'admin/new_preset_event', :layout => :fixed, :locals => {
 		:preset_event => preset,
 		:event_types => event_types,
+		:reservable_tools => reservable_tools,
 		:tools => tools
 	}
 end

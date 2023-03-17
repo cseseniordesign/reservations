@@ -43,6 +43,28 @@
     <div class="dcf-grid dcf-col-gap-vw">
         <div class="dcf-col-100% dcf-col-67%-start@sm" style="margin-top:15px">
             <fieldset>
+                <legend>Preset Event Reservation Tools</legend>
+                <table class="dcf-table dcf-table-bordered" aria-describedby="manage-tools-reservations">
+                    <tbody style="display:block;max-height:600px;overflow-y:scroll;">
+                    <% reservable_tools.each do |tool| %>
+                        <tr>
+                            <td>
+                                <div class="dcf-input-checkbox">
+                                    <input <%= 'checked="checked"' if preset_event.has_tool_reservation(tool.id) %> type="checkbox" name="reservation_tool_<%= tool.id %>" id="tool-reservation-<%= tool.id %>">
+                                    <label for="tool-reservation-<%= tool.id %>"><%=tool.category_name %> - <%= tool.name %> - <%= tool.model %></label>
+                                </div>
+                            </td>
+                        </tr>
+                    <% end %>
+                    </tbody>
+                </table>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="dcf-grid dcf-col-gap-vw">
+        <div class="dcf-col-100% dcf-col-67%-start@sm" style="margin-top:15px">
+            <fieldset>
                 <legend>Preset Event Authorization Tools</legend>
                 <table class="dcf-table dcf-table-bordered" aria-describedby="manage-tools">
                     <tbody style="display:block;max-height:600px;overflow-y:scroll;">
