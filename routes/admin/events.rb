@@ -211,7 +211,7 @@ post '/admin/events/create/?' do
         end
 	end
 
-	if params.checked?('authorize_tools_checkbox')
+	if params.checked?('authorize_tools_checkbox') and !params[:specific_tools].nil?
 		params[:specific_tools].each do |id|
 			event_authorization = EventAuthorization.create(:resource_id => id,:event_id => event.id)
 		end
@@ -437,7 +437,7 @@ post '/admin/events/:event_id/edit/?' do
 	delete_old_authorizations = EventAuthorization.where(event_id: event.id).all
     delete_old_authorizations.destroy_all
 
-	if params.checked?('authorize_tools_checkbox')
+	if params.checked?('authorize_tools_checkbox') and !params[:specific_tools].nil?
 		params[:specific_tools].each do |id|
 			event_authorization = EventAuthorization.create(:resource_id => id,:event_id => event.id)
 		end
