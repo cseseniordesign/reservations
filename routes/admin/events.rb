@@ -739,6 +739,22 @@ post '/admin/events/presets/:preset_id/edit/?' do
 				end
 			end
 
+			delete_old_reservations = PresetEventsHasResourceReservation.where(preset_events_id: preset.id).all
+    		delete_old_reservations.destroy_all
+
+			
+			# add the updated reservation tools that are checked when editing the preset event
+			params.each do |key, value|
+				if key.start_with?('reservation_tool_') && value == 'on'
+					id = key.split('reservation_tool_')[1].to_i
+					PresetEventsHasResourceReservation.create(
+						:preset_events_id => preset.id,
+						:resource_id => id
+					)
+				end
+			end
+			
+
 			# notify that it worked
 			flash(:success, 'Preset Event Updated', "Your preset event #{preset.event_name} has been updated.")
 			redirect '/admin/events/presets'
