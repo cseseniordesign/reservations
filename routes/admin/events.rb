@@ -773,6 +773,9 @@ post '/admin/events/presets/:preset_id/delete/?' do
 		redirect '/admin/events/presets'
 	end
 	
+	delete_reservations = PresetEventsHasResourceReservation.where(preset_events_id: preset.id).all
+    delete_reservations.destroy_all
+
 	begin
 		preset.get_resource_ids.each do |resource_id|
 			PresetEventsHasResource.where(:preset_events_id => preset.id, :resources_id => resource_id).delete_all
