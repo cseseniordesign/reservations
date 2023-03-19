@@ -11,6 +11,10 @@ class PresetEvents < ActiveRecord::Base
         self.preset_events_has_resources.map {|resource| resource.resources_id}
     end
 
+	def get_resource_reservations_ids
+        self.preset_events_has_resource_reservations.map {|resource| resource.resource_id}
+    end
+
     def has_reservation
 		!self.preset_events_has_resource_reservations.nil? && self.preset_events_has_resource_reservations.count > 0
 	end

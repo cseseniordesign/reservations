@@ -64,7 +64,7 @@ end
 
 post '/admin/events/:event_id/signup_list/?' do
 	event = Event.includes(:event_signups).find_by(:id => params[:event_id], :service_space_id => SS_ID)
-	tools = Reservation.where(:event_id => params[:event_id])
+	tools = EventAuthorization.where(:event_id => params[:event_id])
 
 	if event.nil?
 		# that event does not exist
@@ -186,7 +186,7 @@ post '/admin/events/create/?' do
 		redirect back
 	end 
 
-	if params.has_key?('reserve_tool') && params['reserve_tool'] == 'on'
+	if params.has_key?('reserve_tool') && params['reserve_tool'] == 'on' && !params[:tools].nil?
         # check for possible other reservations during this time period
         date = event.start_time.midnight.in_time_zone
         params[:tools].each do |tool_id|
@@ -360,7 +360,7 @@ post '/admin/events/:event_id/edit/?' do
 	end 
 
 	# check the tool reservation for this
-	checked = params.checked?('reserve_tool')
+	checked = params.checked?('reserve_tool') && !params[:tools].nil?
 
     if (checked)
         # check for possible other reservations during this time period
