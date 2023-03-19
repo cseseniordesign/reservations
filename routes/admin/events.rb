@@ -40,7 +40,7 @@ get '/admin/events/?' do
 
 	# Redefine the iterator variable if there is an event type filter applied
 	unless event_type.nil? || event_type.length == 0
-		iterator = Event.includes(:event_signups).where(:service_space_id => SS_ID).where(where_clause).where(:event_type_id => event_type)
+		iterator = iterator.where(:event_type_id => event_type)
 	end
 	
 	erb :'admin/events', :layout => :fixed, :locals => {

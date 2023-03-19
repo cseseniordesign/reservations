@@ -42,13 +42,12 @@
                                     <label for="event-type">Event Type:</label>
                                     <div class="dropdown-container" style="display:flex;">
                                         <select id="event-type" style="max-width:200px;min-width:50px;margin-top:10px;" tabindex="1" name="event_type" class="dcf-input-select">
-                                            <option value=""></option>
+                                            <option value="">All</option>
                                             <% Event.type_options.each do |cat_id, name| %>
                                                 <option <%= 'selected="selected"' if cat_id == event_type.to_i %> value="<%= cat_id %>"><%= name %></option>
                                             <% end %>
                                         </select>
 
-                                        <%# Assign the selected type to the `event_type` variable. %>
                                         <input type="hidden" name="tab" id="tab" value="<%= tab %>">
                                             
                                         <button id="search-btn" tabindex="1" class="dcf-btn dcf-btn-inverse-primary" style="margin-top:10px;margin-left:10px;">Search</button>

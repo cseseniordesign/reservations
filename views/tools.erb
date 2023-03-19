@@ -7,7 +7,7 @@
                 <div>
                     <label for="workshop-category">Workshop Category:</label>
                     <select id="workshop-category" style="width:auto;margin-top:10px;" tabindex="1" name="workshop_category" class="dcf-input-select">
-                    <option value=""></option>
+                    <option value="">All</option>
                     <% Resource.category_options.each do |cat_id, name| %>
                         <option <%= 'selected="selected"' if cat_id == workshop_category.to_i %> value="<%= cat_id %>"><%= name %></option>
                     <% end %>
