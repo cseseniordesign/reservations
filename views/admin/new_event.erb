@@ -45,6 +45,14 @@
                     <label for="max-signups"><span class="dcf-sr-only">Max Signups</span></label>
                     <input value="<%= event.max_signups %>" type="number" id="max-signups" name="max_signups" class="dcf-d-inline dcf-w-10" aria-label="Number of signups to limit."/>
                 </div>
+
+                <div class="dcf-form-group">
+                    <div class="dcf-input-checkbox">
+                        <input type="checkbox" <%= 'checked="checked"' if event.is_private %> id="is_private" name="is_private"><label class="dcf-label" for="is_private">Private event</label>
+                    </div>
+                </div>
+
+
             </fieldset>
 
             <fieldset>

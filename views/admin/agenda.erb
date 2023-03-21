@@ -1,9 +1,23 @@
-<form class="dcf-form dcf-float-right">
-    <div class="offset-field-group">
-        <label for="date">Go to another date:</label>
-        <div class="dcf-datepicker">
-            <input id="date" name="date" title="Reservation Date" type="text" value="<%= date.strftime('%m/%d/%Y') %>" />
+<form class="dcf-form dcf-float-right" id="find-controls">
+    <div class="offset-field-group" style="text-align:center">   <%# To center the Search button. %>
+        <div class="dcf-grid-full dcf-grid-halves@sm dcf-col-gap-vw" style="text-align: left">  <%# Prevent the rest of the text from being center-aligned. %>
+            <div style="width:200px">
+                <label for="workshop-category">Workshop Category:</label>
+                <select id="workshop-category" tabindex="1" name="workshop_category" class="dcf-input-select">
+                    <option value="">All</option>
+                    <% Resource.category_options.each do |cat_id, name| %>
+                        <option <%= 'selected="selected"' if cat_id == params[:workshop_category].to_i %> value="<%= cat_id %>"><%= name %></option>
+                    <% end %>
+                </select>
+            </div>
+            <div style="width:200px">
+                <label for="date">Go to another date:</label>
+                <div class="dcf-datepicker">
+                    <input id="date" name="date" title="Reservation Date" type="text" value="<%= date.strftime('%m/%d/%Y') %>" />
+                </div>
+            </div>
         </div>
+        <button id="search-btn" tabindex="1" class="dcf-btn dcf-btn-inverse-primary" style="margin-top:10px;">Search</button>
     </div>
 </form>
 
@@ -68,7 +82,6 @@ No reservations today. Hopefully someone will still come in to use the space!<br
     </tbody>
 </table>
 <% end %>
-
 <h2 class="dcf-txt-h4 dcf-mt-4" id="todays-events">Today's Events</h4>
 <% if events.empty? %>
 No events today. Perhaps you'd like to create one?<br>
@@ -112,11 +125,14 @@ No events today. Perhaps you'd like to create one?<br>
 <% end %>
 
 <% append_script_declaration("WDN.initializePlugin('datepickers');") %>
+
 <% append_script_declaration(%q[WDN.initializePlugin('jqueryui', [function() {
     $ = require('jquery');
 
-    $('#date').change(function () {
+    $('#search-btn').click(function (e) {
+        e.preventDefault();
         var date = $('#date').val().split('/');
-        window.location = window.location.href.split('?')[0] + '?date=' + date[2] + '-' + date[0] + '-' + date[1];
+        var workshopCategory = $('#workshop-category').val();
+        window.location = window.location.href.split('?')[0] + '?date=' + date[2] + '-' + date[0] + '-' + date[1] + '&workshop_category=' + workshopCategory;
     });
 }]);]) %>

@@ -520,3 +520,10 @@ CREATE TABLE `reservation`.`vehicles` (
   `resource_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1
+
+-- Create Scheduling Event Type
+INSERT INTO `reservation`.`event_types` (`id`, `description`, `service_space_id`) VALUES ('10', 'Scheduling', '1');
+
+-- Alter event table to include "private" column
+ALTER TABLE `reservation`.`events` 
+ADD COLUMN `is_private` TINYINT(1) NULL DEFAULT 0 AFTER `trainer_confirmed`;

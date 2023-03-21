@@ -7,7 +7,9 @@
         </tr>
     </thead>
     <tbody>
+    <% all_private = true %>
     <% events.each do |event| %>
+    <% if !event.is_private || (event.is_private && @user.is_super_user?) %>
         <tr>
             <td class="small-hidden">
                 <a href="<%= event.info_link %>"><%= event.title %></a>
@@ -34,8 +36,10 @@
             <% end %>
             </td>
         </tr>
+        <% all_private = false %>
     <% end %>
-    <% if events.count == 0 %>
+    <% end %>
+    <% if events.count == 0 || all_private %>
         <tr>
             <td colspan="3">No Events Scheduled</td>
         </tr>

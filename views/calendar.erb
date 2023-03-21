@@ -105,6 +105,7 @@ end %>
 			<% day_events = events_groups[day.strftime("%Y/%m/%d")] %>
 			<% unless day_events.nil? %>
 			<% day_events.sort{|a, b| a.start_time <=> b.start_time}.each do |event| %>
+			<% if !event.is_private || (event.is_private && @user.is_super_user?) %>
 				<% start_slot = [(((event.start_time.in_time_zone - day.midnight) / 60 - 360) / 30).floor, 0].max 
 				end_slot = [(((event.end_time.in_time_zone - day.midnight) / 60 - 361) / 30).floor, 35].min
 
@@ -112,7 +113,9 @@ end %>
 					<% max_slots[k] = max_slots[k] + 1 %>
 				<% end %>
 			<% end %>
+			<% end %>
 			<% day_events.sort{|a, b| a.start_time <=> b.start_time}.each do |event| %>
+			<% if !event.is_private || (event.is_private && @user.is_super_user?) %>
 				<% start_slot = [(((event.start_time.in_time_zone - day.midnight) / 60 - 360) / 30).floor, 0].max 
 				end_slot = [(((event.end_time.in_time_zone - day.midnight) / 60 - 361) / 30).floor, 35].min 
 				if end_slot < 0
@@ -152,6 +155,7 @@ end %>
 				<% (start_slot..end_slot).each do |k| %>
 					<% slots[k] = slots[k] + 1 %>
 				<% end %>
+			<% end %>
 			<% end %>
 			<% end %>
 			
