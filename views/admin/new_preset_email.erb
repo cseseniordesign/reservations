@@ -1,0 +1,31 @@
+<form class="dcf-form" id="create-preset-email-form" method="POST">
+    <div class="dcf-grid dcf-col-gap-vw">
+        <div class="dcf-col-100% dcf-col-67%-start@sm">
+            <fieldset>
+                <legend>Preset Email Details</legend>
+
+                <div class="dcf-form-group">
+                    <label for="name">Preset Name <small class="dcf-required">Required</small></label>
+                    <input class="dcf-w-100%" type="text" id="name" name="name" value="<%= preset_email.name %>"/>
+                </div>
+
+                <div class="dcf-form-group">
+                    <label for="name">Subject <small class="dcf-required">Required</small></label>
+                    <input class="dcf-w-100%" type="text" id="subject" name="subject" value="<%= preset_email.subject %>"/>
+                </div>
+
+                <div class="dcf-form-group">
+                    <label for="body">Body <small class="dcf-required">Required</small></label>
+                    <textarea rows="4" id="body" name="body"><%= preset_email.body %></textarea>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="dcf-grid dcf-col-gap-vw" style="margin-top:20px;">
+        <div class="dcf-col-100% dcf-col-67%-start@sm">
+            <button class="dcf-btn dcf-btn-primary dcf-float-left" type="submit"><%= preset_email.id.nil? ? 'Create' : 'Save' %> Preset</button>
+        </div>
+    </div>
+</form>
+</div>

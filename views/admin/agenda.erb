@@ -53,7 +53,11 @@ No reservations today. Hopefully someone will still come in to use the space!<br
         <tr>
             <td>
                 <% if reservation.user %>
-                <%= reservation.user.full_name %>
+                    <% if !reservation.user.expiration_date.nil? && reservation.user.expiration_date > Date.today %>
+                        <%= reservation.user.full_name %>
+                    <% else %>
+                        <p style="color:#d00000;"><%= reservation.user.full_name %> </p>
+                    <% end %>
                 <% elsif !reservation.event.nil? %>
                 <strong>Event:</strong> <%= reservation.event.title %>
                 <% end %>
@@ -89,6 +93,7 @@ No events today. Perhaps you'd like to create one?<br>
             <th>Title</th>
             <th>Date/Location</th>
             <th>Type</th>
+            <th>Trainer</th>
         </tr>
     </thead>
     <tbody>
@@ -103,6 +108,13 @@ No events today. Perhaps you'd like to create one?<br>
             </td>
             <td>
                 <%= event.type.name %>
+            </td>
+            <td>
+                <% if event.trainer_id.nil?%>
+                    No trainer assigned
+                <% else %>
+                    <%= trainers[event.trainer_id]%>
+                <% end %>
             </td>
         </tr>
     <% end %>

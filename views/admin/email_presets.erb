@@ -1,0 +1,53 @@
+<h1 class="dcf-txt-h3">Manage Preset Emails</h1>
+
+<div style="margin-bottom:20px;">
+    <a class="dcf-btn dcf-btn-primary" href="/admin/email/presets/create/">+ New Preset</a>
+</div>
+
+<section class="dcf-grid dcf-col-gap-vw">
+    <% if preset_emails.count > 0 %>
+    <div class="dcf-col-100%">
+        <table class="dcf-w-100% dcf-table dcf-table-bordered dcf-table-responsive" aria-label="Preset Email List">
+            <thead>
+                <tr>
+                    <th scope="col">Preset Name</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Body</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            <% preset_emails.each do |preset| %>
+                <tr>
+                    <td><%= preset.name %></td>
+                    <td><%= preset.subject %></td>
+                    <td><%= preset.body.size > 50 ? preset.body[0...50] + "..." : preset.body %></td>
+                    <td class="table-actions">
+                        <a href="/admin/email/presets/<%= preset.id %>/edit/" class="dcf-mt-1 dcf-btn dcf-btn-primary">Edit</a>
+                        <form class="dcf-form delete-form delete-preset" action="/admin/email/presets/<%= preset.id %>/delete/" method="POST">
+                            <button type="submit" class="dcf-mt-1 dcf-btn dcf-btn-primary">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            <% end %>
+            </tbody>
+        </table>
+    </div>
+    <% else %>
+    <br>
+    <div class="dcf-col-100%">
+        <label>No preset emails found. Click the "+ New Preset" button to get started.</label>
+    </div>
+    <% end %>
+</section>
+
+<% append_script_declaration(%q[require(['jquery'], function($) {
+
+    $(document).ready(function() {
+        $('.delete-preset').submit(function (submit) {
+            if (!window.confirm('Are you sure you want to delete this preset?')) {
+                submit.preventDefault();
+            }
+        });
+    });
+});]) %>

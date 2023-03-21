@@ -5,6 +5,7 @@ require 'models/location'
 require 'models/resource'
 require 'models/resource_authorization'
 require 'models/preset_event'
+require 'models/event_authorization'
 
 before '/admin/events*' do
 	unless has_permission?(Permission::MANAGE_EVENTS) || has_permission?(Permission::EVENTS_ADMIN_READ_ONLY)
@@ -131,14 +132,19 @@ end
 get '/admin/events/create/?' do
 	@breadcrumbs << {:text => 'Admin Events', :href => '/admin/events/'} << {text: 'Create Event'}
 	tools = Resource.where(:service_space_id => SS_ID, :is_reservable => true).order(:name => :asc).all.to_a
+	all_tools = Resource.where(:service_space_id => SS_ID).order(:name).all.to_a
+    all_tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
 	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
-	if Integer(params[:preset_id]) == 0
+	if params[:preset_id].nil? || Integer(params[:preset_id]) == 0
+		
 		erb :'admin/new_event', :layout => :fixed, :locals => {
 			:event => Event.new,
 			:types => EventType.where(:service_space_id => SS_ID).all,
 			:trainers => User.where(:is_trainer => 1).all,
 			:locations => Location.where(:service_space_id => SS_ID).all,
 			:tools => tools,
+			:all_tools => all_tools,
+			:preset_event => nil,
 			:on_unl_events => false,
 			:on_main_calendar => false,
 			:duration => 0
@@ -150,12 +156,15 @@ get '/admin/events/create/?' do
 		event.description = preset.description
 		event.event_type_id = preset.event_type_id
 		event.max_signups = preset.max_signups
+		
 		erb :'admin/new_event', :layout => :fixed, :locals => {
 			:event => event,
 			:types => EventType.where(:service_space_id => SS_ID).all,
 			:trainers => User.where(:is_trainer => 1).all,
 			:locations => Location.where(:service_space_id => SS_ID).all,
 			:tools => tools,
+			:all_tools => all_tools,
+			:preset_event => preset,
 			:on_unl_events => false,
 			:on_main_calendar => false,
 			:duration => preset.duration
@@ -208,6 +217,12 @@ post '/admin/events/create/?' do
         end
 	end
 
+	if params.checked?('authorize_tools_checkbox')
+		params[:specific_tools].each do |id|
+			event_authorization = EventAuthorization.create(:resource_id => id,:event_id => event.id)
+		end
+	end
+
 	if params.checked?('export_to_unl_events')
 		# first create the location, if necessary
 		if event.location.unl_events_id.nil?
@@ -223,6 +238,9 @@ post '/admin/events/create/?' do
 			end
 		end
 
+
+		
+		
 		# send the event up
 		post_params = {
 			:title => params[:title],
@@ -265,6 +283,15 @@ end
 get '/admin/events/:event_id/edit/?' do
 	@breadcrumbs << {:text => 'Admin Events', :href => '/admin/events/'} << {text: 'Edit Event'}
 	event = Event.includes(:event_type, :location, :reservation => :resource).find_by(:id => params[:event_id], :service_space_id => SS_ID)
+	all_tools = Resource.where(:service_space_id => SS_ID).order(:name).all.to_a
+    all_tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
+	event_authorized_tools = EventAuthorization.joins(:event).where('event_id = ?', event.id)
+    authorized_tools_ids = Array.new
+
+    event_authorized_tools.each do |tool|
+        authorized_tools_ids.append(tool.resource_id)
+    end
+
 	if event.nil?
 		# that event does not exist
 		flash(:danger, 'Not Found', 'That event does not exist')
@@ -295,6 +322,8 @@ get '/admin/events/:event_id/edit/?' do
 		:trainers => User.where(:is_trainer => 1).all,
 		:locations => Location.where(:service_space_id => SS_ID).all,
 		:tools => tools,
+		:all_tools => all_tools,
+		:authorized_tools_ids => authorized_tools_ids,
 		:on_unl_events => on_unl_events,
 		:on_main_calendar => on_main_calendar,
 		:duration => ((event.end_time - event.start_time)/60.0).round
@@ -410,6 +439,15 @@ post '/admin/events/:event_id/edit/?' do
             )
         end
     end
+
+	delete_old_authorizations = EventAuthorization.where(event_id: event.id).all
+    delete_old_authorizations.destroy_all
+
+	if params.checked?('authorize_tools_checkbox')
+		params[:specific_tools].each do |id|
+			event_authorization = EventAuthorization.create(:resource_id => id,:event_id => event.id)
+		end
+	end
 
 	if params.checked?('export_to_unl_events')
 		on_unl_events = false
@@ -533,6 +571,9 @@ post '/admin/events/:event_id/delete/?' do
 	trainer_to_email.each do |user|
 		user.notify_trainer_of_deleted_event(event)
 	end
+	
+	delete_old_authorizations = EventAuthorization.where(event_id: event.id).all
+    delete_old_authorizations.destroy_all
 
 	event.destroy
 

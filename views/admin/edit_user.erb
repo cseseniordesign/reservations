@@ -49,7 +49,7 @@
                 </div>
             </div>
         </fieldset>
-
+        
         <% if @user.is_super_user? %>
         <div class="dcf-col-100% dcf-col-50%-end@sm"">
             <fieldset>
@@ -80,6 +80,19 @@
         <% end %>
     </div>
     <button class="dcf-btn dcf-btn-primary" type="submit">Update</button>
+</form>
+
+<hr>
+
+
+<form action="/admin/users/<%=user.id%>/renew/?" method="POST" class="dcf-form">
+    <div class="dcf-grid dcf-col-gap-vw">
+        <fieldset class="dcf-col-100% dcf-col-50%-start@sm">
+            <label>Renew the user's membership to 30 days from today</label> 
+            <br>
+            <button id="renew-membership" class="dcf-btn dcf-btn-primary" type="submit">Renew Membership</button>
+        </fieldset>
+    </div>
 </form>
 
 <% append_script_declaration("WDN.initializePlugin('datepickers');") %>
