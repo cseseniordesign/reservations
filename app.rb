@@ -7,7 +7,8 @@ use Rack::Session::Cookie, :key => 'rack.session',
                            :path => '/',
                            :domain => (ENV['RACK_ENV'] == 'development' ? nil : 'innovationstudio-manager.unl.edu'),
                            :secret => 'averymanteroldfatherbesseyhamilton',
-                           :old_secret => 'averymanteroldfatherbesseyhamilton'
+                           :old_secret => 'averymanteroldfatherbesseyhamilton',
+                           :expire_after => 12*30*24*60*60
 
 Time.zone = "America/Chicago"
 
