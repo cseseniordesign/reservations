@@ -7,15 +7,13 @@ require 'date'
 
 USER_STATII = [
     'None',
-    'UNL Undergrad',
-    'UNL Grad',
-    'Other Student',
-    'UNL Staff',
-    'UNL Faculty',
-    'UNL Alumni',
-    'Emeritus UNL Faculty',
-    'NIC Partner',
-    'Community Member'
+    'NU Student (UNL, UNO, UNMC, UNK)',
+    'NU Faculty (UNL, UNO, UNMC, UNK)',
+    'NU Staff (UNL, UNO, UNMC, UNK)',
+    'NU Alumni (UNL, UNO, UNMC, UNK)',
+    'Non-NU Student (All Other Institutions)',
+    'NIS/NIC Partner (NIS/NIC Affiliated Business Employee, Military Veterans)',
+    'Community'
 ]
 
 EXPIRATION_DATE_SEARCH_OPERATIONS = [
