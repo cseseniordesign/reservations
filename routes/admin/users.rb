@@ -182,10 +182,6 @@ post '/admin/users/:user_id/renew/?' do
         status = "current"
     end
     
-    if user.space_status.include?("_no_email")
-        status = status + "_no_email"
-    end
-    
     user.space_status = status
     user.save
 
@@ -253,9 +249,28 @@ post '/admin/users/:user_id/edit/?' do
         status = "current"
     end
 
-    # if user wants to opt out then add no_email to space_status
-    if params[:email_preference] == "no_email"
-        status = status + "_no_email"
+    if params.checked?('promotional_opt_in')
+        user.promotional_email_status = 1
+    else
+        user.promotional_email_status = 0
+    end
+    
+    if params.checked?('functional_opt_in')
+        user.functional_email_status = 1
+    else
+        user.functional_email_status = 0
+    end
+    
+    if params.checked?('news_opt_in')
+        user.news_email_status = 1
+    else
+        user.news_email_status = 0
+    end
+    
+    if params.checked?('reminder_opt_in')
+        user.reminder_email_status = 1
+    else
+        user.reminder_email_status = 0
     end
 
     user.space_status = status

@@ -30,10 +30,29 @@ post '/me/?' do
   if !@user.get_expiration_date.nil? && @user.get_expiration_date >= Date.today
     status = "current"
   end
+  
+  if params.checked?('promotional_opt_out')
+    @user.promotional_email_status = 0
+  else
+    @user.promotional_email_status = 1
+  end
 
-  # if user wants to opt out then add no_email to space_status
-  if params.checked?('email_opt_out')
-    status = status + "_no_email"
+  if params.checked?('functional_opt_out')
+    @user.functional_email_status = 0
+  else
+    @user.functional_email_status = 1
+  end
+
+  if params.checked?('news_opt_out')
+    @user.news_email_status = 0
+  else
+    @user.news_email_status = 1
+  end
+
+  if params.checked?('reminder_opt_out')
+    @user.reminder_email_status = 0
+  else
+    @user.reminder_email_status = 1
   end
   @user.space_status = status
   @user.save
