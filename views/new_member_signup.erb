@@ -52,7 +52,7 @@
             </div>
 
             <div class="dcf-form-group">
-                <div id="unl-permit">
+                <div id="unl-permit" hidden='hidden'>
                 <label for="unl-permit">Do you have a UNL Parking Permit?</label>
                     <div class="dcf-input-radio">
                         <input type="radio" id="unl-permit-yes" name="unl-permit-option" value="yes">
@@ -66,7 +66,7 @@
             </div>
 
             <div class="dcf-form-group">
-                <div id="unl-perimeter">
+                <div id="unl-perimeter" hidden='hidden'>
                 <label for="unl-perimeter">Do you have a UNL Perimeter Parking?</label>
                     <div class="dcf-input-radio">
                         <input type="radio" id="unl-perim-yes" name="unl-perim-option" value="yes">
@@ -80,7 +80,7 @@
             </div>
 
             <div class="dcf-form-group">
-                <div id="unl-garage">
+                <div id="unl-garage" hidden='hidden'>
                 <label for="unl-garage">Do you have a UNL Garage or Lot Parking?</label>
                     <div class="dcf-input-radio">
                         <input type="radio" id="unl-garage-yes" name="unl-garage-option" value="yes">
@@ -93,7 +93,7 @@
                 </div>
             </div>
 
-            <div class="dcf-input-checkbox">
+            <div class="dcf-input-checkbox" id="parking-checkbox" hidden='hidden'>
                 <input type="checkbox" name="parking-fine" id="parking-fine">
                 <label for="parking-fine">I UNDERSTAND THAT I MUST EMAIL “UNLPTS@UNL.EDU" AND REQUEST “RECIPROCAL PARKING AT NIC”. FAILURE TO DO SO WILL RESULT IN UP TO A $64.00 TICKET EACH VISIT.</label>
             </div>
@@ -227,3 +227,65 @@
 </form>
 
 <% append_script_declaration("WDN.initializePlugin('datepickers');") %>
+<% append_script_declaration(%q[require(['jquery'], function($) {
+    $(document).ready(function() {
+        $('#unl-asso-yes').click(function (click) {
+            $('#unl-permit').removeAttr('hidden');
+        });
+        $('#unl-asso-no').click(function (click) {
+            $('#unl-permit').attr('hidden','hidden');
+            $('input[name=unl-permit-option]').prop('checked',false);
+            const perimeter = $('#unl-perimeter').attr('hidden');
+            if (typeof perimeter == 'undefined' || perimeter == false) {
+                $('#unl-perimeter').attr('hidden','hidden');
+                $('input[name=unl-perim-option]').prop('checked',false);
+            }
+            const garage = $('#unl-garage').attr('hidden');
+            if (typeof garage == 'undefined' || garage == false) {
+                $('#unl-garage').attr('hidden','hidden');
+                $('input[name=unl-garage-option]').prop('checked',false);
+            }
+            const parkingCheckbox = $('#parking-checkbox').attr('hidden');
+            if (typeof parkingCheckbox == 'undefined' || garage == false) {
+                $('#parking-checkbox').attr('hidden','hidden');
+                $('input[name=parking-fine]').prop('checked',false);
+            }
+        });
+        $('#unl-permit-yes').click(function (click) {
+            $('#unl-perimeter').removeAttr('hidden');
+        });
+        $('#unl-permit-no').click(function (click) {
+            $('#unl-perimeter').attr('hidden','hidden');
+            $('input[name=unl-perim-option]').prop('checked',false);
+            const garage = $('#unl-garage').attr('hidden');
+            if (typeof garage == 'undefined' || garage == false) {
+                $('#unl-garage').attr('hidden','hidden');
+                $('input[name=unl-garage-option]').prop('checked',false);
+            }
+            const parkingCheckbox = $('#parking-checkbox').attr('hidden');
+            if (typeof parkingCheckbox == 'undefined' || garage == false) {
+                $('#parking-checkbox').attr('hidden','hidden');
+                $('input[name=parking-fine]').prop('checked',false);
+            }
+        });
+        $('#unl-perim-no').click(function (click) {
+            $('#unl-garage').removeAttr('hidden'); 
+        });
+        $('#unl-perim-yes').click(function (click) {
+            $('#unl-garage').attr('hidden','hidden');
+            $('input[name=unl-garage-option]').prop('checked',false);
+            const parkingCheckbox = $('#parking-checkbox').attr('hidden');
+            if (typeof parkingCheckbox == 'undefined' || garage == false) {
+                $('#parking-checkbox').attr('hidden','hidden');
+                $('input[name=parking-fine]').prop('checked',false);
+            }
+        });
+        $('#unl-garage-yes').click(function (click) {
+            $('#parking-checkbox').removeAttr('hidden');
+        });
+        $('#unl-garage-no').click(function (click) {
+            $('#parking-checkbox').attr('hidden','hidden');
+            $('input[name=parking-fine]').prop('checked',false);
+        });
+    });
+});]) %>
