@@ -79,6 +79,19 @@ post '/tools/trainings/sign_up/:event_id/?' do
 		redirect '/tools/trainings/'
 	end
 
+
+	if event.event_code.present? && params[:event_code].blank?
+		# a code is required to sign up
+		flash(:danger, 'Code Required', 'Sorry, a code is required to signup for this event. You have not been signed up for this event.')
+		redirect '/tools/trainings/'
+	elsif !event.event_code.nil? && !params[:event_code].blank?
+		unless params[:event_code] == event.event_code
+			# incorrect code provided
+			flash(:danger, 'Incorrect Code', 'Sorry, the code you entered is incorrect. You have not been signed up for this event.')
+			redirect '/tools/trainings/'
+		end
+	end
+
 	EventSignup.create(
 		:event_id => params[:event_id],
 		:name => @user.full_name,
