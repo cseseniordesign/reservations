@@ -61,10 +61,10 @@ post '/new_members/sign_up/:event_id/?' do
 		redirect '/new_members/'
 	end
 
-	if !verify_recaptcha
-		flash(:alert, 'Google Recaptcha Verification failed', 'please try again.')
-		redirect '/new_members/'
-	end
+	# if !verify_recaptcha
+	# 	flash(:alert, 'Google Recaptcha Verification failed', 'please try again.')
+	# 	redirect '/new_members/'
+	# end
 
 	EventSignup.create(
 		:event_id => params[:event_id],
@@ -93,11 +93,10 @@ EMAIL
 		flash(:danger, "Invalid Email", "Your email address didn't match any known email")
 		redirect "new_members/sign_up/#{params[:event_id]}"
 	else
-		Emailer.mail(params[:email], "Nebraska Innovation Studio - #{event.title}", body)
+		# Emailer.mail(params[:email], "Nebraska Innovation Studio - #{event.title}", body)
 
-		params.delete("g-recaptcha-response")
-		params.delete("event_id")
-		user = User.new(params)
+		user_info = {"first_name" => params[:first_name],"last_name" => params[:last_name],"email" => params[:email],"university_status" => params[:university_status]}
+		user = User.new(user_info)
 
 		# Username parameters:
 		# First letter of first name
@@ -113,6 +112,69 @@ EMAIL
 				break
 			end
 			counter = counter + 1
+		end
+
+		vehicle1 = Vehicle.new
+		license_plate1 = params[:license_plate1]
+		state1 = params[:state1]
+		make1 = params[:make1]
+		model1 = params[:model1]
+
+		vehicle2 = Vehicle.new
+		license_plate2 = params[:license_plate2]
+		state2 = params[:state2]
+		make2 = params[:make2]
+		model2 = params[:model2]
+
+		vehicle3 = Vehicle.new
+		license_plate3 = params[:license_plate3]
+		state3 = params[:state3]
+		make3 = params[:make3]
+		model3 = params[:model3]
+
+		if !license_plate1.blank? && !state1.blank? && !make1.blank? && !model1.blank?
+			begin
+				vehicle1.license_plate = license_plate1
+				vehicle1.state = state1
+				vehicle1.make = make1
+				vehicle1.model = model1
+				vehicle1.user_id = user.id
+				vehicle1.save
+
+			rescue => exception
+				flash(:error, 'Vehicle 1 Addition Failed', exception.message)
+				redirect back
+			end
+		end
+
+		if !license_plate2.blank? && !state2.blank? && !make2.blank? && !model2.blank?
+			begin
+				vehicle2.license_plate = license_plate2
+				vehicle2.state = state2
+				vehicle2.make = make2
+				vehicle2.model = model2
+				vehicle2.user_id = user.id
+				vehicle2.save
+
+			rescue => exception
+				flash(:error, 'Vehicle 2 Addition Failed', exception.message)
+				redirect back
+			end
+		end
+
+		if !license_plate3.blank? && !state3.blank? && !make3.blank? && !model3.blank?
+			begin
+				vehicle3.license_plate = license_plate3
+				vehicle3.state = state3
+				vehicle3.make = make3
+				vehicle3.model = model3
+				vehicle3.user_id = user.id
+				vehicle3.save
+
+			rescue => exception
+				flash(:error, 'Vehicle 3 Addition Failed', exception.message)
+				redirect back
+			end
 		end
 
 		user.space_status = 'expired'

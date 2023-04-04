@@ -95,6 +95,10 @@ class User < ActiveRecord::Base
     self.save
   end
 
+  def date_of_birth
+    date_of_birth
+  end
+
   def full_name
     "#{first_name} #{last_name}"
   end

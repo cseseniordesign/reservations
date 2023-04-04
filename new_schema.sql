@@ -531,3 +531,35 @@ INSERT INTO `reservation`.`event_types` (`id`, `description`, `service_space_id`
 -- Alter event table to include "private" column
 ALTER TABLE `reservation`.`events` 
 ADD COLUMN `is_private` TINYINT(1) NULL DEFAULT 0 AFTER `trainer_confirmed`;
+
+--Alter users table to include "date-of-birth"
+ALTER TABLE `reservation`.`users` 
+ADD COLUMN `date_of_birth` DATETIME NULL AFTER `promotional_email_status`;
+
+--Create emergency_contacts table
+CREATE TABLE IF NOT EXISTS `reservation`.`emergency_contacts` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  `relationship` VARCHAR(45) NULL,
+  `primary_phone_number` VARCHAR(45) NULL,
+  `secondary_phone_number` VARCHAR(45) NULL,
+  `primary_contact` TINYINT(1) NULL,
+  PRIMARY KEY (`id`));
+
+--Create users_has_emergency_contacts
+CREATE TABLE IF NOT EXISTS `reservation`.`users_has_emergency_contacts` (
+  `users_id` INT(11) NOT NULL,
+  `emergency_contacts_id` INT(11) NOT NULL,
+  PRIMARY KEY (`users_id`, `emergency_contacts_id`),
+  INDEX `fk_users_has_emergency_contacts_emergency_contacts1_idx` (`emergency_contacts_id` ASC) VISIBLE,
+  INDEX `fk_users_has_emergency_contacts_users1_idx` (`users_id` ASC) VISIBLE,
+  CONSTRAINT `fk_users_has_emergency_contacts_users1`
+    FOREIGN KEY (`users_id`)
+    REFERENCES `reservation`.`users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_users_has_emergency_contacts_emergency_contacts1`
+    FOREIGN KEY (`emergency_contacts_id`)
+    REFERENCES `reservation`.`emergency_contacts` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
