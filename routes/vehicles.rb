@@ -47,6 +47,9 @@ post '/vehicle/:vehicle_id/edit/?' do
             vehicle.model = model
             vehicle.user_id = @user.id
 			vehicle.save
+			if @user.is_current?
+				@user.send_vehicle_information_update
+			end
 
 			# notify that it worked
 			flash(:success, 'Vehicle Update Successful', "Your vehicle has been updated.")
@@ -77,6 +80,9 @@ post '/vehicle/add/?' do
             vehicle.model = model
             vehicle.user_id = @user.id
 			vehicle.save
+			if @user.is_current?
+				@user.send_vehicle_information_update
+			end
 
 			# notify that it worked
 			flash(:success, 'Vehicle Addition Successful', "Your vehicle has been added.")
@@ -98,6 +104,10 @@ post '/vehicle/:vehicle_id/delete/?' do
 	
 	begin
 		vehicle.destroy
+		if @user.is_current?
+			@user.send_vehicle_information_update
+		end
+
 		flash(:success, 'Vehicle Successfully Deleted', "Your vehicle has been deleted.")
 		redirect '/me/'
 	rescue => exception

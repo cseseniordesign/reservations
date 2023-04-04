@@ -43,5 +43,5 @@ ps -o user= -p pid
 ```
 4. Once you determine which processes are extra (if any) then kill them with this command.
 ```
-kill -9 pid
+sudo -u innovationstudio kill -9 pid
 ```

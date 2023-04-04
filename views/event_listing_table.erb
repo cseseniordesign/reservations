@@ -1,3 +1,23 @@
+<div class="dcf-modal" id="enter-code-modal" hidden>
+  <div class="dcf-modal-wrapper">
+    <div class="dcf-modal-header">
+      <h2>Code Required</h2>
+      <button class="dcf-btn-close-modal">Close</button>
+    </div>
+    <div class="dcf-modal-content">
+        <p>To sign up for this event, please enter the code that you received from the NIS administrators.
+
+        <form class="dcf-form inline-form" id="signup-with-code-form" action="" method="POST">                                                         
+            <div class="dcf-form-group">
+                <label for="code">Event Signup Code:</label>
+                <input type="text" id="event_code" name="event_code" />
+            </div>
+            <button type="submit" class="dcf-btn dcf-btn-primary">Sign Up!</button>
+        </form>
+    </div>
+  </div>
+</div>
+
 <table class="dcf-table dcf-table-striped dcf-table-responsive dcf-mb-6" aria-describedby="<%= events_advanced %>">
     <thead>
         <tr>
@@ -7,38 +27,49 @@
         </tr>
     </thead>
     <tbody>
+    <% all_private = true %>
     <% events.each do |event| %>
-        <tr>
-            <td class="small-hidden">
-                <a href="<%= event.info_link %>"><%= event.title %></a>
-            </td>
-            <td>
-                <%= event.start_time.in_time_zone.strftime('%m/%d/%Y @ %l:%M %P') %><br>
-                <%= event.location.name %>
-            </td>
-            <td>
-            <% if @user.signed_up_event_ids.include?(event.id) %>
-                Signed up!
-            <% elsif !event.max_signups.nil? && event.signups.count >= event.max_signups %>
-                Event is full.
-            <% elsif !event.signup_allowed_for_type? %>
-                <a href="<%= event.info_link %>">View for details on how to signup.</a>
-            <% elsif event.machine_training_event_type? %>
-                <form class="dcf-form inline-form" action="/tools/trainings/sign_up/<%= event.id %>/" method="POST">
-                    <button type="submit" class="dcf-btn dcf-btn-primary" href="/tools/trainings/sign_up/<%= event.id %>/">Sign Up!</button>
-                </form>
-            <% else %>
-                <form class="dcf-form inline-form" action="/workshops/sign_up/<%= event.id %>/" method="POST">
-                    <button type="submit" class="dcf-btn dcf-btn-primary" href="/workshops/sign_up/<%= event.id %>/">Sign Up!</button>
-                </form>
-            <% end %>
-            </td>
-        </tr>
+        <% if !event.is_private || (event.is_private && @user.is_super_user?) %>
+            <tr>
+                <td class="small-hidden">
+                    <a href="<%= event.info_link %>"><%= event.title %></a>
+                </td>
+                <td>
+                    <%= event.start_time.in_time_zone.strftime('%m/%d/%Y @ %l:%M %P') %><br>
+                    <%= event.location.name %>
+                </td>
+                <td>
+                <% if @user.signed_up_event_ids.include?(event.id) %>
+                    Signed up!
+                <% elsif !event.max_signups.nil? && event.signups.count >= event.max_signups %>
+                    Event is full.
+                <% elsif !event.signup_allowed_for_type? %>
+                    <a href="<%= event.info_link %>">View for details on how to signup.</a>
+                <% elsif event.machine_training_event_type? %>
+                    <form class="dcf-form inline-form" action="/tools/trainings/sign_up/<%= event.id %>/" method="POST">                                                         
+                        <button type="submit" <% if event.event_code.present? %> onclick="promptCode('/tools/trainings/sign_up/<%= event.id %>/', event);" data-toggles-modal="enter-code-modal" <% end %>  class="dcf-btn dcf-btn-primary dcf-btn-toggle-modal" href="/tools/trainings/sign_up/<%= event.id %>/">Sign Up!</button>
+                    </form>
+                <% else %>
+                    <form class="dcf-form inline-form" action="/workshops/sign_up/<%= event.id %>/" method="POST">
+                        <button type="submit" <% if event.event_code.present? %> onclick="promptCode('/workshops/sign_up/<%= event.id %>/', event);" data-toggles-modal="enter-code-modal" <% end %> class="dcf-btn dcf-btn-primary dcf-btn-toggle-modal" href="/workshops/sign_up/<%= event.id %>/">Sign Up!</button>
+                    </form>
+                <% end %>
+                </td>
+            </tr>
+            <% all_private = false %>
+        <% end %>
     <% end %>
-    <% if events.count == 0 %>
+    <% if events.count == 0 || all_private %>
         <tr>
             <td colspan="3">No Events Scheduled</td>
         </tr>
     <% end %>
     </tbody>
 </table>
+
+<script>
+    function promptCode(signupLink, event) {
+        event.preventDefault();
+        document.getElementById('signup-with-code-form').setAttribute('action', signupLink);
+    }
+</script>

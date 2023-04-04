@@ -2,6 +2,8 @@
 
 <form class="dcf-form" id="attendance" action="" method="POST">
     <table class="dcf-w-100% dcf-table dcf-table-bordered">
+
+<% if !event.signups.empty? %>
         <thead>
             <tr>
                 <th>Name</th>
@@ -9,6 +11,9 @@
                 <th>Attended</th>
             </tr>
         </thead>
+ <% else %>
+ <p>So far, no one has signed up for this event yet.</p>
+ <% end %>
         <tbody>
         <% event.signups.each do |signup| %>
             <tr>

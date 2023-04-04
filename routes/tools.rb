@@ -9,12 +9,22 @@ get '/tools/?' do
 	@breadcrumbs << {:text => 'Tools'}
 	require_login
 
+	workshop_category = params[:workshop_category]
+
 	# show tools that the user is authorized to use, as well as all those that do not require authorization
 	tools = Resource.where(:service_space_id => SS_ID).all.to_a
+
+	# Redefine the tools variable if there is a workshop category filter applied
+	unless workshop_category.nil? || workshop_category.length == 0
+		tools = Resource.where(:service_space_id => SS_ID).where(:category_id => workshop_category).all.to_a
+	end
+
 	tools.reject! {|tool| tool.needs_authorization && !@user.authorized_resource_ids.include?(tool.id)}
 	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
+	
 
 	erb :tools, :layout => :fixed, :locals => {
+		:workshop_category => workshop_category,
 		:available_tools => tools
 	}
 end
@@ -67,6 +77,19 @@ post '/tools/trainings/sign_up/:event_id/?' do
 		# that event is full
 		flash(:danger, 'Event Full', 'Sorry, that event is full.')
 		redirect '/tools/trainings/'
+	end
+
+
+	if event.event_code.present? && params[:event_code].blank?
+		# a code is required to sign up
+		flash(:danger, 'Code Required', 'Sorry, a code is required to signup for this event. You have not been signed up for this event.')
+		redirect '/tools/trainings/'
+	elsif !event.event_code.nil? && !params[:event_code].blank?
+		unless params[:event_code] == event.event_code
+			# incorrect code provided
+			flash(:danger, 'Incorrect Code', 'Sorry, the code you entered is incorrect. You have not been signed up for this event.')
+			redirect '/tools/trainings/'
+		end
 	end
 
 	EventSignup.create(

@@ -6,10 +6,10 @@
 
 <h5>Hello, <%= @user.full_name %> (<%= @user.username %>)</h5>
 <% if !@user.expiration_date.nil? && @user.expiration_date > Date.today %>
-    <h2 style ="<%= @user.expiration_date > (Time.now + 1.weeks) ? "" : "color:orange;" %>">Your membership will expire on: <%= @user.expiration_date.to_formatted_s(:long_ordinal)[0...-5] %></h2>
+    <h4 style ="<%= @user.expiration_date > (Time.now + 1.weeks) ? "" : "color:orange;" %>">Your membership will expire on: <%= @user.expiration_date.to_formatted_s(:long_ordinal)[0...-5] %></h4>
 <% else %>
-    <h2 style="color:#d00000;">Your membership is inactive.</h2> 
-    <h4>Please visit Nebraska Innovation Studio to activate your membership.</h4>
+    <h4 style="color:#d00000;">Your membership is expired.</h4> 
+    <h6>You can still reserve equipment and sign up for trainings. Please visit Nebraska Innovation Studio to activate your membership.</h6>
 <% end %>
 
 <h2 class="dcf-txt-h4" id="my-reservations">My Reservations</h2>

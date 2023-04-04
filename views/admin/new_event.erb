@@ -45,6 +45,17 @@
                     <label for="max-signups"><span class="dcf-sr-only">Max Signups</span></label>
                     <input value="<%= event.max_signups %>" type="number" id="max-signups" name="max_signups" class="dcf-d-inline dcf-w-10" aria-label="Number of signups to limit."/>
                 </div>
+
+                <div class="dcf-form-group">
+                    <div class="dcf-input-checkbox">
+                        <input type="checkbox" <%= 'checked="checked"' if event.is_private %> id="is_private" name="is_private"><label class="dcf-label" for="is_private">Private event</label>
+                    </div>
+                </div>
+
+                <div class="dcf-form-group">
+                    <label for="event-code">Require Code to Signup</label>
+                    <input class="dcf-w-100%" type="text" id="event-code" name="event_code" value="<%= event.event_code %>"/>
+                </div>
             </fieldset>
 
             <fieldset>
@@ -100,37 +111,43 @@
 
                 <div>
                     <div class="dcf-input-checkbox dcf-mt-6">
-                        <input type="checkbox" <%= 'checked="checked"' if event.has_reservation %> id="reserve-tool" name="reserve_tool"><label for="reserve-tool">Reserve a tool for this event</label>
+                        <input type="checkbox" <%= 'checked="checked"' if event.has_reservation || (event.id.nil? && !preset_event.nil?) %> id="reserve-tool" name="reserve_tool">
+                        <label for="reserve-tool">Reserve a tool for this event</label>
                     </div>
-                    <div id="tools-for-reserving" style="<%= 'display: none;' if !event.has_reservation %>">
-                        <label for="tool">Tool</label>
-                        <select id="tools" name="tools[]" class="use-select2" multiple>
+                    <div id="tools-for-reserving" >
+                        <label for="tool">Use Shift or Ctrl/Cmd to select multiple tools</label>
+                        <select id="tools" name="tools[]" class="use-select2" multiple size="8" >
                             <% tools.each do |tool| %>
-                                <option <%= 'selected="selected"' if event.has_tool_reservation(tool.id) %> value="<%= tool.id %>"><%= "#{tool.category_name} - #{tool.name} - #{tool.model}" %></option>
+                                 <% if event.id.nil? %>
+                                    <option <%= 'selected="selected"' if !preset_event.nil? and preset_event.get_resource_reservations_ids.include?(tool.id)  %> value="<%=tool.id%>"><%= "#{tool.category_name} - #{tool.name} - #{tool.model}" %></option>
+                                <% else%>
+                                    <option <%= 'selected="selected"' if event.has_tool_reservation(tool.id) %> value="<%= tool.id %>"><%= "#{tool.category_name} - #{tool.name} - #{tool.model}" %></option>
+                                <% end %>                                
                             <% end %>
                         </select>
                     </div>
                 </div>
                 <br>
 
-                <div class="dcf-form-group dcf-input-group">
-			        <div class="dcf-input-checkbox">
-			            <input type="checkbox" <%= 'checked="checked"' if event.has_authorization || (event.id.nil? && !preset_event.nil?) %> id="authorize_tools_checkbox" name="authorize_tools_checkbox">
-			            <label title="Authorize Tools" for="authorize_tools_checkbox"><span class="dcf-sr-only">Authorize Tools</span></label>
-			        </div>
-                    <div class="dcf-form-group">
-                        <label for="specific-group">Authorize Tool(s) (use Shift or Ctrl/Cmd to select multiple):</label>
-                        <select class="dcf-txt-sm" multiple="multiple" id="specific-tools" name="specific_tools[]" >
+                <div>
+                    <div class="dcf-input-checkbox dcf-mt-6">
+                        <input type="checkbox" <%= 'checked="checked"' if event.has_authorization || (event.id.nil? && !preset_event.nil?) %> id="authorize_tools_checkbox" name="authorize_tools_checkbox">
+                        <label for="authorize_tools_checkbox">Authorize a tool for this event</label>
+                    </div>
+                    <div id="tools-for-authorizing" >
+                        <label for="specific-group">Use Shift or Ctrl/Cmd to select multiple tools</label>
+                        <select id="specific-tools" name="specific_tools[]" class="use-select2" multiple size="8" >
                             <% all_tools.each do |tool| %>
                                 <% if event.id.nil? %>
-                                    <option <%= 'selected="selected"' if !preset_event.nil? and preset_event.get_resource_ids.include?(tool.id)  %> value="<%=tool.id%>"><%= tool.name %>- <%= tool.model %></option>
+                                    <option <%= 'selected="selected"' if !preset_event.nil? and preset_event.get_resource_ids.include?(tool.id)  %> value="<%=tool.id%>"><%= "#{tool.category_name} - #{tool.name} - #{tool.model}" %></option>
                                 <% else%>
-                                    <option <%= 'selected="selected"' if authorized_tools_ids.include?(tool.id) %> value="<%=tool.id%>"><%= tool.name %>- <%= tool.model %></option>
+                                    <option <%= 'selected="selected"' if authorized_tools_ids.include?(tool.id) %> value="<%=tool.id%>"><%= "#{tool.category_name} - #{tool.name} - #{tool.model}" %></option>
                                 <% end %>
                             <% end %>
                         </select>
                     </div>
                 </div>
+                <br>
 
                 <label for="start-date" >Start Date &amp; Time <small class="dcf-required">Required</small></label>
                 <div class="date-time-select">

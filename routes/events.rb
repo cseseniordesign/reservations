@@ -67,6 +67,18 @@ post '/events/:event_id/sign_up_as_non_member/?' do
         redirect back
 	end
 
+	if event.event_code.present? && params[:event_code].blank?
+		# a code is required to sign up
+		flash(:danger, 'Code Required', 'Sorry, a code is required to signup for this event. You have not been signed up for this event.')
+		redirect back
+	elsif !event.event_code.nil? && !params[:event_code].blank?
+		unless params[:event_code] == event.event_code
+			# incorrect code provided
+			flash(:danger, 'Incorrect Code', 'Sorry, the code you entered is incorrect. You have not been signed up for this event.')
+			redirect back
+		end
+	end
+
 	EventSignup.create(
 		:event_id => params[:event_id],
 		:name => params[:name],
@@ -111,6 +123,18 @@ post '/events/:event_id/sign_up/?' do
 	if !event.signup_allowed_for_type?
 	    flash_message(MESSAGE_SIGNUP_NOT_ALLOWED)
         redirect back
+	end
+
+	if event.event_code.present? && params[:event_code].blank?
+		# a code is required to sign up
+		flash(:danger, 'Code Required', 'Sorry, a code is required to signup for this event. You have not been signed up for this event.')
+		redirect back
+	elsif !event.event_code.nil? && !params[:event_code].blank?
+		unless params[:event_code] == event.event_code
+			# incorrect code provided
+			flash(:danger, 'Incorrect Code', 'Sorry, the code you entered is incorrect. You have not been signed up for this event.')
+			redirect back
+		end
 	end
 
 	EventSignup.create(

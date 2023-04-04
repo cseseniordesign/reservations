@@ -81,6 +81,17 @@
 					</select>
                 </div>
             </div>
+			<div class="dcf-form-group dcf-input-group">
+                <div class="dcf-form-group">
+					<label for="email-type">Select the Email Type:</label>
+					<select id="email-type" tabindex="1" name="email_type" class="dcf-input-select">
+						<option value="0"></option>
+						<% Emailer.type_options.each do |cat_id, name| %>
+							<option value="<%= cat_id %>"><%= name %></option>
+						<% end %>
+					</select>
+                </div>
+            </div>
 		</fieldset>
 
 		<fieldset class="dcf-col-100% dcf-col-50%-end@sm">
@@ -154,7 +165,8 @@ require(['jquery'], function ($) {
 				preset_emails.every(obj => {
 					if (obj.id == preset_id) {
 						$('#subject').val(obj.subject);
-						CKEDITOR.instances["body"].setData(obj.body);
+						// need to test emails on staging and make sure the emails send correctly after replacing \n with <br>
+						CKEDITOR.instances["body"].setData(obj.body.replace("\\n", "<br>"));
 						return false;
 					}
 					return true;

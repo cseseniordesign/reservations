@@ -175,20 +175,11 @@ post '/admin/users/:user_id/renew/?' do
         redirect '/admin/users/'
     end
 
-    user.update({
-        :expiration_date => Date.today + 30
-    })
-    
-    if user.space_status.include?("_no_email")
-        status = "expired_no_email"
-        if !user.get_expiration_date.nil? && user.get_expiration_date >= Date.today
-            status = "current_no_email"
-        end
-    else
-        status = "expired"
-        if !user.get_expiration_date.nil? && user.get_expiration_date >= Date.today
-            status = "current"
-        end
+    user.set_expiration_date(Date.today + 30)
+
+    status = "expired"
+    if user.is_current?
+        status = "current"
     end
     
     user.space_status = status
@@ -243,19 +234,43 @@ post '/admin/users/:user_id/edit/?' do
         :last_name => params[:last_name],
         :email => params[:email],
         :username => params[:username],
-        :university_status => params[:university_status],
-        :expiration_date => params[:expiration_date].nil? || params[:expiration_date].empty? ? nil : calculate_time(params[:expiration_date], 0, 0, 'am')
+        :university_status => params[:university_status]
     })
+
+    if params[:expiration_date].nil? || params[:expiration_date].empty?
+        user.set_expiration_date(nil)
+    else
+        user.set_expiration_date(calculate_time(params[:expiration_date], 0, 0, 'am'))
+    end
 
     # figure out if space_status should be expired or current
     status = "expired"
-    if !user.get_expiration_date.nil? && user.get_expiration_date >= Date.today
+    if user.is_current?
         status = "current"
     end
 
-    # if user wants to opt out then add no_email to space_status
-    if params[:email_preference] == "no_email"
-        status = status + "_no_email"
+    if params.checked?('promotional_opt_in')
+        user.promotional_email_status = 1
+    else
+        user.promotional_email_status = 0
+    end
+    
+    if params.checked?('functional_opt_in')
+        user.functional_email_status = 1
+    else
+        user.functional_email_status = 0
+    end
+    
+    if params.checked?('news_opt_in')
+        user.news_email_status = 1
+    else
+        user.news_email_status = 0
+    end
+    
+    if params.checked?('reminder_opt_in')
+        user.reminder_email_status = 1
+    else
+        user.reminder_email_status = 0
     end
 
     user.space_status = status
@@ -335,6 +350,11 @@ post '/admin/users/create/?' do
     user.save
 
     user.set_image_data(params)
+    if params[:expiration_date].nil? || params[:expiration_date].empty?
+        user.set_expiration_date(nil)
+    else
+        user.set_expiration_date(calculate_time(params[:expiration_date], 0, 0, 'am'))
+    end
 
     flash :success, 'User Created', 'Your user has been created.'
     redirect '/admin/users/'

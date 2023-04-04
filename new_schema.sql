@@ -471,7 +471,7 @@ Clean up after yourself.  We need everyone to plan for an appropriate amount of 
 Thank you, 
 Your NIS Staff'
 );
-=======
+
 -- Create alerts table
 CREATE TABLE IF NOT EXISTS `alerts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -512,3 +512,48 @@ CREATE TABLE `reservation`.`vehicles` (
   `resource_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1
+
+-- Create preset_events_has_resource_reservations table
+    CREATE TABLE IF NOT EXISTS `preset_events_has_resource_reservations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `preset_events_id` int(11) NOT NULL,
+  `resource_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1
+
+-- Add authorized_event column to resource_authorizations
+ALTER TABLE `reservation`.`resource_authorizations` 
+ADD COLUMN `authorized_event` INT(11) NULL DEFAULT NULL AFTER `authorized_date`;
+
+-- Create Scheduling Event Type
+INSERT INTO `reservation`.`event_types` (`id`, `description`, `service_space_id`) VALUES ('10', 'Scheduling', '1');
+
+-- Alter event table to include "private" column
+ALTER TABLE `reservation`.`events` 
+ADD COLUMN `is_private` TINYINT(1) NULL DEFAULT 0 AFTER `trainer_confirmed`;
+
+-- Alter event table to include "event_code" column
+ALTER TABLE `reservation`.`events` 
+ADD COLUMN `event_code` VARCHAR(255) NULL AFTER `is_private`;
+
+-- Add email status columns to users table
+ALTER TABLE `reservation`.`users`
+ADD COLUMN `functional_email_status` TINYINT(1) DEFAULT 1 after `expiration_date`,
+ADD COLUMN `news_email_status` TINYINT(1) DEFAULT 1 after `functional_email_status`,
+ADD COLUMN `reminder_email_status` TINYINT(1) DEFAULT 1 after `news_email_status`,
+ADD COLUMN `promotional_email_status` TINYINT(1) DEFAULT 1 after `reminder_email_status`;
+
+-- Add email types table
+CREATE TABLE IF NOT EXISTS `reservation`.`email_types` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NULL,
+  PRIMARY KEY (`id`));
+
+-- Insert default email types
+CREATE TABLE `reservation`.`email_types` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NULL,
+  PRIMARY KEY (`id`));
+
+-- Add scheduling event type
+INSERT INTO `reservation`.`event_types` (`id`, `description`, `service_space_id`) VALUES ('10', 'Scheduling', '1');
