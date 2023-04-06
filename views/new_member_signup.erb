@@ -8,22 +8,22 @@
         <fieldset>
             <div class="dcf-form-group">
                 <label for="first-name">First Name</label>
-                <input class="dcf-w-100%" type="text" id="first-name" name="first_name"/>
+                <input class="dcf-w-100%" type="text" id="first-name" name="first_name" required/>
             </div>
 
             <div class="dcf-form-group">
                 <label for="last-name">Last Name</label>
-                <input class="dcf-w-100%" type="text" id="last-name" name="last_name" />
+                <input class="dcf-w-100%" type="text" id="last-name" name="last_name" required/>
             </div>
 
             <div class="dcf-form-group">
                 <label for="email">Email Address</label>
-                <input class="dcf-w-100%" type="text" id="email" name="email" />
+                <input class="dcf-w-100%" type="text" id="email" name="email" required/>
             </div>
 
             <div class="dcf-form-group">
                 <label for="university-status">University Status</label>
-                <select id="university-status" name="university_status">
+                <select id="university-status" name="university_status" required>
                     <% USER_STATII.each do |word| %>
                         <option value="<%= word %>"><%= word %></option>
                     <% end %>
@@ -33,7 +33,7 @@
             <div class="dcf-form-group">
                 <div class="dcf-datepicker">
                     <label for="date-of-birth">Date of Birth</label>
-                    <input id="date-of-birth" name="date-of-birth" type="text" value=<%= Date.today.strftime('%m/%d/%Y')%>/>
+                    <input id="date-of-birth" name="date-of-birth" type="text" value=<%= Date.today.strftime('%m/%d/%Y')%> required/>
                 </div>
             </div>
 
@@ -41,11 +41,11 @@
                 <div id="unl-association">
                 <label for="unl-association">Are you a UNL Student, Faculty, or Staff Member?</label>
                     <div class="dcf-input-radio">
-                        <input type="radio" id="unl-asso-yes" name="unl-asso-option" value="yes">
+                        <input type="radio" id="unl-asso-yes" name="unl-asso-option" value="yes" required>
                         <label for="unl-asso-yes">Yes</label>
                     </div>
                     <div class="dcf-input-radio">
-                        <input type="radio" id="unl-asso-no" name="unl-asso-option" value="no">
+                        <input type="radio" id="unl-asso-no" name="unl-asso-option" value="no" required>
                         <label for="unl-asso-no">No</label>
                     </div>
                 </div>
@@ -164,7 +164,7 @@
             </div>
 
             <div class="dcf-input-checkbox">
-                <input type="checkbox" name="vehicle-update" id="vehicle-update">
+                <input type="checkbox" name="vehicle-update" id="vehicle-update" required>
                 <label for="vehicle-update">I UNDERSTAND I MUST UPDATE VEHICLE INFORMATION AS CHANGES OCCUR.</label>
             </div>
 
@@ -172,22 +172,22 @@
                 <h6>Primary Emergency Contact</h6>
                 <div class="dcf-form-group">
                     <label for="name1">Name</label>
-                    <input type="text" id="name1" name="name1"/>
+                    <input type="text" id="name1" name="name1" required/>
                 </div>
 
                 <div class="dcf-form-group">
                     <label for="relationship1">Relationship</label>
-                    <input type="text" id="relationship1" name="relationship1"/>
+                    <input type="text" id="relationship1" name="relationship1" required/>
                 </div>
 
                 <div class="dcf-form-group">
                     <label for="primary-phone1">Primary Phone Number</label>
-                    <input type="text" id="primary_phone1" name="primary_phone1"/>
+                    <input type="text" id="primary_phone1" name="primary_phone1" required/>
                 </div>
 
                 <div class="dcf-form-group">
                     <label for="secondary_phone1">Secondary Phone Number</label>
-                    <input type="text" id="secondary_phone1" name="secondary_phone1"/>
+                    <input type="text" id="secondary_phone1" name="secondary_phone1" required/>
                 </div>
             </div>
 
@@ -248,6 +248,7 @@
             const parkingCheckbox = $('#parking-checkbox').attr('hidden');
             if (typeof parkingCheckbox == 'undefined' || garage == false) {
                 $('#parking-checkbox').attr('hidden','hidden');
+                $('#parking-fine').removeAttr('required');
                 $('input[name=parking-fine]').prop('checked',false);
             }
         });
@@ -265,6 +266,7 @@
             const parkingCheckbox = $('#parking-checkbox').attr('hidden');
             if (typeof parkingCheckbox == 'undefined' || garage == false) {
                 $('#parking-checkbox').attr('hidden','hidden');
+                $('#parking-fine').removeAttr('required');
                 $('input[name=parking-fine]').prop('checked',false);
             }
         });
@@ -277,14 +279,17 @@
             const parkingCheckbox = $('#parking-checkbox').attr('hidden');
             if (typeof parkingCheckbox == 'undefined' || garage == false) {
                 $('#parking-checkbox').attr('hidden','hidden');
+                $('#parking-fine').removeAttr('required');
                 $('input[name=parking-fine]').prop('checked',false);
             }
         });
         $('#unl-garage-yes').click(function (click) {
             $('#parking-checkbox').removeAttr('hidden');
+            $('#parking-fine').attr('required','required');
         });
         $('#unl-garage-no').click(function (click) {
             $('#parking-checkbox').attr('hidden','hidden');
+            $('#parking-fine').removeAttr('required');
             $('input[name=parking-fine]').prop('checked',false);
         });
     });
