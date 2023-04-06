@@ -36,24 +36,6 @@ post '/me/?' do
   else
     @user.promotional_email_status = 1
   end
-
-  if params.checked?('functional_opt_out')
-    @user.functional_email_status = 0
-  else
-    @user.functional_email_status = 1
-  end
-
-  if params.checked?('news_opt_out')
-    @user.news_email_status = 0
-  else
-    @user.news_email_status = 1
-  end
-
-  if params.checked?('reminder_opt_out')
-    @user.reminder_email_status = 0
-  else
-    @user.reminder_email_status = 1
-  end
   @user.space_status = status
   @user.save
 
