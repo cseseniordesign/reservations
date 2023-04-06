@@ -25,19 +25,6 @@
         <input type="checkbox" id="promotional-opt-out" name="promotional_opt_out" <%= 'checked="checked"' if !@user.promotional_email_status %> />
         <label for="promotional-opt-out">I no longer want to receive promotional emails from Nebraska Innovation Studio.</label>
     </div>
-    <div class="dcf-form-group dcf-input-checkbox">
-        <input type="checkbox" id="functional-opt-out" name="functional_opt_out" <%= 'checked="checked"' if !@user.functional_email_status %> />
-        <label for="functional-opt-out">I no longer want to receive functional emails from Nebraska Innovation Studio.</label>
-    </div>
-    <div class="dcf-form-group dcf-input-checkbox">
-        <input type="checkbox" id="news-opt-out" name="news_opt_out" <%= 'checked="checked"' if !@user.news_email_status %> />
-        <label for="news-opt-out">I no longer want to receive news emails from Nebraska Innovation Studio.</label>
-    </div>
-    <div class="dcf-form-group dcf-input-checkbox">
-        <input type="checkbox" id="reminder-opt-out" name="reminder_opt_out" <%= 'checked="checked"' if !@user.reminder_email_status %> />
-        <label for="reminder-opt-out">I no longer want to receive reminder emails from Nebraska Innovation Studio.</label>
-    </div>
-    
 
     <button type="submit" class="dcf-btn dcf-btn-primary">Save</button>
 </div>

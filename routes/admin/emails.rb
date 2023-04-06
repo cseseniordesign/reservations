@@ -88,13 +88,9 @@ post '/admin/email/send/?' do
 		flash(:error, 'Error', 'Please select an email type')
 		redirect back
 	elsif params[:email_type].to_i == 1
-		all_users = User.where(:service_space_id => SS_ID).where(:promotional_email_status => 1).all
+		all_users = User.where(:service_space_id => SS_ID).where(:general_email_status => 1).all
 	elsif params[:email_type].to_i == 2
-		all_users = User.where(:service_space_id => SS_ID).where(:functional_email_status => 1).all
-	elsif params[:email_type].to_i == 3
-		all_users = User.where(:service_space_id => SS_ID).where(:news_email_status => 1).all
-	elsif params[:email_type].to_i == 4
-		all_users = User.where(:service_space_id => SS_ID).where(:reminder_email_status => 1).all
+		all_users = User.where(:service_space_id => SS_ID).where(:promotional_email_status => 1).all
 	end
 
 	all_allerts = Alert.all
