@@ -1,5 +1,6 @@
 require 'models/event'
 require 'models/event_signup'
+require 'models/emergency_contact'
 require 'classes/emailer'
 require 'recaptcha'
 
@@ -132,13 +133,17 @@ EMAIL
 		make3 = params[:make3]
 		model3 = params[:model3]
 
+		vehicle1_flag = false
+		vehicle2_flag = false
+		vehicle3_flag = false
+
 		if !license_plate1.blank? && !state1.blank? && !make1.blank? && !model1.blank?
 			begin
 				vehicle1.license_plate = license_plate1
 				vehicle1.state = state1
 				vehicle1.make = make1
 				vehicle1.model = model1
-
+				vehicle1_flag = true
 			rescue => exception
 				flash(:error, 'Vehicle 1 Addition Failed', exception.message)
 				redirect back
@@ -151,7 +156,7 @@ EMAIL
 				vehicle2.state = state2
 				vehicle2.make = make2
 				vehicle2.model = model2
-
+				vehicle2_flag = true
 			rescue => exception
 				flash(:error, 'Vehicle 2 Addition Failed', exception.message)
 				redirect back
@@ -164,7 +169,7 @@ EMAIL
 				vehicle3.state = state3
 				vehicle3.make = make3
 				vehicle3.model = model3
-
+				vehicle3_flag = true
 			rescue => exception
 				flash(:error, 'Vehicle 3 Addition Failed', exception.message)
 				redirect back
@@ -174,14 +179,69 @@ EMAIL
 		user.space_status = 'expired'
 		user.service_space_id = SS_ID
 
+		emergency1 = EmergencyContact.new
+		name1 = params[:name1]
+		relationship1 = params[:relationship1]
+		primary_phone1 = params[:primary_phone1]
+		secondary_phone1 = params[:secondary_phone1]
+
+		emergency2 = EmergencyContact.new
+		name2 = params[:name2]
+		relationship2 = params[:relationship2]
+		primary_phone2 = params[:primary_phone2]
+		secondary_phone2 = params[:secondary_phone2]
+
+		emergency1_flag = false
+		emergency2_flag = false
+
+		if !name1.blank? && !relationship1.blank? && !primary_phone1.blank? && !secondary_phone1.blank?
+			begin
+				emergency1.name = name1
+				emergency1.relationship = relationship1
+				emergency1.primary_phone_number = primary_phone1
+				emergency1.secondary_phone_number = secondary_phone1
+				emergency1_flag = true
+			rescue => exception
+				flash(:error, 'Emergency Contact 1 Failed', exception.message)
+				redirect back
+			end
+		end
+
+		if !name2.blank? && !relationship2.blank? && !primary_phone2.blank? && !secondary_phone2.blank?
+			begin
+				emergency2.name = name2
+				emergency2.relationship = relationship2
+				emergency2.primary_phone_number = primary_phone2
+				emergency2.secondary_phone_number = secondary_phone2
+				emergency2_flag = true
+			rescue => exception
+				flash(:error, 'Emergency Contact 2 Failed', exception.message)
+				redirect back
+			end
+		end
+
 		User.transaction do
+			if emergency1_flag
+				emergency1.save
+				user.primary_emergency_contact_id = emergency1.id
+			end
+			if emergency2_flag
+				emergency2.save
+				user.secondary_emergency_contact_id = emergency2.id
+			end
 			user.save
-			vehicle1.user_id = user.id
-			vehicle2.user_id = user.id
-			vehicle3.user_id = user.id
-			vehicle1.save
-			vehicle2.save
-			vehicle3.save
+			if vehicle1_flag
+				vehicle1.user_id = user.id
+				vehicle1.save
+			end
+			if vehicle2_flag
+				vehicle2.user_id = user.id
+				vehicle2.save
+			end
+			if vehicle3_flag
+				vehicle3.user_id = user.id
+				vehicle3.save
+			end
 		end
 
 
