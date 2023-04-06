@@ -545,8 +545,9 @@ CREATE TABLE IF NOT EXISTS `reservation`.`emergency_contacts` (
   `secondary_phone_number` VARCHAR(45) NULL,
   PRIMARY KEY (`id`));
 
-
 --Update user's table to include primary and secondary contact ids.
 ALTER TABLE `reservation`.`users`
 ADD COLUMN `primary_emergency_contact_id` INT(11) NULL DEFAULT NULL AFTER `date_of_birth`,
-ADD COLUMN `secondary_emergency_contact_id` INT(11) NULL DEFAULT NULL AFTER `primary_emergency_contact_id`;
+ADD COLUMN `secondary_emergency_contact_id` INT(11) NULL DEFAULT NULL AFTER `primary_emergency_contact_id`,
+ADD FOREIGN KEY (primary_emergency_contact_id) REFERENCES emergency_contacts(id),
+ADD FOREIGN KEY (secondary_emergency_contact_id) REFERENCES emergency_contacts(id);
