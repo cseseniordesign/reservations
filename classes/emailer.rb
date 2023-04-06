@@ -2,17 +2,13 @@ require 'pony'
 
 class Emailer
 
-  TYPE_PROMOTIONAL = 1
-  TYPE_FUNCTIONAL = 2
-  TYPE_NEWS = 3
-  TYPE_REMINDER = 4
+  TYPE_GENERAL = 1
+  TYPE_PROMOTIONAL = 2
 
   def self.type_options
       {
+        TYPE_GENERAL => 'General',
         TYPE_PROMOTIONAL => 'Promotional',
-        TYPE_FUNCTIONAL => 'Functional',
-        TYPE_NEWS => 'News',
-        TYPE_REMINDER => 'Reminder',
       }
   end
 

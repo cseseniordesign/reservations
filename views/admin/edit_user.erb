@@ -38,20 +38,12 @@
                 <label for="email-preferences">Email Preferences</label>
                 <div style="padding-left: 20px; padding-top: 20px;">
                     <div class="dcf-form-group dcf-input-checkbox">
+                        <input type="checkbox" id="general-opt-in" name="general_opt_in" <%= 'checked="checked"' if user.general_email_status %> />
+                        <label for="general-opt-in">General</label>
+                    </div>
+                    <div class="dcf-form-group dcf-input-checkbox">
                         <input type="checkbox" id="promotional-opt-in" name="promotional_opt_in" <%= 'checked="checked"' if user.promotional_email_status %> />
                         <label for="promotional-opt-in">Promotional</label>
-                    </div>
-                    <div class="dcf-form-group dcf-input-checkbox">
-                        <input type="checkbox" id="functional-opt-in" name="functional_opt_in" <%= 'checked="checked"' if user.functional_email_status %> />
-                        <label for="functional-opt-in">Functional</label>
-                    </div>
-                    <div class="dcf-form-group dcf-input-checkbox">
-                        <input type="checkbox" id="news-opt-in" name="news_opt_in" <%= 'checked="checked"' if user.news_email_status %> />
-                        <label for="news-opt-in">News</label>
-                    </div>
-                    <div class="dcf-form-group dcf-input-checkbox">
-                        <input type="checkbox" id="reminder-opt-in" name="reminder_opt_in" <%= 'checked="checked"' if user.reminder_email_status %> />
-                        <label for="reminder-opt-in">Reminder</label>
                     </div>
                 </div>
             </div>
