@@ -82,15 +82,15 @@ class User < ActiveRecord::Base
   end
 
   def set_expiration_date(exp)
-    if !exp.nil?
-      if self.get_expiration_date.nil? && exp >= Date.today
-        self.send_vehicle_information_update
-        self.send_activation_email
-      end
-      if !self.get_expiration_date.nil? && self.get_expiration_date < Date.today && exp >= Date.today
-        self.send_vehicle_information_update
-      end
-    end
+    # if !exp.nil?
+    #   if self.get_expiration_date.nil? && exp >= Date.today
+    #     self.send_vehicle_information_update
+    #     self.send_activation_email
+    #   end
+    #   if !self.get_expiration_date.nil? && self.get_expiration_date < Date.today && exp >= Date.today
+    #     self.send_vehicle_information_update
+    #   end
+    # end
     self.expiration_date = exp
     self.save
   end
