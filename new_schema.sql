@@ -546,11 +546,10 @@ CREATE TABLE IF NOT EXISTS `reservation`.`email_types` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL,
   PRIMARY KEY (`id`));
-
-
--- Add scheduling event type
-INSERT INTO `reservation`.`event_types` (`id`, `description`, `service_space_id`) VALUES ('10', 'Scheduling', '1');
-
+  
 -- Insert email types 
 INSERT INTO `reservation`.`email_types` (`name`) VALUES ('Promotional');
 INSERT INTO `reservation`.`email_types` (`name`) VALUES ('General');
+
+-- Add scheduling event type
+INSERT INTO `reservation`.`event_types` (`id`, `description`, `service_space_id`) VALUES ('10', 'Scheduling', '1');

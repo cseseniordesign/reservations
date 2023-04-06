@@ -254,7 +254,7 @@ post '/admin/users/:user_id/edit/?' do
     else
         user.general_email_status = 0
     end
-
+    
     if params.checked?('promotional_opt_in')
         user.promotional_email_status = 1
     else

@@ -36,6 +36,7 @@ post '/me/?' do
   else
     @user.promotional_email_status = 1
   end
+  
   @user.space_status = status
   @user.save
 
