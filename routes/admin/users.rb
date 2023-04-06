@@ -342,7 +342,6 @@ post '/admin/users/create/?' do
     end
 
     params.delete('password2')
-    params[:expiration_date] = params[:expiration_date].nil? || params[:expiration_date].empty? ? nil : calculate_time(params[:expiration_date], 0, 0, 'am')
     user = User.new(params)
     user.created_by_user_id = @user.id
     user.space_status = 'current'

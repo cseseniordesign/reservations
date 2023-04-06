@@ -18,7 +18,5 @@ if users_expiring_today.count > 0
 	users_expiring_today.each do |user|
 		body = body + "<p>Full Name: #{user.first_name} #{user.last_name}, Username: #{user.username}</p>"
 	end
-	# change this to innovationstudio@unl.edu after testing instead of the email test user
-	email_tester = User.where("username like ?", "%emailtest%").first
-	Emailer.mail("#{email_tester.email}", "Expiring Users' Parking Information Update", body, '', nil)
+	Emailer.mail("innovationstudio@unl.edu", "Expiring Users' Parking Information Update", body, '', nil)
 end

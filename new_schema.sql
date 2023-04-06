@@ -532,6 +532,10 @@ INSERT INTO `reservation`.`event_types` (`id`, `description`, `service_space_id`
 ALTER TABLE `reservation`.`events` 
 ADD COLUMN `is_private` TINYINT(1) NULL DEFAULT 0 AFTER `trainer_confirmed`;
 
+-- Alter event table to include "event_code" column
+ALTER TABLE `reservation`.`events` 
+ADD COLUMN `event_code` VARCHAR(255) NULL AFTER `is_private`;
+
 -- Add email status columns to users table
 ALTER TABLE `reservation`.`users`
 ADD COLUMN `functional_email_status` TINYINT(1) DEFAULT 1 after `expiration_date`,
