@@ -138,8 +138,6 @@ EMAIL
 				vehicle1.state = state1
 				vehicle1.make = make1
 				vehicle1.model = model1
-				vehicle1.user_id = user.id
-				vehicle1.save
 
 			rescue => exception
 				flash(:error, 'Vehicle 1 Addition Failed', exception.message)
@@ -153,8 +151,6 @@ EMAIL
 				vehicle2.state = state2
 				vehicle2.make = make2
 				vehicle2.model = model2
-				vehicle2.user_id = user.id
-				vehicle2.save
 
 			rescue => exception
 				flash(:error, 'Vehicle 2 Addition Failed', exception.message)
@@ -168,8 +164,6 @@ EMAIL
 				vehicle3.state = state3
 				vehicle3.make = make3
 				vehicle3.model = model3
-				vehicle3.user_id = user.id
-				vehicle3.save
 
 			rescue => exception
 				flash(:error, 'Vehicle 3 Addition Failed', exception.message)
@@ -179,7 +173,17 @@ EMAIL
 
 		user.space_status = 'expired'
 		user.service_space_id = SS_ID
-		user.save
+
+		User.transaction do
+			user.save
+			vehicle1.user_id = user.id
+			vehicle2.user_id = user.id
+			vehicle3.user_id = user.id
+			vehicle1.save
+			vehicle2.save
+			vehicle3.save
+		end
+
 
 		# flash a message that this works
 		flash(:success, "You're signed up!", "Thanks for signing up! Don't forget, orientation is #{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}. Check your email for more information about the event and where to park.")

@@ -550,3 +550,5 @@ CREATE TABLE IF NOT EXISTS `reservation`.`emergency_contacts` (
 ALTER TABLE `reservation`.`users`
 ADD COLUMN `primary_emergency_contact_id` INT(11) NULL DEFAULT NULL AFTER `date_of_birth`,
 ADD COLUMN `secondary_emergency_contact_id` INT(11) NULL DEFAULT NULL AFTER `primary_emergency_contact_id`;
+
+
