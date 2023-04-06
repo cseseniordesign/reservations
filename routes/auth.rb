@@ -5,10 +5,8 @@ get '/me/?' do
   require_login
   @breadcrumbs << {:text => 'My Account'}
 
-  vehicles = Vehicle.where(:user_id => @user.id).all
-
   erb :me, :layout => :fixed, :locals => {
-    :vehicles => vehicles
+    :vehicles => Vehicle.where(:user_id => @user.id).all
   }
 end
 

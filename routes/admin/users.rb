@@ -206,6 +206,7 @@ get '/admin/users/:user_id/edit/?' do
     @breadcrumbs << {:text => 'Admin Users', :href => '/admin/users/'} << {:text => 'Edit User'}
     erb :'admin/edit_user', :layout => :fixed, :locals => {
         :user => user,
+        :vehicles => Vehicle.where(:user_id => user.id).all,
         :permissions => Permission.where.not(:id => Permission::SUPER_USER).all,
         :su_permission => Permission.find(Permission::SUPER_USER)
     }
