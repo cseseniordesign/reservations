@@ -553,3 +553,7 @@ INSERT INTO `reservation`.`email_types` (`name`) VALUES ('General');
 
 -- Add scheduling event type
 INSERT INTO `reservation`.`event_types` (`id`, `description`, `service_space_id`) VALUES ('10', 'Scheduling', '1');
+
+-- Add INOP column to resources table
+ALTER TABLE `reservation`.`resources`
+ADD COLUMN `INOP` TINYINT(1) DEFAULT 0 after `max_reservations_per_user`;
