@@ -2,6 +2,7 @@ require 'models/user'
 require 'models/vehicle'
 require 'models/resource'
 require 'models/permission'
+require 'models/emergency_contact'
 require 'csv'
 require 'date'
 
@@ -203,12 +204,24 @@ get '/admin/users/:user_id/edit/?' do
         redirect '/admin/users/'
     end
 
+    primary_emergency_contact = EmergencyContact.new
+    if user.primary_emergency_contact_id.present?
+        primary_emergency_contact = EmergencyContact.find_by(:id => user.primary_emergency_contact_id)
+    end
+
+    secondary_emergency_contact = EmergencyContact.new
+    if user.secondary_emergency_contact_id.present?
+        secondary_emergency_contact = EmergencyContact.find_by(:id => user.secondary_emergency_contact_id)
+    end
+
     @breadcrumbs << {:text => 'Admin Users', :href => '/admin/users/'} << {:text => 'Edit User'}
     erb :'admin/edit_user', :layout => :fixed, :locals => {
         :user => user,
         :vehicles => Vehicle.where(:user_id => user.id).all,
         :permissions => Permission.where.not(:id => Permission::SUPER_USER).all,
-        :su_permission => Permission.find(Permission::SUPER_USER)
+        :su_permission => Permission.find(Permission::SUPER_USER),
+        :primary_emergency_contact => primary_emergency_contact,
+        :secondary_emergency_contact => secondary_emergency_contact
     }
 end
 
