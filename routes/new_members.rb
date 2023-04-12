@@ -194,7 +194,7 @@ EMAIL
 		emergency1_flag = false
 		emergency2_flag = false
 
-		if !name1.blank? && !relationship1.blank? && !primary_phone1.blank? && !secondary_phone1.blank?
+		if !name1.blank? && !relationship1.blank? && !primary_phone1.blank?
 			begin
 				emergency1.name = name1
 				emergency1.relationship = relationship1
@@ -202,12 +202,12 @@ EMAIL
 				emergency1.secondary_phone_number = secondary_phone1
 				emergency1_flag = true
 			rescue => exception
-				flash(:error, 'Emergency Contact 1 Failed', exception.message)
+				flash(:error, 'Primary Emergency Contact Save Failed', exception.message)
 				redirect back
 			end
 		end
 
-		if !name2.blank? && !relationship2.blank? && !primary_phone2.blank? && !secondary_phone2.blank?
+		if !name2.blank? && !relationship2.blank? && !primary_phone2.blank?
 			begin
 				emergency2.name = name2
 				emergency2.relationship = relationship2
@@ -215,7 +215,7 @@ EMAIL
 				emergency2.secondary_phone_number = secondary_phone2
 				emergency2_flag = true
 			rescue => exception
-				flash(:error, 'Emergency Contact 2 Failed', exception.message)
+				flash(:error, 'Secondary Emergency Contact Save Failed', exception.message)
 				redirect back
 			end
 		end
@@ -243,7 +243,6 @@ EMAIL
 				vehicle3.save
 			end
 		end
-
 
 		# flash a message that this works
 		flash(:success, "You're signed up!", "Thanks for signing up! Don't forget, orientation is #{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}. Check your email for more information about the event and where to park.")

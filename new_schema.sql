@@ -505,8 +505,8 @@ CREATE TABLE `reservation`.`vehicles` (
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-    -- Create event_authorizations table
-    CREATE TABLE IF NOT EXISTS `event_authorizations` (
+-- Create event_authorizations table
+CREATE TABLE IF NOT EXISTS `event_authorizations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `event_id` int(11) NOT NULL,
   `resource_id` int(11) NOT NULL,
@@ -551,3 +551,7 @@ ADD COLUMN `primary_emergency_contact_id` INT(11) NULL DEFAULT NULL AFTER `date_
 ADD COLUMN `secondary_emergency_contact_id` INT(11) NULL DEFAULT NULL AFTER `primary_emergency_contact_id`,
 ADD FOREIGN KEY (primary_emergency_contact_id) REFERENCES emergency_contacts(id),
 ADD FOREIGN KEY (secondary_emergency_contact_id) REFERENCES emergency_contacts(id);
+
+-- Add attended column to event_signups table
+ALTER TABLE `reservation`.`event_signups` 
+ADD COLUMN `attended` INT(11) NOT NULL DEFAULT 0 AFTER `email`;
