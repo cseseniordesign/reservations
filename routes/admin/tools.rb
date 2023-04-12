@@ -21,6 +21,44 @@ get '/admin/tools/?' do
 	}
 end
 
+post '/admin/tools/?' do
+	require_login
+	@breadcrumbs << {:text => 'Admin Tools'}
+	tools = Resource.where(:service_space_id => SS_ID).order(:name).all.to_a
+
+	# Revert tools INOP status when a pre-checked checkbox is unchecked
+	tools.each do |tool|
+		unless params.has_key?("INOP_#{tool.id}") && params["INOP_#{tool.id}"] == 'on' 
+			if tool.INOP
+				tool.INOP = false
+				tool.save
+			end 
+		end	
+	end
+	
+	#  Mark tool as INOP tool when checking the INOP checkbox
+    params.each do |key, value|
+        if key.start_with?('INOP_') && value == 'on'
+
+            tool_id = key.split('INOP_')[1].to_i
+			tool_record = Resource.find_by(:id => tool_id)
+
+			if !tool_record.INOP 
+				tool_record.INOP = true
+				tool_record.save
+				# add notifying members via email code here 
+				#  when a user already has a piece of equipment 
+				#  reserved, but an admin marks it as INOP before their reservation date
+			end
+            	
+        end
+    end
+
+	flash(:success, 'INOP Statuses Updateded', "Your tool INOP Statuses has been updateded.")
+	redirect back
+	
+end
+
 get '/admin/tools/create/?' do
 	require_login
 	@breadcrumbs << {:text => 'Admin Tools', :href => '/admin/tools/'} << {:text => 'Create Tool'}

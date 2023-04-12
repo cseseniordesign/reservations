@@ -1,38 +1,48 @@
 <h1 class="dcf-txt-h3" id="tool-list-header">All Tools</h1>
-
 <a class="dcf-btn dcf-btn-primary" href="/admin/tools/create/">Create Tool</a><br><br>
 
-<table class="dcf-table dcf-table-bordered" aria-describedby="tool-list-header">
-    <thead>
-        <tr>
-            <th scope="col">Category</th>
-            <th scope="col">Tool</th>
-            <th scope="col">Model</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-    <% tools.each do |tool| %>
-        <tr>
-            <td>
-                <%= tool.category_name %>
-            </td>
-            <td>
-                <%= tool.name %>
-            </td>
-            <td>
-                <%= tool.model %>
-            </td>
-            <td class="table-actions">
-                <a href="/admin/tools/<%= tool.id %>/edit/" class="dcf-btn dcf-btn-primary dcf-mt-1">Edit</a>
-                <form method="POST" action="/admin/tools/<%= tool.id %>/delete/" class="dcf-form delete-form delete-tool">
-                    <button class="dcf-btn dcf-btn-secondary dcf-mt-1" type="submit">Delete</button>
-                </form>
-            </td>
-        </tr>
-    <% end %>
-    </tbody>
-</table>
+<form class="dcf-form" id="tool-INOP-status" action="" method="POST">
+    <table class="dcf-table dcf-table-bordered" aria-describedby="tool-list-header">
+        <thead>
+            <tr>
+                <th scope="col">Category</th>
+                <th scope="col">Tool</th>
+                <th scope="col">Model</th>
+                <th scope="col">INOP</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        <% tools.each do |tool| %>
+            <tr>
+                <td>
+                    <%= tool.category_name %>
+                </td>
+                <td>
+                    <%= tool.name %>
+                </td>
+                <td>
+                    <%= tool.model %>
+                </td>
+                <td>
+                    <div class="dcf-input-checkbox">
+                        <input <%= 'checked="checked"' if tool.INOP %> id="INOP-checkbox_<%= tool.id %>" type="checkbox" name="INOP_<%= tool.id %>"  >
+                        <label for="INOP-checkbox_<%= tool.id %>"></label>
+                    </div>
+                </td>
+                <td class="table-actions">
+                    <a href="/admin/tools/<%= tool.id %>/edit/" class="dcf-btn dcf-btn-primary dcf-mt-1">Edit</a>
+                    <form method="POST" action="/admin/tools/<%= tool.id %>/delete/" class="dcf-form delete-form delete-tool">
+                        <button class="dcf-btn dcf-btn-secondary dcf-mt-1" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        <% end %>
+        </tbody>
+    </table>
+    <br>
+    <button class="dcf-btn dcf-btn-primary" type="submit">Update Tools INOP Statuses</button>   
+</form>
 
 <% append_script_declaration(%q[require(['jquery'], function($) {
     $(document).ready(function() {
