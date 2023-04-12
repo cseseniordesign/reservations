@@ -35,11 +35,17 @@
             </div>
 
             <div class="dcf-form-group">
-                <label for="email-preference">Email Preference</label>
-                <select id="email-preference" name="email_preference">
-                    <option <%= 'selected="selected"' if !user.space_status.include? "no_email" %> value="email">Opt-in</option>
-                    <option <%= 'selected="selected"' if user.space_status.include? "no_email" %> value="no_email">Opt-out</option>
-                </select>
+                <label for="email-preferences">Email Preferences</label>
+                <div style="padding-left: 20px; padding-top: 20px;">
+                    <div class="dcf-form-group dcf-input-checkbox">
+                        <input type="checkbox" id="general-opt-in" name="general_opt_in" <%= 'checked="checked"' if user.general_email_status %> />
+                        <label for="general-opt-in">General</label>
+                    </div>
+                    <div class="dcf-form-group dcf-input-checkbox">
+                        <input type="checkbox" id="promotional-opt-in" name="promotional_opt_in" <%= 'checked="checked"' if user.promotional_email_status %> />
+                        <label for="promotional-opt-in">Promotional</label>
+                    </div>
+                </div>
             </div>
 
             <div class="dcf-form-group">

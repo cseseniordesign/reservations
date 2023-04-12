@@ -175,6 +175,22 @@ end
 
 post '/admin/events/create/?' do
 
+	if  params[:title].blank?
+		flash :error, 'Error', 'Please enter event title'
+		redirect back
+	end 
+
+	if  params[:start_date].blank?
+		flash :error, 'Error', 'Please enter event start date'
+		redirect back
+	end
+
+	if  params[:end_date].blank?
+		flash :error, 'Error', 'Please enter event end date'
+		redirect back
+	end
+
+
 	if params[:location] == 'new'
 		# this is a new location, we must create it!
 		location = Location.create(params[:new_location].merge({
@@ -337,6 +353,21 @@ post '/admin/events/:event_id/edit/?' do
 		# that event does not exist
 		flash(:danger, 'Not Found', 'That event does not exist')
 		redirect '/admin/events/'
+	end
+
+	if  params[:title].blank?
+		flash :error, 'Error', 'Please enter event title'
+		redirect back
+	end 
+
+	if  params[:start_date].blank?
+		flash :error, 'Error', 'Please enter event start date'
+		redirect back
+	end
+
+	if  params[:end_date].blank?
+		flash :error, 'Error', 'Please enter event end date'
+		redirect back
 	end
 
 	old_trainer = User.where('id = ?', event.trainer_id)

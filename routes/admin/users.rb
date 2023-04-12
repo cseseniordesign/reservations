@@ -181,10 +181,6 @@ post '/admin/users/:user_id/renew/?' do
         status = "current"
     end
     
-    if user.space_status.include?("_no_email")
-        status = status + "_no_email"
-    end
-    
     user.space_status = status
     user.save
 
@@ -207,11 +203,19 @@ get '/admin/users/:user_id/edit/?' do
     primary_emergency_contact = EmergencyContact.new
     if user.primary_emergency_contact_id.present?
         primary_emergency_contact = EmergencyContact.find_by(:id => user.primary_emergency_contact_id)
+        if primary_emergency_contact.nil?
+            # the primary_emergency_contact_id saved to the user doesn't exist so we will just save a new one
+            primary_emergency_contact = EmergencyContact.new
+        end
     end
 
     secondary_emergency_contact = EmergencyContact.new
     if user.secondary_emergency_contact_id.present?
         secondary_emergency_contact = EmergencyContact.find_by(:id => user.secondary_emergency_contact_id)
+        if secondary_emergency_contact.nil?
+            # the secondary_emergency_contact_id saved to the user doesn't exist so we will just save a new one
+            secondary_emergency_contact = EmergencyContact.new
+        end
     end
 
     @breadcrumbs << {:text => 'Admin Users', :href => '/admin/users/'} << {:text => 'Edit User'}
@@ -265,9 +269,16 @@ post '/admin/users/:user_id/edit/?' do
         status = "current"
     end
 
-    # if user wants to opt out then add no_email to space_status
-    if params[:email_preference] == "no_email"
-        status = status + "_no_email"
+    if params.checked?('general_opt_in')
+        user.general_email_status = 1
+    else
+        user.general_email_status = 0
+    end
+    
+    if params.checked?('promotional_opt_in')
+        user.promotional_email_status = 1
+    else
+        user.promotional_email_status = 0
     end
 
     user.space_status = status
@@ -285,19 +296,24 @@ post '/admin/users/:user_id/edit/?' do
     secondary_contact_phone2 = params[:secondary_contact_phone2]
 
     primary_contact_provided = primary_contact_name.present? && primary_contact_relationship.present? && primary_contact_phone1.present?
-    secondary_contact_provided = secondary_contact_name.present? && secondary_contact_relationship.present? && secondary_contact_phone1.present?
+    primary_contact_blank = primary_contact_name.blank? && primary_contact_relationship.blank? && primary_contact_phone1.blank?
 
-    if primary_contact_provided
-        begin
-            primary_emergency_contact = EmergencyContact.new
-            # check if the user already has a primary emergency contact so we can edit it instead of creating a new one
-            if user.primary_emergency_contact_id.present?
-                primary_emergency_contact = EmergencyContact.find_by(:id => user.primary_emergency_contact_id)
-                if primary_emergency_contact.nil?
-                    # the primary_emergency_contact_id saved to the user doesn't exist so we will just save a new one
-                    primary_emergency_contact = EmergencyContact.new
-                end
+    secondary_contact_provided = secondary_contact_name.present? && secondary_contact_relationship.present? && secondary_contact_phone1.present?
+    secondary_contact_blank = secondary_contact_name.blank? && secondary_contact_relationship.blank? && secondary_contact_phone1.blank?
+
+    begin
+        primary_emergency_contact = EmergencyContact.new
+        has_existing_primary = false
+        # check if the user already has a primary emergency contact so we can edit it instead of creating a new one
+        if user.primary_emergency_contact_id.present?
+            primary_emergency_contact = EmergencyContact.find_by(:id => user.primary_emergency_contact_id)
+            has_existing_primary = primary_emergency_contact.present?
+            if !has_existing_primary
+                # the primary_emergency_contact_id saved to the user doesn't exist so we will just save a new one
+                primary_emergency_contact = EmergencyContact.new
             end
+        end
+        if primary_contact_provided || (has_existing_primary && primary_contact_blank)
             primary_emergency_contact.name = primary_contact_name
             primary_emergency_contact.relationship = primary_contact_relationship
             primary_emergency_contact.primary_phone_number = primary_contact_phone1
@@ -305,23 +321,25 @@ post '/admin/users/:user_id/edit/?' do
             primary_emergency_contact.save
             user.primary_emergency_contact_id = primary_emergency_contact.id
             user.save
-        rescue => exception
-            flash(:error, 'Primary Emergency Contact Save Failed', exception.message)
-            redirect back
         end
+    rescue => exception
+        flash(:error, 'Primary Emergency Contact Save Failed', exception.message)
+        redirect back
     end
 
-    if secondary_contact_provided
-        begin
-            secondary_emergency_contact = EmergencyContact.new
-            # check if the user already has a primary emergency contact so we can edit it instead of creating a new one
-            if user.secondary_emergency_contact_id.present?
-                secondary_emergency_contact = EmergencyContact.find_by(:id => user.secondary_emergency_contact_id)
-                if secondary_emergency_contact.nil?
-                    # the secondary_emergency_contact_id saved to the user doesn't exist so we will just save a new one
-                    secondary_emergency_contact = EmergencyContact.new
-                end
+    begin
+        secondary_emergency_contact = EmergencyContact.new
+        has_existing_secondary = false
+        # check if the user already has a secondary emergency contact so we can edit it instead of creating a new one
+        if user.secondary_emergency_contact_id.present?
+            secondary_emergency_contact = EmergencyContact.find_by(:id => user.secondary_emergency_contact_id)
+            has_existing_secondary = secondary_emergency_contact.present?
+            if !has_existing_secondary
+                # the secondary_emergency_contact_id saved to the user doesn't exist so we will just save a new one
+                secondary_emergency_contact = EmergencyContact.new
             end
+        end
+        if secondary_contact_provided || (has_existing_secondary && secondary_contact_blank)
             secondary_emergency_contact.name = secondary_contact_name
             secondary_emergency_contact.relationship = secondary_contact_relationship
             secondary_emergency_contact.primary_phone_number = secondary_contact_phone1
@@ -329,10 +347,10 @@ post '/admin/users/:user_id/edit/?' do
             secondary_emergency_contact.save
             user.secondary_emergency_contact_id = secondary_emergency_contact.id
             user.save
-        rescue => exception
-            flash(:error, 'Secondary Emergency Contact Save Failed', exception.message)
-            redirect back
         end
+    rescue => exception
+        flash(:error, 'Secondary Emergency Contact Save Failed', exception.message)
+        redirect back
     end
 
     # check the permissions, check for new ones
@@ -401,7 +419,6 @@ post '/admin/users/create/?' do
     end
 
     params.delete('password2')
-    params[:expiration_date] = params[:expiration_date].nil? || params[:expiration_date].empty? ? nil : calculate_time(params[:expiration_date], 0, 0, 'am')
     user = User.new(params)
     user.created_by_user_id = @user.id
     user.space_status = 'current'

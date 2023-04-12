@@ -22,8 +22,8 @@
     </div>
 
     <div class="dcf-form-group dcf-input-checkbox">
-        <input type="checkbox" id="email-opt-out" name="email_opt_out" <%= 'checked="checked"' if !@user.space_status.nil? && @user.space_status.to_s.include?("no_email") %> />
-        <label for="email-opt-out">I no longer want to receive emails from Nebraska Innovation Studio.</label>
+        <input type="checkbox" id="promotional-opt-out" name="promotional_opt_out" <%= 'checked="checked"' if !@user.promotional_email_status %> />
+        <label for="promotional-opt-out">I no longer want to receive promotional emails from Nebraska Innovation Studio.</label>
     </div>
 
     <div class="dcf-form-group">

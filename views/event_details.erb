@@ -1,3 +1,23 @@
+<div class="dcf-modal" id="enter-code-modal" hidden>
+  <div class="dcf-modal-wrapper">
+    <div class="dcf-modal-header">
+      <h2>Code Required</h2>
+      <button class="dcf-btn-close-modal">Close</button>
+    </div>
+    <div class="dcf-modal-content">
+        <p>To sign up for this event, please enter the code that you received from the NIS administrators.
+
+        <form class="dcf-form inline-form" id="signup-with-code-form" action="" method="POST">                                                         
+            <div class="dcf-form-group">
+                <label for="code">Event Signup Code:</label>
+                <input type="text" id="event_code" name="event_code" />
+            </div>
+            <button type="submit" class="dcf-btn dcf-btn-primary">Sign Up!</button>
+        </form>
+    </div>
+  </div>
+</div>
+
 <div class="event-details dcf-p-4">
 	<div>
 		<h3>
@@ -41,7 +61,7 @@
         Please read details above on how to signup for this event.
 	<% elsif event.max_signups.nil? || event.signups.count < event.max_signups %>
         <form class="dcf-form" action="/events/<%= event.id %>/sign_up/" method="POST">
-        <button type="submit" class="dcf-btn dcf-btn-primary">
+        <button type="submit" <% if event.event_code.present? %> onclick="promptCode('/events/<%= event.id %>/sign_up/', event);" data-toggles-modal="enter-code-modal" <% end %> class="dcf-btn dcf-btn-primary dcf-btn-toggle-modal">
             <% if event.free_event_type? %>
                 Note event on my homepage
             <% else %>
@@ -58,9 +78,16 @@
 		<% if !event.signup_allowed_for_type? %>
             Please read details above on how to signup for this event.
         <% elsif event.max_signups.nil? || event.signups.count < event.max_signups %>
-		    <a class="dcf-btn dcf-btn-primary" href="/events/<%= event.id %>/sign_up_as_non_member/">Sign up for this event</a>
+		    <a <% if event.event_code.present? %> onclick="promptCode('/events/<%= event.id %>/sign_up_as_non_member/', event);" data-toggles-modal="enter-code-modal" <% end %> class="dcf-btn dcf-btn-primary dcf-btn-toggle-modal" href="/events/<%= event.id %>/sign_up_as_non_member/">Sign up for this event</a>
 		<% else %>
 		    All slots for this event are filled.
 		<% end %>
 	<% end %>
 <% end %>
+
+<script>
+    function promptCode(signupLink, event) {
+        event.preventDefault();
+        document.getElementById('signup-with-code-form').setAttribute('action', signupLink);
+    }
+</script>
