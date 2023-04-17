@@ -292,4 +292,15 @@ EMAIL
       Emailer.mail(self.email, "Nebraska Innovation Studio - Getting Started", body, '', {"new-member-orientation-parking-map.pdf" => File.read(File.expand_path("../public/pdf/new-member-orientation-parking-map.pdf", File.dirname(__FILE__)))})
   end
 
+  def notify_user_of_broken_equipment(reservation)
+    resource = Resource.find(reservation.resource_id)
+body = <<EMAIL
+<p>Hi, #{self.full_name.rstrip}. You are receiving this email because your reservation for <strong>#{resource.name}</strong> on <strong>#{reservation.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}</strong> has been canceled due to broken equipment. We apologize for this inconvenience.</p>
+
+<p>Nebraska Innovation Studio</p>
+EMAIL
+
+    Emailer.mail(self.email, "Nebraska Innovation Studio - Reservation Canceled for #{reservation.start_time.strftime('%m-%d-%Y')}", body)
+  end
+
 end

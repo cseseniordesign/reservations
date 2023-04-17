@@ -18,7 +18,7 @@ get '/admin/tools/?' do
 	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
 	erb :'admin/tools', :layout => :fixed, :locals => {
 		:tools => tools
-	}
+	}	
 end
 
 post '/admin/tools/?' do
@@ -46,15 +46,31 @@ post '/admin/tools/?' do
 			if !tool_record.INOP 
 				tool_record.INOP = true
 				tool_record.save
-				# add notifying members via email code here 
-				#  when a user already has a piece of equipment 
-				#  reserved, but an admin marks it as INOP before their reservation date
 			end
-            	
         end
     end
 
-	flash(:success, 'INOP Statuses Updateded', "Your tool INOP Statuses has been updateded.")
+	# If a tool is marked INOP, email all users who have it reserved in the future. Once done, delete the reservation.
+	reservations = Reservation.joins(:resource).
+		where(:resources => {:service_space_id => SS_ID}).
+		where('resources.INOP = ?', 1).
+		where("user_id IS NOT NULL").
+		where('start_time > ?', Time.now).
+		order(:start_time).all
+
+	reservations.each do |reservation|
+
+		user_to_email = User.where('id = ?', reservation.user_id)
+
+		user_to_email.each do |user|
+			user.notify_user_of_broken_equipment(reservation)
+		end
+
+		# delete the reservation
+		reservation.destroy
+	end
+
+	flash(:success, 'INOP Statuses Updated', "Tool INOP Statuses have been updated.")
 	redirect back
 	
 end

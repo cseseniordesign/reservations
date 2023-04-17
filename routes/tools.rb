@@ -418,7 +418,7 @@ post '/tools/:resource_id/reserve/?' do
 		:user_id => @user.id
 	)
 
-	flash(:success, 'Reservation Created', "You have successfully reserved #{tool.name} for #{params[:length]} minutes at #{start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}")
+	flash(:success, 'Reservation Created', "You have successfully reserved #{tool.name} for #{params[:length]} minutes on #{start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}")
 	redirect '/tools/'
 end
 
