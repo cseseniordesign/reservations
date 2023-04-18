@@ -1,0 +1,70 @@
+<h1> Check In Viewer </h1>
+
+
+<div style="padding-top: 25px">
+    <h3> Number of Members going to each studio in the past 7 days </h3>
+    <table class="dcf-w-100% dcf-table dcf-table-bordered dcf-table-responsive" aria-label="Heat Map">
+        <thead>
+            <tr>
+                <% studios.each do |studio| %>
+                    <th><%= studio %></th>
+                <% end %>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <% studios.each do |studio| %>
+                    <th><%= counts[studio] || 0 %></th>
+                <% end %>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div style="padding-top: 25px">
+    <h3> Check In Log </h3>
+    <table class="dcf-w-100% dcf-table dcf-table-bordered dcf-table-responsive" aria-label="Check Ins">
+        <thead>
+            <tr>
+                <th scope="col">Check In Time</th>
+                <th scope="col">Name</th>
+                <th scope="col">Username</th>
+                <th scope="col">University Status</th>
+                <th scope="col">Visit Reason</th>
+                <th scope="col">Studio Used</th>
+                <th scope="col">Is Member Expired?</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% checkIns.each do |checkIn| %>
+                <tr>
+                    <td>
+                        <%= checkIn.datetime.in_time_zone.strftime('%m/%d/%Y %H:%M %p') %>
+                    </td>
+                    <td>
+                        <%= checkIn.name %><br>
+                    </td>
+                    <td>
+                        <%= checkIn.username %>
+                    </td>
+                    <td>
+                        <%= checkIn.university_status %>
+                    </td>
+                    <td>
+                        <%= checkIn.visit_reason %>
+                    </td>
+                    <td>
+                        <%= checkIn.studio_used %>
+                    </td>
+                    <td>
+                        <%= checkIn.expired %>
+                    </td>
+                    <td class="table-actions">
+                        <a href="/admin/users/<%= checkIn.user_id %>/edit/" class="dcf-mt-1 dcf-btn dcf-btn-primary">Edit</a>
+                    </td>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+</div>

@@ -64,35 +64,56 @@ post '/change-password/?' do
   redirect '/me/'
 end
 
+get '/check_in_login/?' do
+  @breadcrumbs << {:text => 'Login'}
+  unless @user.nil?
+    redirect '/check_in/'
+  end
+  erb :check_in_login, :layout => :fixed_no_toolbar
+end
+
+post '/check_in_login/?' do
+  user = User.where(:username => params[:username]).first
+  # check user existence and password correctness
+  if user.nil? || user.password != params[:password]
+    flash(:danger, 'Incorrect Password', 'Username/password combination is incorrect.')
+    redirect '/check_in_login/'
+  end
+
+  # it is the user, hooray
+  session[:user_id] = user.id
+  redirect '/check_in/'
+end
+
 get '/login/?' do
-    @breadcrumbs << {:text => 'Login'}
-    unless @user.nil?
-      redirect '/home/'
-    end
-    erb :login, :layout => :fixed, :locals => {
-      :next_page => params[:next_page]
+  @breadcrumbs << {:text => 'Login'}
+  unless @user.nil?
+    redirect '/home/'
+  end
+  erb :login, :layout => :fixed, :locals => {
+    :next_page => params[:next_page]
   }
 end
 
 post '/login/?' do
-    user = User.where(:username => params[:username]).first
-    next_page = params[:next_page]
-    # check user existence and password correctness
-    if user.nil? || user.password != params[:password]
-        flash(:danger, 'Incorrect Password', 'Username/password combination is incorrect.')
-        if !next_page.nil? && next_page.length > 0
-          redirect "/login/?next_page=#{next_page}"
-        end
-        redirect '/login/'
-    end
+  user = User.where(:username => params[:username]).first
+  next_page = params[:next_page]
+  # check user existence and password correctness
+  if user.nil? || user.password != params[:password]
+      flash(:danger, 'Incorrect Password', 'Username/password combination is incorrect.')
+      if !next_page.nil? && next_page.length > 0
+        redirect "/login/?next_page=#{next_page}"
+      end
+      redirect '/login/'
+  end
 
-    # it is the user, hooray
-    session[:user_id] = user.id
-    if !next_page.nil? && next_page.length > 0
-      redirect "/#{next_page}/"
-    else
-      redirect '/home/'
-    end
+  # it is the user, hooray
+  session[:user_id] = user.id
+  if !next_page.nil? && next_page.length > 0
+    redirect "/#{next_page}/"
+  else
+    redirect '/home/'
+  end
 end
 
 get '/forgot_password/' do
