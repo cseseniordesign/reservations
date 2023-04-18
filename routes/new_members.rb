@@ -62,10 +62,10 @@ post '/new_members/sign_up/:event_id/?' do
 		redirect '/new_members/'
 	end
 
-	# if !verify_recaptcha
-	# 	flash(:alert, 'Google Recaptcha Verification failed', 'please try again.')
-	# 	redirect '/new_members/'
-	# end
+	if !verify_recaptcha
+		flash(:alert, 'Google Recaptcha Verification failed', 'please try again.')
+		redirect '/new_members/'
+	end
 
 	EventSignup.create(
 		:event_id => params[:event_id],
@@ -94,7 +94,7 @@ EMAIL
 		flash(:danger, "Invalid Email", "Your email address didn't match any known email")
 		redirect "new_members/sign_up/#{params[:event_id]}"
 	else
-		# Emailer.mail(params[:email], "Nebraska Innovation Studio - #{event.title}", body)
+		Emailer.mail(params[:email], "Nebraska Innovation Studio - #{event.title}", body)
 
 		user_info = {"first_name" => params[:first_name],"last_name" => params[:last_name],"email" => params[:email],"university_status" => params[:university_status]}
 		user = User.new(user_info)
