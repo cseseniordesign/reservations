@@ -257,9 +257,7 @@ body = <<EMAIL
 #{summary}
 <p>Nebraska Innovation Studio</p>
 EMAIL
-      # change this to innovationstudio@unl.edu after testing instead of the email test user
-      email_tester = User.where("username like ?", "%emailtest%").first
-      Emailer.mail(self.email, "Nebraska Innovation Studio - Vehicle Information Update", body, email_tester.email)
+      Emailer.mail(self.email, "Nebraska Innovation Studio - Vehicle Information Update", body, "innovationstudio@unl.edu")
     end
   end
 

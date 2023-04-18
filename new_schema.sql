@@ -505,8 +505,8 @@ CREATE TABLE `reservation`.`vehicles` (
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-    -- Create event_authorizations table
-    CREATE TABLE IF NOT EXISTS `event_authorizations` (
+-- Create event_authorizations table
+CREATE TABLE IF NOT EXISTS `event_authorizations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `event_id` int(11) NOT NULL,
   `resource_id` int(11) NOT NULL,
@@ -532,6 +532,25 @@ INSERT INTO `reservation`.`event_types` (`id`, `description`, `service_space_id`
 ALTER TABLE `reservation`.`events` 
 ADD COLUMN `is_private` TINYINT(1) NULL DEFAULT 0 AFTER `trainer_confirmed`;
 
+-- Alter event table to include "event_code" column
+ALTER TABLE `reservation`.`events` 
+ADD COLUMN `event_code` VARCHAR(255) NULL AFTER `is_private`;
+
+-- Add email status columns to users table
+ALTER TABLE `reservation`.`users`
+ADD COLUMN `general_email_status` TINYINT(1) DEFAULT 1 after `expiration_date`,
+ADD COLUMN `promotional_email_status` TINYINT(1) DEFAULT 1 after `general_email_status`;
+
+-- Add email types table
+CREATE TABLE IF NOT EXISTS `reservation`.`email_types` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NULL,
+  PRIMARY KEY (`id`));
+  
+-- Insert email types 
+INSERT INTO `reservation`.`email_types` (`name`) VALUES ('Promotional');
+INSERT INTO `reservation`.`email_types` (`name`) VALUES ('General');
+
 --Alter users table to include "date-of-birth"
 ALTER TABLE `reservation`.`users` 
 ADD COLUMN `date_of_birth` DATETIME NULL AFTER `promotional_email_status`;
@@ -551,3 +570,7 @@ ADD COLUMN `primary_emergency_contact_id` INT(11) NULL DEFAULT NULL AFTER `date_
 ADD COLUMN `secondary_emergency_contact_id` INT(11) NULL DEFAULT NULL AFTER `primary_emergency_contact_id`,
 ADD FOREIGN KEY (primary_emergency_contact_id) REFERENCES emergency_contacts(id),
 ADD FOREIGN KEY (secondary_emergency_contact_id) REFERENCES emergency_contacts(id);
+
+-- Add attended column to event_signups table
+ALTER TABLE `reservation`.`event_signups` 
+ADD COLUMN `attended` INT(11) NOT NULL DEFAULT 0 AFTER `email`;
