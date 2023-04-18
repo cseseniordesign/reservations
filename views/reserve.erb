@@ -194,6 +194,8 @@ end %>
         <br><br>
         <% if reservation.nil? && !@user.meets_resource_reservation_limit?(tool.id) %>
         <p>You are at the user reservation limit of <%= tool.max_reservations_per_user.to_s%>.
+        <% elsif tool.INOP %>
+        <p>Currently unavailable due to service. 
         <% else %>
         <button type="submit" class="dcf-btn dcf-btn-primary"><%= reservation.nil? ? 'Reserve' : 'Update' %></button>
         <% end %>

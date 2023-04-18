@@ -574,3 +574,7 @@ ADD FOREIGN KEY (secondary_emergency_contact_id) REFERENCES emergency_contacts(i
 -- Add attended column to event_signups table
 ALTER TABLE `reservation`.`event_signups` 
 ADD COLUMN `attended` INT(11) NOT NULL DEFAULT 0 AFTER `email`;
+
+-- Add INOP column to resources table
+ALTER TABLE `reservation`.`resources`
+ADD COLUMN `INOP` TINYINT(1) DEFAULT 0 after `max_reservations_per_user`;

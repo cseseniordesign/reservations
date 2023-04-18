@@ -87,10 +87,27 @@ post '/admin/email/send/?' do
 	if params[:email_type].to_i == 0
 		flash(:error, 'Error', 'Please select an email type')
 		redirect back
+
+	# General emails
 	elsif params[:email_type].to_i == 1
 		all_users = User.where(:service_space_id => SS_ID).where(:general_email_status => 1).all
+
+		body = params[:body]
+		body = <<-EMAIL
+		#{body}
+		<hr>If you no longer want to receive emails from us, please email <a href="mailto:innovationstudio@unl.edu">innovationstudio@unl.edu</a>.
+		EMAIL
+
+	# Promotional emails
 	elsif params[:email_type].to_i == 2
 		all_users = User.where(:service_space_id => SS_ID).where(:promotional_email_status => 1).all
+
+		body = params[:body]
+		body = <<-EMAIL
+		#{body}
+		<hr>If you no longer want to receive emails from us you can adjust your email preferences <a href="http://#{ENV['RACK_ENV'] == 'development' ? 'localhost:9393' : 'innovationstudio-manager.unl.edu'}/opt_out/" target="_blank">here</a>.
+		EMAIL
+		
 	end
 
 	all_allerts = Alert.all
@@ -168,15 +185,6 @@ post '/admin/email/send/?' do
  		attachments[file_hash[:filename]] = file_hash[:tempfile].read
  	end
  	attachments = nil if attachments.empty?
-
-	# add the option to opt out if necessary
-	body = params[:body]
-	if params.checked?('email_opt_out')
-		body = <<-EMAIL
-		#{body}
-		<hr>If you no longer want to receive emails from us you can adjust your email preferences <a href="http://#{ENV['RACK_ENV'] == 'development' ? 'localhost:9393' : 'innovationstudio-manager.unl.edu'}/opt_out/" target="_blank">here</a>.
-		EMAIL
-	end
 
 	if invalid_emails.count > 0
 		invalid_emails_body = "Invalid emails were found in the member database: " + invalid_emails.join(',')
