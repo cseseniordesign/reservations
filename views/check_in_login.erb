@@ -2,17 +2,19 @@
 
 <form class="dcf-form" id="login" action="" method="POST">
     <div class="dcf-grid-full dcf-grid-halves@sm dcf-col-gap-vw">
-        <div>
-            <div class="dcf-form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" />
+        <fieldset>
+            <div>
+                <div class="dcf-form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" />
+                </div>
+                <div class="dcf-form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" />
+                    <span class="dcf-form-help"><a href="/forgot_password/">Forgot password?</a></span>
+                </div>
+                <button class="dcf-mt-3 dcf-btn dcf-btn-primary" type="submit">Check-In</button>
             </div>
-            <div class="dcf-form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" />
-                <span class="dcf-form-help"><a href="/forgot_password/">Forgot password?</a></span>
-            </div>
-            <button class="dcf-mt-3 dcf-btn dcf-btn-primary" type="submit">Check-In</button>
-        </div>
+        </fieldset>
     </div>
 </form>
