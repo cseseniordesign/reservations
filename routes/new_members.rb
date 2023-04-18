@@ -190,29 +190,28 @@ EMAIL
 		primary_phone2 = params[:primary_phone2]
 		secondary_phone2 = params[:secondary_phone2]
 
-		emergency1_flag = false
-		emergency2_flag = false
+		emergency1_flag = !name1.blank? && !relationship1.blank? && !primary_phone1.blank?
 
-		if !name1.blank? && !relationship1.blank? && !primary_phone1.blank?
+		if emergency1_flag
 			begin
 				emergency1.name = name1
 				emergency1.relationship = relationship1
 				emergency1.primary_phone_number = primary_phone1
 				emergency1.secondary_phone_number = secondary_phone1
-				emergency1_flag = true
 			rescue => exception
 				flash(:error, 'Primary Emergency Contact Save Failed', exception.message)
 				redirect back
 			end
 		end
 
-		if !name2.blank? && !relationship2.blank? && !primary_phone2.blank?
+		emergency2_flag = !name2.blank? && !relationship2.blank? && !primary_phone2.blank?
+
+		if emergency2_flag
 			begin
 				emergency2.name = name2
 				emergency2.relationship = relationship2
 				emergency2.primary_phone_number = primary_phone2
 				emergency2.secondary_phone_number = secondary_phone2
-				emergency2_flag = true
 			rescue => exception
 				flash(:error, 'Secondary Emergency Contact Save Failed', exception.message)
 				redirect back
