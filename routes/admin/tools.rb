@@ -18,7 +18,61 @@ get '/admin/tools/?' do
 	tools.sort_by! {|tool| tool.category_name.downcase + tool.name.downcase + tool.model.downcase}
 	erb :'admin/tools', :layout => :fixed, :locals => {
 		:tools => tools
-	}
+	}	
+end
+
+post '/admin/tools/?' do
+	require_login
+	@breadcrumbs << {:text => 'Admin Tools'}
+	tools = Resource.where(:service_space_id => SS_ID).order(:name).all.to_a
+
+	# Revert tools INOP status when a pre-checked checkbox is unchecked
+	tools.each do |tool|
+		unless params.has_key?("INOP_#{tool.id}") && params["INOP_#{tool.id}"] == 'on' 
+			if tool.INOP
+				tool.INOP = false
+				tool.save
+			end 
+		end	
+	end
+	
+	#  Mark tool as INOP tool when checking the INOP checkbox
+    params.each do |key, value|
+        if key.start_with?('INOP_') && value == 'on'
+
+            tool_id = key.split('INOP_')[1].to_i
+			tool_record = Resource.find_by(:id => tool_id)
+
+			if !tool_record.INOP 
+				tool_record.INOP = true
+				tool_record.save
+			end
+        end
+    end
+
+	# If a tool is marked INOP, email all users who have it reserved in the future. Once done, delete the reservation.
+	reservations = Reservation.joins(:resource).
+		where(:resources => {:service_space_id => SS_ID}).
+		where('resources.INOP = ?', 1).
+		where("user_id IS NOT NULL").
+		where('start_time > ?', Time.now).
+		order(:start_time).all
+
+	reservations.each do |reservation|
+
+		user_to_email = User.where('id = ?', reservation.user_id)
+
+		user_to_email.each do |user|
+			user.notify_user_of_broken_equipment(reservation)
+		end
+
+		# delete the reservation
+		reservation.destroy
+	end
+
+	flash(:success, 'INOP Statuses Updated', "Tool INOP Statuses have been updated.")
+	redirect back
+	
 end
 
 get '/admin/tools/create/?' do
