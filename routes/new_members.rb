@@ -133,43 +133,42 @@ EMAIL
 		make3 = params[:make3]
 		model3 = params[:model3]
 
-		vehicle1_flag = false
-		vehicle2_flag = false
-		vehicle3_flag = false
+		vehicle1_flag = !license_plate1.blank? && !state1.blank? && !make1.blank? && !model1.blank?
 
-		if !license_plate1.blank? && !state1.blank? && !make1.blank? && !model1.blank?
+		if vehicle1_flag 
 			begin
 				vehicle1.license_plate = license_plate1
 				vehicle1.state = state1
 				vehicle1.make = make1
 				vehicle1.model = model1
-				vehicle1_flag = true
 			rescue => exception
 				flash(:error, 'Vehicle 1 Addition Failed', exception.message)
 				redirect back
 			end
 		end
 
-		if !license_plate2.blank? && !state2.blank? && !make2.blank? && !model2.blank?
+		vehicle2_flag = !license_plate2.blank? && !state2.blank? && make2.blank? && !model2.blank?
+
+		if vehicle2_flag 
 			begin
 				vehicle2.license_plate = license_plate2
 				vehicle2.state = state2
 				vehicle2.make = make2
 				vehicle2.model = model2
-				vehicle2_flag = true
 			rescue => exception
 				flash(:error, 'Vehicle 2 Addition Failed', exception.message)
 				redirect back
 			end
 		end
 
-		if !license_plate3.blank? && !state3.blank? && !make3.blank? && !model3.blank?
+		vehicle3_flag = !license_plate3.blank? && !state3.blank? && !make3.blank? && !model3.blank?
+
+		if vehicle3_flag 
 			begin
 				vehicle3.license_plate = license_plate3
 				vehicle3.state = state3
 				vehicle3.make = make3
 				vehicle3.model = model3
-				vehicle3_flag = true
 			rescue => exception
 				flash(:error, 'Vehicle 3 Addition Failed', exception.message)
 				redirect back
