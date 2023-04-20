@@ -6,7 +6,7 @@
     <h4 style ="<%= @user.expiration_date > (Time.now + 1.weeks) ? "" : "color:orange;" %>">Your membership will expire on: <%= @user.expiration_date.to_formatted_s(:long_ordinal)[0...-5] %></h4>
 <% else %>
     <h4 style="color:#d00000;">Your membership is expired.</h4> 
-    <h6>Please ask a member of staff to help you activate your membership.</h6>
+    <h6>Please ask a NIS Staff Member to help you activate your membership.</h6>
 <% end %>
 
 <form class="dcf-form" id="check_in" action="" method="POST">

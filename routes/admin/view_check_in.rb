@@ -1,10 +1,10 @@
 require 'models/check_ins'
 
-# before '/admin/view_check_in*' do
-#     unless has_permission?(Permission::MANAGE_USERS) || has_permission?(Permission::SUPER_USER)
-#         raise Sinatra::NotFound
-#     end
-# end
+before '/admin/view_check_in*' do
+    unless has_permission?(Permission::MANAGE_USERS) || has_permission?(Permission::SUPER_USER)
+        raise Sinatra::NotFound
+    end
+end
 
 get '/admin/view_check_in/?' do
     @breadcrumbs << {:text => 'View Check Ins'}
