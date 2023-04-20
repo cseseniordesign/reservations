@@ -52,7 +52,10 @@
                     </div>
                 </div>
 
-
+                <div class="dcf-form-group">
+                    <label for="event-code">Require Code to Signup</label>
+                    <input class="dcf-w-100%" type="text" id="event-code" name="event_code" value="<%= event.event_code %>"/>
+                </div>
             </fieldset>
 
             <fieldset>
@@ -115,11 +118,13 @@
                         <label for="tool">Use Shift or Ctrl/Cmd to select multiple tools</label>
                         <select id="tools" name="tools[]" class="use-select2" multiple size="8" >
                             <% tools.each do |tool| %>
-                                 <% if event.id.nil? %>
-                                    <option <%= 'selected="selected"' if !preset_event.nil? and preset_event.get_resource_reservations_ids.include?(tool.id)  %> value="<%=tool.id%>"><%= "#{tool.category_name} - #{tool.name} - #{tool.model}" %></option>
-                                <% else%>
-                                    <option <%= 'selected="selected"' if event.has_tool_reservation(tool.id) %> value="<%= tool.id %>"><%= "#{tool.category_name} - #{tool.name} - #{tool.model}" %></option>
-                                <% end %>                                
+                                <% if !tool.INOP %>
+                                    <% if event.id.nil? %>
+                                        <option <%= 'selected="selected"' if !preset_event.nil? and preset_event.get_resource_reservations_ids.include?(tool.id)  %> value="<%=tool.id%>"><%= "#{tool.category_name} - #{tool.name} - #{tool.model}" %></option>
+                                    <% else%>
+                                        <option <%= 'selected="selected"' if event.has_tool_reservation(tool.id) %> value="<%= tool.id %>"><%= "#{tool.category_name} - #{tool.name} - #{tool.model}" %></option>
+                                    <% end %>  
+                                <% end %>                              
                             <% end %>
                         </select>
                     </div>
@@ -135,10 +140,12 @@
                         <label for="specific-group">Use Shift or Ctrl/Cmd to select multiple tools</label>
                         <select id="specific-tools" name="specific_tools[]" class="use-select2" multiple size="8" >
                             <% all_tools.each do |tool| %>
-                                <% if event.id.nil? %>
-                                    <option <%= 'selected="selected"' if !preset_event.nil? and preset_event.get_resource_ids.include?(tool.id)  %> value="<%=tool.id%>"><%= "#{tool.category_name} - #{tool.name} - #{tool.model}" %></option>
-                                <% else%>
-                                    <option <%= 'selected="selected"' if authorized_tools_ids.include?(tool.id) %> value="<%=tool.id%>"><%= "#{tool.category_name} - #{tool.name} - #{tool.model}" %></option>
+                                <% if !tool.INOP %>
+                                    <% if event.id.nil? %>
+                                        <option <%= 'selected="selected"' if !preset_event.nil? and preset_event.get_resource_ids.include?(tool.id)  %> value="<%=tool.id%>"><%= "#{tool.category_name} - #{tool.name} - #{tool.model}" %></option>
+                                    <% else%>
+                                        <option <%= 'selected="selected"' if authorized_tools_ids.include?(tool.id) %> value="<%=tool.id%>"><%= "#{tool.category_name} - #{tool.name} - #{tool.model}" %></option>
+                                    <% end %>
                                 <% end %>
                             <% end %>
                         </select>

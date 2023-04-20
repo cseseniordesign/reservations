@@ -22,8 +22,54 @@
     </div>
 
     <div class="dcf-form-group dcf-input-checkbox">
-        <input type="checkbox" id="email-opt-out" name="email_opt_out" <%= 'checked="checked"' if !@user.space_status.nil? && @user.space_status.to_s.include?("no_email") %> />
-        <label for="email-opt-out">I no longer want to receive emails from Nebraska Innovation Studio.</label>
+        <input type="checkbox" id="promotional-opt-out" name="promotional_opt_out" <%= 'checked="checked"' if !@user.promotional_email_status %> />
+        <label for="promotional-opt-out">I no longer want to receive promotional emails from Nebraska Innovation Studio.</label>
+    </div>
+
+    <div class="dcf-form-group">
+        <h6>Primary Emergency Contact</h6>
+        <div class="dcf-form-group">
+            <label for="primary-contact-name">Name <small class="dcf-required">Required</small></label>
+            <input type="text" id="primary-contact-name" name="primary_contact_name" value="<%= primary_emergency_contact.name %>" />
+        </div>
+
+        <div class="dcf-form-group">
+            <label for="primary-contact-relationship">Relationship <small class="dcf-required">Required</small></label>
+            <input type="text" id="primary-contact-relationship" name="primary_contact_relationship" value="<%= primary_emergency_contact.relationship %>" />
+        </div>
+
+        <div class="dcf-form-group">
+            <label for="primary-contact-phone1">Primary Phone Number <small class="dcf-required">Required</small></label>
+            <input type="text" id="primary-contact-phone1" name="primary_contact_phone1" value="<%= primary_emergency_contact.primary_phone_number %>" />
+        </div>
+
+        <div class="dcf-form-group">
+            <label for="primary-contact-phone2">Secondary Phone Number</label>
+            <input type="text" id="primary-contact-phone2" name="primary_contact_phone2" value="<%= primary_emergency_contact.secondary_phone_number %>" />
+        </div>
+    </div>
+
+    <div class="dcf-form-group">
+        <h6>Secondary Emergency Contact</h6>
+        <div class="dcf-form-group">
+            <label for="secondary-contact-name">Name <small class="dcf-required">Required</small></label>
+            <input type="text" id="secondary-contact-name" name="secondary_contact_name" value="<%= secondary_emergency_contact.name %>" />
+        </div>
+
+        <div class="dcf-form-group">
+            <label for="secondary-contact-relationship">Relationship <small class="dcf-required">Required</small></label>
+            <input type="text" id="secondary-contact-relationship" name="secondary_contact_relationship" value="<%= secondary_emergency_contact.relationship %>" />
+        </div>
+
+        <div class="dcf-form-group">
+            <label for="secondary-contact-phone1">Primary Phone Number <small class="dcf-required">Required</small></label>
+            <input type="text" id="secondary-contact-phone1" name="secondary_contact_phone1" value="<%= secondary_emergency_contact.primary_phone_number %>" />
+        </div>
+
+        <div class="dcf-form-group">
+            <label for="secondary-contact-phone2">Secondary Phone Number</label>
+            <input type="text" id="secondary-contact-phone2" name="secondary_contact_phone2" value="<%= secondary_emergency_contact.secondary_phone_number %>" />
+        </div>
     </div>
 
     <button type="submit" class="dcf-btn dcf-btn-primary">Save</button>
@@ -71,7 +117,6 @@
     </table>
 </div>
 <% end %>
-
 <% if vehicles.count < 3 %>
     <a href="/vehicle/add">
         <button type="submit" class="dcf-mt-1 dcf-btn dcf-btn-primary" style="margin-top:20px !important;">Add Vehicle</button>

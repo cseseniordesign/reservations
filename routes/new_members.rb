@@ -1,5 +1,6 @@
 require 'models/event'
 require 'models/event_signup'
+require 'models/emergency_contact'
 require 'classes/emailer'
 require 'recaptcha'
 
@@ -95,9 +96,8 @@ EMAIL
 	else
 		Emailer.mail(params[:email], "Nebraska Innovation Studio - #{event.title}", body)
 
-		params.delete("g-recaptcha-response")
-		params.delete("event_id")
-		user = User.new(params)
+		user_info = {"first_name" => params[:first_name],"last_name" => params[:last_name],"email" => params[:email],"university_status" => params[:university_status]}
+		user = User.new(user_info)
 
 		# Username parameters:
 		# First letter of first name
@@ -115,9 +115,132 @@ EMAIL
 			counter = counter + 1
 		end
 
+		vehicle1 = Vehicle.new
+		license_plate1 = params[:license_plate1]
+		state1 = params[:state1]
+		make1 = params[:make1]
+		model1 = params[:model1]
+
+		vehicle2 = Vehicle.new
+		license_plate2 = params[:license_plate2]
+		state2 = params[:state2]
+		make2 = params[:make2]
+		model2 = params[:model2]
+
+		vehicle3 = Vehicle.new
+		license_plate3 = params[:license_plate3]
+		state3 = params[:state3]
+		make3 = params[:make3]
+		model3 = params[:model3]
+
+		vehicle1_flag = !license_plate1.blank? && !state1.blank? && !make1.blank? && !model1.blank?
+
+		if vehicle1_flag 
+			begin
+				vehicle1.license_plate = license_plate1
+				vehicle1.state = state1
+				vehicle1.make = make1
+				vehicle1.model = model1
+			rescue => exception
+				flash(:error, 'Vehicle 1 Addition Failed', exception.message)
+				redirect back
+			end
+		end
+
+		vehicle2_flag = !license_plate2.blank? && !state2.blank? && make2.blank? && !model2.blank?
+
+		if vehicle2_flag 
+			begin
+				vehicle2.license_plate = license_plate2
+				vehicle2.state = state2
+				vehicle2.make = make2
+				vehicle2.model = model2
+			rescue => exception
+				flash(:error, 'Vehicle 2 Addition Failed', exception.message)
+				redirect back
+			end
+		end
+
+		vehicle3_flag = !license_plate3.blank? && !state3.blank? && !make3.blank? && !model3.blank?
+
+		if vehicle3_flag 
+			begin
+				vehicle3.license_plate = license_plate3
+				vehicle3.state = state3
+				vehicle3.make = make3
+				vehicle3.model = model3
+			rescue => exception
+				flash(:error, 'Vehicle 3 Addition Failed', exception.message)
+				redirect back
+			end
+		end
+
 		user.space_status = 'expired'
 		user.service_space_id = SS_ID
-		user.save
+
+		emergency1 = EmergencyContact.new
+		name1 = params[:name1]
+		relationship1 = params[:relationship1]
+		primary_phone1 = params[:primary_phone1]
+		secondary_phone1 = params[:secondary_phone1]
+
+		emergency2 = EmergencyContact.new
+		name2 = params[:name2]
+		relationship2 = params[:relationship2]
+		primary_phone2 = params[:primary_phone2]
+		secondary_phone2 = params[:secondary_phone2]
+
+		emergency1_flag = !name1.blank? && !relationship1.blank? && !primary_phone1.blank?
+
+		if emergency1_flag
+			begin
+				emergency1.name = name1
+				emergency1.relationship = relationship1
+				emergency1.primary_phone_number = primary_phone1
+				emergency1.secondary_phone_number = secondary_phone1
+			rescue => exception
+				flash(:error, 'Primary Emergency Contact Save Failed', exception.message)
+				redirect back
+			end
+		end
+
+		emergency2_flag = !name2.blank? && !relationship2.blank? && !primary_phone2.blank?
+
+		if emergency2_flag
+			begin
+				emergency2.name = name2
+				emergency2.relationship = relationship2
+				emergency2.primary_phone_number = primary_phone2
+				emergency2.secondary_phone_number = secondary_phone2
+			rescue => exception
+				flash(:error, 'Secondary Emergency Contact Save Failed', exception.message)
+				redirect back
+			end
+		end
+
+		User.transaction do
+			if emergency1_flag
+				emergency1.save
+				user.primary_emergency_contact_id = emergency1.id
+			end
+			if emergency2_flag
+				emergency2.save
+				user.secondary_emergency_contact_id = emergency2.id
+			end
+			user.save
+			if vehicle1_flag
+				vehicle1.user_id = user.id
+				vehicle1.save
+			end
+			if vehicle2_flag
+				vehicle2.user_id = user.id
+				vehicle2.save
+			end
+			if vehicle3_flag
+				vehicle3.user_id = user.id
+				vehicle3.save
+			end
+		end
 
 		# flash a message that this works
 		flash(:success, "You're signed up!", "Thanks for signing up! Don't forget, orientation is #{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}. Check your email for more information about the event and where to park.")

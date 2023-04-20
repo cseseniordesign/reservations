@@ -35,17 +35,69 @@
             </div>
 
             <div class="dcf-form-group">
-                <label for="email-preference">Email Preference</label>
-                <select id="email-preference" name="email_preference">
-                    <option <%= 'selected="selected"' if !user.space_status.include? "no_email" %> value="email">Opt-in</option>
-                    <option <%= 'selected="selected"' if user.space_status.include? "no_email" %> value="no_email">Opt-out</option>
-                </select>
+                <label for="email-preferences">Email Preferences</label>
+                <div style="padding-left: 20px; padding-top: 20px;">
+                    <div class="dcf-form-group dcf-input-checkbox">
+                        <input type="checkbox" id="general-opt-in" name="general_opt_in" <%= 'checked="checked"' if user.general_email_status %> />
+                        <label for="general-opt-in">General</label>
+                    </div>
+                    <div class="dcf-form-group dcf-input-checkbox">
+                        <input type="checkbox" id="promotional-opt-in" name="promotional_opt_in" <%= 'checked="checked"' if user.promotional_email_status %> />
+                        <label for="promotional-opt-in">Promotional</label>
+                    </div>
+                </div>
             </div>
 
             <div class="dcf-form-group">
                 <div class="dcf-datepicker">
                     <label for="expiration-date">Membership Expiration Date</label>
                     <input id="expiration-date" name="expiration_date" title="Membership Expiration Date" type="text" value="<%= user.expiration_date.strftime('%m/%d/%Y') if user.expiration_date %>" />
+                </div>
+            </div>
+
+            <div class="dcf-form-group">
+                <h6>Primary Emergency Contact</h6>
+                <div class="dcf-form-group">
+                    <label for="primary-contact-name">Name <small class="dcf-required">Required</small></label>
+                    <input type="text" id="primary-contact-name" name="primary_contact_name" value="<%= primary_emergency_contact.name %>" />
+                </div>
+
+                <div class="dcf-form-group">
+                    <label for="primary-contact-relationship">Relationship <small class="dcf-required">Required</small></label>
+                    <input type="text" id="primary-contact-relationship" name="primary_contact_relationship" value="<%= primary_emergency_contact.relationship %>" />
+                </div>
+
+                <div class="dcf-form-group">
+                    <label for="primary-contact-phone1">Primary Phone Number <small class="dcf-required">Required</small></label>
+                    <input type="text" id="primary-contact-phone1" name="primary_contact_phone1" value="<%= primary_emergency_contact.primary_phone_number %>" />
+                </div>
+
+                <div class="dcf-form-group">
+                    <label for="primary-contact-phone2">Secondary Phone Number</label>
+                    <input type="text" id="primary-contact-phone2" name="primary_contact_phone2" value="<%= primary_emergency_contact.secondary_phone_number %>" />
+                </div>
+            </div>
+
+            <div class="dcf-form-group">
+                <h6>Secondary Emergency Contact</h6>
+                <div class="dcf-form-group">
+                    <label for="secondary-contact-name">Name <small class="dcf-required">Required</small></label>
+                    <input type="text" id="secondary-contact-name" name="secondary_contact_name" value="<%= secondary_emergency_contact.name %>" />
+                </div>
+
+                <div class="dcf-form-group">
+                    <label for="secondary-contact-relationship">Relationship <small class="dcf-required">Required</small></label>
+                    <input type="text" id="secondary-contact-relationship" name="secondary_contact_relationship" value="<%= secondary_emergency_contact.relationship %>" />
+                </div>
+
+                <div class="dcf-form-group">
+                    <label for="secondary-contact-phone1">Primary Phone Number <small class="dcf-required">Required</small></label>
+                    <input type="text" id="secondary-contact-phone1" name="secondary_contact_phone1" value="<%= secondary_emergency_contact.primary_phone_number %>" />
+                </div>
+
+                <div class="dcf-form-group">
+                    <label for="secondary-contact-phone2">Secondary Phone Number</label>
+                    <input type="text" id="secondary-contact-phone2" name="secondary_contact_phone2" value="<%= secondary_emergency_contact.secondary_phone_number %>" />
                 </div>
             </div>
         </fieldset>
@@ -97,4 +149,63 @@
     </div>
 </form>
 
+
+<h2 class="dcf-txt-h4 dcf-mt-6">Update Vehicle Information</h2>
+<% if vehicles.count > 0 %>
+    <div>
+        <table class="dcf-w-100% dcf-table dcf-table-bordered dcf-table-responsive" aria-label="Vehicles List">
+            <thead>
+                <tr>
+                    <th scope="col">License Plate</th>
+                    <th scope="col">State</th>
+                    <th scope="col">Make</th>
+                    <th scope="col">Model</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% vehicles.each do |vehicle| %>
+                    <tr>
+                        <td>
+                            <%= vehicle.license_plate %><br>
+                        </td>
+                        <td>
+                            <%= vehicle.state %>
+                        </td>
+                        <td>
+                            <%= vehicle.make %>
+                        </td>
+                        <td>
+                            <%= vehicle.model %>
+                        </td>
+                        <td class="table-actions">
+                            <a href="/vehicle/<%= vehicle.id %>/edit/?user_id=<%= user.id %>" class="dcf-mt-1 dcf-btn dcf-btn-primary">Edit</a>
+                            <form class="dcf-form delete-form delete-vehicle" action="/vehicle/<%= vehicle.id %>/delete/?user_id=<%= user.id %>" method="POST">
+                                <button type="submit" class="dcf-mt-1 dcf-btn dcf-btn-primary">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+<% end %>
+
+<% if vehicles.count < 3 %>
+    <a href="/vehicle/add/?user_id=<%= user.id %>">
+        <button type="submit" class="dcf-mt-1 dcf-btn dcf-btn-primary" style="margin-top:20px !important;">Add Vehicle</button>
+    </a>
+<% end %>
+
 <% append_script_declaration("WDN.initializePlugin('datepickers');") %>
+
+<% append_script_declaration(%q[require(['jquery'], function($) {
+
+    $(document).ready(function() {
+        $('.delete-vehicle').submit(function (submit) {
+            if (!window.confirm('Are you sure you want to delete this vehicle?')) {
+                submit.preventDefault();
+            }
+        });
+    });
+});]) %>

@@ -1,6 +1,22 @@
 require 'pony'
 
 class Emailer
+
+  TYPE_GENERAL = 1
+  TYPE_PROMOTIONAL = 2
+
+  def self.type_options
+      {
+        TYPE_GENERAL => 'General',
+        TYPE_PROMOTIONAL => 'Promotional',
+      }
+  end
+
+  def type_name
+    return self.class.type_options[type_id] if self.class.type_options.include?(type_id)
+    'Other'
+  end
+
   RECIPIENT_BYTE_LIMIT = 2048
 
   def self.mail(to, subject, body, bcc = "", attachments = nil)

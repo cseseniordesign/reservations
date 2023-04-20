@@ -95,6 +95,10 @@ class User < ActiveRecord::Base
     self.save
   end
 
+  def date_of_birth
+    date_of_birth
+  end
+
   def full_name
     "#{first_name} #{last_name}"
   end
@@ -253,9 +257,7 @@ body = <<EMAIL
 #{summary}
 <p>Nebraska Innovation Studio</p>
 EMAIL
-      # change this to innovationstudio@unl.edu after testing instead of the email test user
-      email_tester = User.where("username like ?", "%emailtest%").first
-      Emailer.mail(self.email, "Nebraska Innovation Studio - Vehicle Information Update", body, email_tester.email)
+      Emailer.mail(self.email, "Nebraska Innovation Studio - Vehicle Information Update", body, "innovationstudio@unl.edu")
     end
   end
 
@@ -292,6 +294,17 @@ You can add up to 3 vehicles. You must park in the lot shown on the attached map
 <p>Your Studio Staff</p>
 EMAIL
       Emailer.mail(self.email, "Nebraska Innovation Studio - Getting Started", body, '', {"new-member-orientation-parking-map.pdf" => File.read(File.expand_path("../public/pdf/new-member-orientation-parking-map.pdf", File.dirname(__FILE__)))})
+  end
+
+  def notify_user_of_broken_equipment(reservation)
+    resource = Resource.find(reservation.resource_id)
+body = <<EMAIL
+<p>Hi, #{self.full_name.rstrip}. You are receiving this email because your reservation for <strong>#{resource.name}</strong> on <strong>#{reservation.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}</strong> has been canceled due to broken equipment. We apologize for this inconvenience.</p>
+
+<p>Nebraska Innovation Studio</p>
+EMAIL
+
+    Emailer.mail(self.email, "Nebraska Innovation Studio - Reservation Canceled for #{reservation.start_time.strftime('%m-%d-%Y')}", body)
   end
 
 end
