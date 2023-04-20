@@ -578,3 +578,9 @@ ADD COLUMN `attended` INT(11) NOT NULL DEFAULT 0 AFTER `email`;
 -- Add INOP column to resources table
 ALTER TABLE `reservation`.`resources`
 ADD COLUMN `INOP` TINYINT(1) DEFAULT 0 after `max_reservations_per_user`;
+
+-- Add announcements table
+CREATE TABLE IF NOT EXISTS `reservation`.`announcements` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `text` VARCHAR(10000) NULL,
+  PRIMARY KEY (`id`));
