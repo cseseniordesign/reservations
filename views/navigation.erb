@@ -63,6 +63,9 @@
                 <% if has_permission?(Permission::SEE_AGENDA) %>
                 <li><a href="/admin/agenda/" title="Agenda">Agenda</a></li>
                 <% end %>
+                <% if has_permission?(Permission::SUPER_USER) %>
+                <li><a href="/admin/announcements/" title="Hours">Announcements</a></li>
+                <% end %>
                 <% if has_permission?(Permission::MANAGE_RESOURCES) %>
                 <li><a href="https://innovationstudio.unl.edu/user/login?destination=node/<%= drupal_node_lookup(:material_pricing) %>/edit" target="_blank">Edit Material Pricing</a></li>
                 <li><a href="https://innovationstudio.unl.edu/user/login?destination=node/<%= drupal_node_lookup(:sop_training_doc) %>/edit" target="_blank">Edit SOP</a></li>
