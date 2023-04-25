@@ -578,3 +578,30 @@ ADD COLUMN `attended` INT(11) NOT NULL DEFAULT 0 AFTER `email`;
 -- Add INOP column to resources table
 ALTER TABLE `reservation`.`resources`
 ADD COLUMN `INOP` TINYINT(1) DEFAULT 0 after `max_reservations_per_user`;
+
+-- Add Table to hold member check ins
+CREATE TABLE IF NOT EXISTS `check_ins` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`user_id` int(11) NULL,
+`username` varchar(255) NULL,
+`name` varchar(255) NULL,
+`university_status` varchar(255) NULL,
+`datetime` datetime NULL,
+`expired` varchar(4) NULL,
+`visit_reason` varchar(255) NULL,
+`space_used` varchar(255) NULL,
+PRIMARY KEY (`id`));
+
+-- Add Table to hold studio spaces
+CREATE TABLE IF NOT EXISTS `reservation`.`studio_spaces` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NULL,
+  PRIMARY KEY (`id`));
+
+INSERT INTO reservation.studio_spaces (name) VALUES ('Woodshop');
+INSERT INTO reservation.studio_spaces (name) VALUES ('Metalshop');
+INSERT INTO reservation.studio_spaces (name) VALUES ('Digital Lab');
+INSERT INTO reservation.studio_spaces (name) VALUES ('Digital Fabrication');
+INSERT INTO reservation.studio_spaces (name) VALUES ('Textiles');
+INSERT INTO reservation.studio_spaces (name) VALUES ('Ceramics');
+INSERT INTO reservation.studio_spaces (name) VALUES ('Prototyping');

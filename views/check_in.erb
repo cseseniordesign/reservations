@@ -16,16 +16,16 @@
                 <label for='ReasonOfVisit'>What is the reason of your visit today?</label>
                 <select id='ReasonOfVisit' name='ReasonOfVisit'>
                     <% reasons.each do |reason| %>
-                                <option value="<%= reason %>"><%= reason %></option>
-                            <% end %>
+                        <option value="<%= reason %>"><%= reason %></option>
+                    <% end %>
                 <select>
             </div>
             <div class="dcf-form-group">
                 <label for='StudioUsed'>What studio do you plan on using today?</label>
                 <select id='StudioUsed' name='StudioUsed'>
                     <% studios.each do |studio| %>
-                                <option value="<%= studio %>"><%= studio %></option>
-                            <% end %>
+                        <option value="<%= studio %>"><%= studio %></option>
+                    <% end %>
                 <select>
             </div>
             <button class="dcf-mt-3 dcf-btn dcf-btn-primary" type="submit">Check-In</button>

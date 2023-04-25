@@ -21,19 +21,23 @@
     </table>
 </div>
 
-<form class="dcf-form dcf-mb-6" id="find-controls">
+<form class="dcf-form dcf-mb-6" id="find-controls" style="padding-top: 25px">
+    <h3> Check In Log </h3>
     <div class="dcf-grid dcf-col-gap-vw dcf-row-gap-6">
         <div class="dcf-col-100% dcf-col-25%-start@md">
-            <label>Find users by:</label>
+            <label>Find check in by:</label>
             <br>
-            <a href="/admin/users/" class="dcf-btn dcf-btn-secondary">Clear</a>
+            <a href="/admin/view_check_in/" class="dcf-btn dcf-btn-secondary">Clear</a>
         </div>
         <div class="dcf-col-100% dcf-col-75%-end@md">
             <div class="dcf-grid-full dcf-grid-halves@sm dcf-col-gap-vw">
                 <div>
                     <label for="name">Name:</label>
                     <input id="name" tabindex="1" type="text" name="name" value="<%= name != "" ? name : "" %>" style="width:100%;" />
-                    <input type="hidden" name="hidden-first-name" id="hidden-first-name" value="<%= name %>">
+                </div>
+                <div>
+                    <label for="username">Username:</label>
+                    <input id="username" tabindex="1" type="text" name="username" value="<%= username != "" ? username : "" %>" style="width:100%;" />
                 </div>
                 <div>
                     <label for="studio-status">Studio Status:</label>
@@ -43,25 +47,32 @@
                             <option <%= 'selected="selected"' if studio_status == word %> value="<%= word %>"><%= word %></option>
                         <% end %>
                     </select>
-                    <input type="hidden" name="hidden-studio-status" id="hidden-studio-status" value="<%= studio_status %>">
                 </div>
                 <div>
-                    <label for="expiration-date">Expiration Date:</label>
+                    <label for="visit-reason">Vist Reason:</label>
+                    <select id="visit-reason" tabindex="1" name="visit_reason" class="dcf-input-select">
+                        <option value=""></option>
+                        <% reasons.each do |word| %>
+                            <option <%= 'selected="selected"' if visit_reason == word %> value="<%= word %>"><%= word %></option>
+                        <% end %>
+                    </select>
+                </div>
+                <div>
+                    <label for="studio-used">Studio Used:</label>
+                    <select id="studio-used" tabindex="1" name="studio_used" class="dcf-input-select">
+                        <option value=""></option>
+                        <% studios.each do |word| %>
+                            <option <%= 'selected="selected"' if studio_used == word %> value="<%= word %>"><%= word %></option>
+                        <% end %>
+                    </select>
+                </div>
+                <div>
+                    <label for="expiration-date">Check In Date:</label>
                     <div class="dcf-grid dcf-col-gap-1 dcf-row-gap-2 dcf-flex-wrap">
-                        <div class="dcf-col-100% dcf-col-33%-start@sm">
-                            <select id="expiration-date-operation" tabindex="1" name="expiration_date_operation" class="dcf-input-select">
-                                <option value=""></option>
-                                <% EXPIRATION_DATE_SEARCH_OPERATIONS.each_with_index do |operation, value| %>
-                                    <option <%= 'selected="selected"' if expiration_date_operation.to_i == (value + 1) %> value="<%= value + 1 %>"><%= operation %></option>
-                                <% end %>
-                            </select>
-                            <input type="hidden" name="hidden-expiration-date-operation" id="hidden-expiration-date-operation" value="<%= expiration_date_operation %>">
-                        </div>
-                        <div class="dcf-col-100% dcf-col-67%-end@sm">
+                        <div class="dcf-col-100%">
                             <div class="dcf-datepicker">
-                                <input id="expiration-date" tabindex="1" value="<%= expiration_date != "" ? expiration_date : "" %>" name="expiration_date" title="Expiration Date" type="text"  style="width:100%;"/>
+                                <input id="check-in-date" tabindex="1" value="<%= check_in_date != "" ? check_in_date : "" %>" name="check_in_date" title="Check In Date" type="text"  style="width:100%;"/>
                             </div>
-                            <input type="hidden" name="hidden-expiration-date" id="hidden-expiration-date" value="<%= expiration_date %>">
                         </div>
                     </div>
                 </div>
@@ -71,8 +82,7 @@
     </div>
 </form>
 
-<div style="padding-top: 25px">
-    <h3> Check In Log </h3>
+<div>
     <table class="dcf-w-100% dcf-table dcf-table-bordered dcf-table-responsive" aria-label="Check Ins">
         <thead>
             <tr>
@@ -118,3 +128,5 @@
         </tbody>
     </table>
 </div>
+
+<% append_script_declaration("WDN.initializePlugin('datepickers');") %>

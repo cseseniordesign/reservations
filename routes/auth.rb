@@ -154,7 +154,6 @@ post '/change-password/?' do
 end
 
 get '/check_in_login/?' do
-  @breadcrumbs << {:text => 'Login'}
   unless @user.nil?
     redirect '/check_in/'
   end
@@ -172,6 +171,20 @@ post '/check_in_login/?' do
   # it is the user, hooray
   session[:user_id] = user.id
   redirect '/check_in/'
+end
+
+get '/forgot_password_check_in/' do
+  erb :forgot_password, :layout => :fixed_no_toolbar
+end
+
+post '/forgot_password_check_in/' do
+  user = User.find_by(:username => params[:username].trim)
+  unless user.nil?
+    user.send_reset_password_email
+  end
+
+  flash :success, 'Email sent', 'An email containing instructions to reset your password has been sent.'
+  redirect '/check_in_login/'
 end
 
 get '/login/?' do

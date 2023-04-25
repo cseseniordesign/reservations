@@ -20,7 +20,6 @@
     <link rel="stylesheet" href="/css/jquery-ui.min-custom.css">
     <!-- TemplateEndEditable -->
     <!-- TemplateParam name="class" type="text" value="" -->
-  </head>
     <main class="dcf-main" id="dcf-main" role="main" tabindex="-1" style="padding: 25px;">
       <div class="dcf-main-content dcf-wrapper">
         <!-- TemplateBeginEditable name="maincontentarea" -->
@@ -55,5 +54,11 @@
             <!-- TemplateEndEditable -->
       </div>
     </main>
+    <%= ERB.new(File.read(File.expand_path("#{ROOT}/public/wdn/templates_5.3/includes/global/js-body-local.html"))).result.gsub('$DEP_VERSION$', template_dep_version) %>
+    <!-- TemplateBeginEditable name="jsbody" -->
+    <!-- put your custom javascript here -->
+    <script type="text/javascript">WDN.initializePlugin("notice");</script>
+    <%= @inline_body_script_content %>
+    <!-- TemplateEndEditable -->
   </body>
 </html>
