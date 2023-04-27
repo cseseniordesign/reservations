@@ -57,8 +57,8 @@ get '/admin/view_check_in/?' do
     end
 
     unless check_in_date.blank?   
-        converted_date = Date.strptime(check_in_date, "%m/%d/%Y").strftime("%Y-%m-%d")
-        checkIns = checkIns.where("STR_TO_DATE(datetime, '%Y-%m-%d') = ?", converted_date)
+        converted_date = Date.strptime(check_in_date, "%m/%d/%Y")
+        checkIns = checkIns.in_day(converted_date)
     end
 
     checkIns.order(datetime: :desc)
@@ -66,7 +66,7 @@ get '/admin/view_check_in/?' do
     counts = CheckIn.where(datetime: (Time.current - 7.days)..Time.current).group(:studio_used).count
     studios = ['Woodshop', 'Metalshop', 'Digital Lab', 'Digital Fabrication', 'Textiles', 'Ceramics', 'Prototyping']
 
-    reasons = ['Training', 'Personal Project', 'Buisness Project', 'Class Project']
+    reasons = ['Training', 'Personal Project', 'Business Project', 'Class Project']
 
     erb :'admin/view_check_in', :layout => :fixed, :locals => {
         :checkIns => checkIns,
