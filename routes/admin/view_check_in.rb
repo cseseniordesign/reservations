@@ -56,8 +56,9 @@ get '/admin/view_check_in/?' do
         checkIns = checkIns.where("visit_reason LIKE ?", "%#{visit_reason}%")
     end
 
-    unless check_in_date.blank?        
-        checkIns = checkIns.where("check_in_date LIKE ?", "%#{check_in_date}%")
+    unless check_in_date.blank?   
+        converted_date = Date.strptime(check_in_date, "%m/%d/%Y").strftime("%Y-%m-%d")
+        checkIns = checkIns.where("STR_TO_DATE(datetime, '%Y-%m-%d') = ?", converted_date)
     end
 
     checkIns.order(datetime: :desc)
