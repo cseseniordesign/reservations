@@ -1,0 +1,58 @@
+<h1>Manage Studio Spaces</h1>
+
+<form class="dcf-form" action="" method="POST" >
+    <div class="dcf-grid dcf-col-gap-vw">
+        <div class="dcf-col-100% dcf-col-67%-start@sm">
+            <fieldset>
+                <legend>Create New Studio Space</legend>
+                <div class="dcf-form-group">
+                    <label for="name">Studio Space Name <small class="dcf-required">Required</small></label>
+                    <input class="dcf-w-100%" type="text" name="name" id="name" value=''/>
+                </div>
+
+                <div class="dcf-grid dcf-col-gap-vw" style="margin-top:20px;">
+                    <div class="dcf-col-100% dcf-col-67%-start@sm">
+                        <button class="dcf-btn dcf-btn-primary dcf-float-left" type="submit">Create</button>
+                    </div>
+                </div>
+            </fieldset>
+	
+        </div>
+    </div>
+</form>
+
+<br>
+<br>
+<% if !studios.empty? %>
+    <table class="dcf-table dcf-table-bordered" aria-describedby="manage-studio-spaces">
+        <thead>
+            <tr>
+                <th scope="col">Studio Space Name</th>
+                <th scope="col">Delete Option</th>
+            </tr>
+        </thead>
+        <tbody>
+        <% studios.each do |studios| %>
+            <tr>
+                <td>
+                    <%= studios.name %>
+                </td>
+                <td class="table-actions">
+                    <form method="POST" action="/admin/view_check_in/studio_spaces/<%= studios.id %>/delete/" class="dcf-form delete-form delete-studio">
+                        <button class="dcf-btn dcf-btn-secondary dcf-mt-1" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        <% end %>
+        </tbody>
+    </table>
+<% end %>
+<% append_script_declaration(%q[require(['jquery'], function($) {
+    $(document).ready(function() {
+        $('.delete-studio').submit(function (submit) {
+            if (!window.confirm('Are you sure you want to delete this studio?')) {
+                submit.preventDefault();
+            }
+        });
+    });
+});]) %>

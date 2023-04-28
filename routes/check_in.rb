@@ -1,8 +1,9 @@
 require 'models/check_ins'
+require 'models/studio_space.rb'
 
 get '/check_in/?' do
 
-    studios = ['Woodshop', 'Metalshop', 'Digital Lab', 'Digital Fabrication', 'Textiles', 'Ceramics', 'Prototyping']
+    studios = StudioSpace.pluck(:name)
 
     reasons = ['Training', 'Personal Project', 'Buisness Project', 'Class Project']
 

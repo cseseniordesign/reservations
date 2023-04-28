@@ -1,4 +1,6 @@
 require 'models/check_ins'
+require 'models/studio_space.rb'
+
 
 USER_STATII = [
     'None',
@@ -64,7 +66,7 @@ get '/admin/view_check_in/?' do
     checkIns.order(datetime: :desc)
 
     counts = CheckIn.where(datetime: (Time.current - 7.days)..Time.current).group(:studio_used).count
-    studios = ['Woodshop', 'Metalshop', 'Digital Lab', 'Digital Fabrication', 'Textiles', 'Ceramics', 'Prototyping']
+    studios = StudioSpace.pluck(:name)
 
     reasons = ['Training', 'Personal Project', 'Business Project', 'Class Project']
 
@@ -82,3 +84,43 @@ get '/admin/view_check_in/?' do
     }
 
 end
+
+get '/admin/view_check_in/studio_spaces/?' do
+    studios = StudioSpace.all
+    @breadcrumbs << {:text => 'Manage Studio Spaces'}
+    erb :'admin/manage_studio_spaces', :layout => :fixed, :locals => {
+        :studios => studios
+    }
+end 
+
+post '/admin/view_check_in/studio_spaces/?' do
+	require_login
+
+	if  params[:name].blank?
+		flash :error, 'Error', 'Please enter studio space name'
+		redirect back
+	end
+
+	studio = StudioSpace.new
+	studio.name = params[:name]
+	studio.save
+
+	flash(:success, 'Studio Created', "Your studio #{studio.name} has been created.")
+	redirect '/admin/view_check_in/studio_spaces/'
+end
+
+post '/admin/view_check_in/studio_spaces/:studio_id/delete/?' do
+	require_login
+
+	# check that this is a valid studio
+	studio = StudioSpace.find_by(:id => params[:studio_id])
+	if studio.nil?
+		flash(:alert, 'Not Found', 'That studio does not exist.')
+		redirect '/admin/view_check_in/studio_spaces/'
+	end
+
+	studio.destroy
+	flash(:success, 'Studio Deleted', "Your studio #{studio.name} has been deleted.")
+	redirect '/admin/view_check_in/studio_spaces/'
+end
+
