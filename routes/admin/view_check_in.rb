@@ -24,7 +24,7 @@ get '/admin/view_check_in/?' do
 
     name = params[:name]
     username = params[:username]
-    studio_status = params[:studio_status]
+    university_status = params[:university_status]
     studio_used = params[:studio_used]
     visit_reason = params[:visit_reason]
     check_in_date = params[:check_in_date]
@@ -46,8 +46,8 @@ get '/admin/view_check_in/?' do
         checkIns = checkIns.where("username LIKE ?", "%#{username}%")
     end
 
-    unless studio_status.blank?
-        checkIns = checkIns.where("studio_status LIKE ?", "%#{studio_status}%")
+    unless university_status.blank?
+        checkIns = checkIns.where("university_status LIKE ?", "%#{university_status}%")
     end
 
     unless studio_used.blank?
@@ -77,7 +77,7 @@ get '/admin/view_check_in/?' do
         :name => name,
         :username => username,
         :reasons => reasons,
-        :studio_status => studio_status,
+        :university_status => university_status,
         :studio_used => studio_used,
         :visit_reason => visit_reason,
         :check_in_date => check_in_date,

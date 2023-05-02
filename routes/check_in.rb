@@ -5,7 +5,7 @@ get '/check_in/?' do
 
     studios = StudioSpace.pluck(:name)
 
-    reasons = ['Training', 'Personal Project', 'Buisness Project', 'Class Project']
+    reasons = ['Training', 'Personal Project', 'Business Project', 'Class Project']
 
     erb :check_in, :layout => :fixed_no_toolbar, :locals => {
        :studios => studios,

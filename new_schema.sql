@@ -589,7 +589,7 @@ CREATE TABLE IF NOT EXISTS `check_ins` (
 `datetime` datetime NULL,
 `expired` varchar(4) NULL,
 `visit_reason` varchar(255) NULL,
-`space_used` varchar(255) NULL,
+`studio_used` varchar(255) NULL,
 PRIMARY KEY (`id`));
 
 -- Add Table to hold studio spaces
