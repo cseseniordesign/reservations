@@ -1,0 +1,16 @@
+<h1 class="dcf-txt-h3">Announcements</h1>
+
+<form class="dcf-form" action="" method="POST">
+	<label for="body">Text (empty if no current announcement):</label>
+	<% if announcements %>	<%# If there is an existing announcement, display its text in the text box %>
+		<textarea class="ckeditor" style="min-height: 150px" id="text" name="text"><%= announcements.text %></textarea>
+	<% else %>
+		<textarea class="ckeditor" style="min-height: 150px" id="text" name="text"></textarea>
+	<% end %>
+
+	<br>
+	<div class="dcf-form-group">
+		<button type="submit" formaction="/admin/announcements/post/" class="dcf-btn dcf-btn-primary">Post</button>
+		<button type="submit" formaction="/admin/announcements/delete/" class="dcf-btn dcf-btn-secondary dcf-mt-1">Delete current announcement</button>		
+	</div>
+</form>

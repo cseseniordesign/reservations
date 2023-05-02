@@ -605,3 +605,9 @@ INSERT INTO reservation.studio_spaces (name) VALUES ('Digital Fabrication');
 INSERT INTO reservation.studio_spaces (name) VALUES ('Textiles');
 INSERT INTO reservation.studio_spaces (name) VALUES ('Ceramics');
 INSERT INTO reservation.studio_spaces (name) VALUES ('Prototyping');
+
+-- Add announcements table
+CREATE TABLE IF NOT EXISTS `reservation`.`announcements` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `text` VARCHAR(10000) NULL,
+  PRIMARY KEY (`id`));
