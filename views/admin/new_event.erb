@@ -283,6 +283,29 @@
 <% append_script_declaration(%q[WDN.initializePlugin('jqueryui', [function() {
     $ = require('jquery');
 
+    // sets AM/PM radio buttons and mods the time passed if necessary
+    function setAMPM(time) {
+        if (time % 12 != 0) {
+            time = time % 12;
+            if ($('input[name="start_time_am_pm"]:checked').val() === 'pm') {
+                $('#end-time-am-pm-pm').attr('checked', true);
+                $('#end-time-am-pm-am').attr('checked', false);
+            } else {
+                $('#end-time-am-pm-am').attr('checked', true);
+                $('#end-time-am-pm-pm').attr('checked', false);
+            }
+        } else {
+            if ($('input[name="start_time_am_pm"]:checked').val() === 'am') {
+                $('#end-time-am-pm-pm').attr('checked', true);
+                $('#end-time-am-pm-am').attr('checked', false);
+            } else {
+                $('#end-time-am-pm-am').attr('checked', true);
+                $('#end-time-am-pm-pm').attr('checked', false);
+            }
+        }
+        return time;
+    }
+
     $('#reserve-tool').click(function(click) {
         if ($('#reserve-tool').is(':checked')) {
             $('#tools-for-reserving').show();
@@ -312,9 +335,7 @@
         start_time_hour = parseInt($('#start-time-hour').val());
         duration = parseInt($('#duration').val());
         time = start_time_hour + ((duration - (duration % 60)) / 60);
-        if (time % 12 != 0) {
-            time = time % 12;
-        }
+        time = setAMPM(time);
         $('#end-time-hour').val(time);
     }).change();
     
@@ -324,15 +345,11 @@
         duration = parseInt($('#duration').val());
         time = start_time_minute + (duration % 60);
         hour_time = start_time_hour + ((duration - (duration % 60)) / 60);
-        if (hour_time % 12 != 0) {
-            hour_time = hour_time % 12;
-        }
+        hour_time = setAMPM(hour_time);
         hour = hour_time + Math.floor(time/60);
         if (time >= 60){
             $('#end-time-hour').val(hour % 12);
-            if (time % 60 != 0) {
-                time = time % 60;
-            }
+            time = setAMPM(time);
             $('#end-time-minute').val(time);
         }
         else {
