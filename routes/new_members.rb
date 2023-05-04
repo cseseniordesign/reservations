@@ -63,8 +63,8 @@ post '/new_members/sign_up/:event_id/?' do
 	end
 
 	if !verify_recaptcha
-		flash(:alert, 'Google Recaptcha Verification failed', 'please try again.')
-		redirect '/new_members/'
+		flash(:alert, 'Google Recaptcha Verification Failed', 'Please try again.')
+		redirect back
 	end
 
 	EventSignup.create(
@@ -94,7 +94,6 @@ EMAIL
 		flash(:danger, "Invalid Email", "Your email address didn't match any known email")
 		redirect "new_members/sign_up/#{params[:event_id]}"
 	else
-		Emailer.mail(params[:email], "Nebraska Innovation Studio - #{event.title}", body)
 
 		user_info = {"first_name" => params[:first_name],"last_name" => params[:last_name],"email" => params[:email],"university_status" => params[:university_status]}
 		user = User.new(user_info)
@@ -241,6 +240,8 @@ EMAIL
 				vehicle3.save
 			end
 		end
+
+		Emailer.mail(params[:email], "Nebraska Innovation Studio - #{event.title}", body)
 
 		# flash a message that this works
 		flash(:success, "You're signed up!", "Thanks for signing up! Don't forget, orientation is #{event.start_time.in_time_zone.strftime('%A, %B %d at %l:%M %P')}. Check your email for more information about the event and where to park.")

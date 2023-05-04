@@ -1,0 +1,134 @@
+<h1> Check In Viewer </h1>
+
+<a class="dcf-mt-6 dcf-btn dcf-btn-primary" href="/admin/view_check_in/studio_spaces/">Manage Studio Spaces</a>
+<div style="padding-top: 25px">
+    <h3> Number of Members going to each studio in the past 7 days </h3>
+    <table class="dcf-w-100% dcf-table dcf-table-bordered dcf-table-responsive" aria-label="Heat Map">
+        <thead>
+            <tr>
+                <% studios.each do |studio| %>
+                    <th><%= studio %></th>
+                <% end %>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <% studios.each do |studio| %>
+                    <th><%= counts[studio] || 0 %></th>
+                <% end %>
+                <th><%= total %></th>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<form class="dcf-form dcf-mb-6" id="find-controls" style="padding-top: 25px">
+    <h3> Check In Log </h3>
+    <div class="dcf-grid dcf-col-gap-vw dcf-row-gap-6">
+        <div class="dcf-col-100% dcf-col-25%-start@md">
+            <label>Find check in by:</label>
+            <br>
+            <a href="/admin/view_check_in/" class="dcf-btn dcf-btn-secondary">Clear</a>
+        </div>
+        <div class="dcf-col-100% dcf-col-75%-end@md">
+            <div class="dcf-grid-full dcf-grid-halves@sm dcf-col-gap-vw">
+                <div>
+                    <label for="name">Name:</label>
+                    <input id="name" tabindex="1" type="text" name="name" value="<%= name != "" ? name : "" %>" style="width:100%;" />
+                </div>
+                <div>
+                    <label for="username">Username:</label>
+                    <input id="username" tabindex="1" type="text" name="username" value="<%= username != "" ? username : "" %>" style="width:100%;" />
+                </div>
+                <div>
+                    <label for="university-status">University Status:</label>
+                    <select id="university-status" tabindex="1" name="university_status" class="dcf-input-select">
+                        <option value=""></option>
+                        <% USER_STATII.each do |word| %>
+                            <option <%= 'selected="selected"' if university_status == word %> value="<%= word %>"><%= word %></option>
+                        <% end %>
+                    </select>
+                </div>
+                <div>
+                    <label for="visit-reason">Visit Reason:</label>
+                    <select id="visit-reason" tabindex="1" name="visit_reason" class="dcf-input-select">
+                        <option value=""></option>
+                        <% reasons.each do |word| %>
+                            <option <%= 'selected="selected"' if visit_reason == word %> value="<%= word %>"><%= word %></option>
+                        <% end %>
+                    </select>
+                </div>
+                <div>
+                    <label for="studio-used">Studio Used:</label>
+                    <select id="studio-used" tabindex="1" name="studio_used" class="dcf-input-select">
+                        <option value=""></option>
+                        <% studios.each do |word| %>
+                            <option <%= 'selected="selected"' if studio_used == word %> value="<%= word %>"><%= word %></option>
+                        <% end %>
+                    </select>
+                </div>
+                <div>
+                    <label for="expiration-date">Check In Date:</label>
+                    <div class="dcf-grid dcf-col-gap-1 dcf-row-gap-2 dcf-flex-wrap">
+                        <div class="dcf-col-100%">
+                            <div class="dcf-datepicker">
+                                <input id="check-in-date" tabindex="1" value="<%= check_in_date != "" ? check_in_date : "" %>" name="check_in_date" title="Check In Date" type="text"  style="width:100%;"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="search-btn" tabindex="1" class="dcf-btn dcf-btn-inverse-primary" style="margin-top:10px;">Search</button>
+        </div>
+    </div>
+</form>
+
+<div>
+    <table class="dcf-w-100% dcf-table dcf-table-bordered dcf-table-responsive" aria-label="Check Ins">
+        <thead>
+            <tr>
+                <th scope="col">Check In Time</th>
+                <th scope="col">Name</th>
+                <th scope="col">Username</th>
+                <th scope="col">University Status</th>
+                <th scope="col">Visit Reason</th>
+                <th scope="col">Studio Used</th>
+                <th scope="col">Is Member Expired?</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% checkIns.each do |checkIn| %>
+                <tr>
+                    <td>
+                        <%= checkIn.datetime.in_time_zone("Central Time (US & Canada)").strftime("%m/%d/%Y %I:%M %p") %>
+                    </td>
+                    <td>
+                        <%= checkIn.name %><br>
+                    </td>
+                    <td>
+                        <%= checkIn.username %>
+                    </td>
+                    <td>
+                        <%= checkIn.university_status %>
+                    </td>
+                    <td>
+                        <%= checkIn.visit_reason %>
+                    </td>
+                    <td>
+                        <%= checkIn.studio_used %>
+                    </td>
+                    <td>
+                        <%= checkIn.expired %>
+                    </td>
+                    <td class="table-actions">
+                        <a href="/admin/users/<%= checkIn.user_id %>/edit/" class="dcf-mt-1 dcf-btn dcf-btn-primary">Edit</a>
+                    </td>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+</div>
+
+<% append_script_declaration("WDN.initializePlugin('datepickers');") %>

@@ -72,6 +72,9 @@
                 <li><a href="https://innovationstudio.unl.edu/user/login?destination=node/<%= drupal_node_lookup(:workshops_training_doc) %>/edit" target="_blank">Edit Workshops</a></li>
                 <li><a href="https://innovationstudio.unl.edu/user/login?destination=node/<%= drupal_node_lookup(:tips_training_doc) %>/edit" target="_blank">Edit Tips and Tricks</a></li>
                 <% end %>
+                <% if has_permission?(Permission::MANAGE_USERS) || has_permission?(Permission::SUPER_USER) %>
+                <li><a href="/admin/view_check_in/" title="CheckIns">Check In Log</a></li>
+                <% end %>
             </ul>
         </li>
     <% end %>

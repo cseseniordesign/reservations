@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<% template_dep_version = Time.now.strftime("%F")  %>
+<html class="dcf-no-js dcf-no-webp" lang="en">
+  <head>
+    <%= ERB.new(File.read(File.expand_path("#{ROOT}/public/wdn/templates_5.3/includes/global/head-1.html"))).result %>
+    <!--
+      Membership and regular participation in the University of Nebraska–Lincoln (UNL) Web Developer Network (WDN) is required to use the UNLedu Web Framework. Visit the WDN site at https://wdn.unl.edu/. Register for our mailing list and add your site or server to UNL Web Audit.
+      All framework code is the property of the UNL Web Developer Network. The code seen in a source code view is not, and may not be used as, a template. You may not use this code, a reverse-engineered version of this code, or its associated visual presentation in whole or in part to create a derivative work.
+      This message may not be removed from any pages based on the UNLedu Web Framework.
+
+      $Id$
+    -->
+    <!-- TemplateBeginEditable name="doctitle" -->
+    <title><%= @title %> | University of Nebraska&ndash;Lincoln</title>
+    <!-- TemplateEndEditable -->
+    <%= ERB.new(File.read(File.expand_path("#{ROOT}/public/wdn/templates_5.3/includes/global/head-2-local.html"))).result.gsub('$DEP_VERSION$', template_dep_version) %>
+    <!-- TemplateBeginEditable name="head" -->
+    <!-- Place optional header elements here -->
+    <link rel="stylesheet" href="/css/innovation_studio.css?cb=20220124">
+    <link rel="stylesheet" href="/css/jquery-ui.min-custom.css">
+    <!-- TemplateEndEditable -->
+    <!-- TemplateParam name="class" type="text" value="" -->
+    <main class="dcf-main" id="dcf-main" role="main" tabindex="-1" style="padding: 25px;">
+      <div class="dcf-main-content dcf-wrapper">
+        <!-- TemplateBeginEditable name="maincontentarea" -->
+            <div class="dcf-bleed">
+                <div class="dcf-wrapper dcf-pb-8">
+                    <% unless session["notice"].nil? %>
+                        <% notices = session.delete("notice") %>
+                        <% notices.each do |notice| %>
+                        <% notice_class = 'dcf-notice-info' %>
+                        <% case notice[:type]
+                            when 'success', :success
+                                notice_class = 'dcf-notice-success'
+                            when 'failure', :failure
+                                notice_class = 'dcf-notice-danger'
+                            when 'alert', 'danger', 'error', :error, :alert, :danger
+                                notice_class = 'dcf-notice-warning' %>
+                        <% end %>
+                        <div id="notice" class="dcf-notice <%= notice_class %>" hidden>
+                            <h2><%= notice[:header] %></h2>
+                            <div class="message-content">
+                                    <%= notice[:message] %>
+                            </div>
+                        </div>
+                        <% end %>
+                    <% else %>
+                    <% session.delete(:notice) %>
+                    <% session.delete("notice") %>
+                    <% end %>
+                    <%= yield %>
+                </div>
+            </div>
+            <!-- TemplateEndEditable -->
+      </div>
+    </main>
+    <%= ERB.new(File.read(File.expand_path("#{ROOT}/public/wdn/templates_5.3/includes/global/js-body-local.html"))).result.gsub('$DEP_VERSION$', template_dep_version) %>
+    <!-- TemplateBeginEditable name="jsbody" -->
+    <!-- put your custom javascript here -->
+    <script type="text/javascript">WDN.initializePlugin("notice");</script>
+    <%= @inline_body_script_content %>
+    <!-- TemplateEndEditable -->
+  </body>
+</html>
