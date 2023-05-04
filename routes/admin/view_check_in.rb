@@ -68,13 +68,9 @@ get '/admin/view_check_in/?' do
     studios = StudioSpace.pluck(:name)
     counts = CheckIn.where(datetime: (Time.current - 7.days)..Time.current).where(studio_used: studios).group(:studio_used).count
     
-
     total = 0
 
-    puts(counts)
-
     counts.each do |count|
-        puts count
         total = total + count[1]
     end
 
