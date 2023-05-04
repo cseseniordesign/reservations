@@ -65,14 +65,21 @@ get '/admin/view_check_in/?' do
 
     checkIns.order(datetime: :desc)
 
-    counts = CheckIn.where(datetime: (Time.current - 7.days)..Time.current).group(:studio_used).count
     studios = StudioSpace.pluck(:name)
+    counts = CheckIn.where(datetime: (Time.current - 7.days)..Time.current).where(studio_used: studios).group(:studio_used).count
+    
+    total = 0
+
+    counts.each do |count|
+        total = total + count[1]
+    end
 
     reasons = ['Training', 'Personal Project', 'Business Project', 'Class Project']
 
     erb :'admin/view_check_in', :layout => :fixed, :locals => {
         :checkIns => checkIns,
         :counts => counts,
+        :total => total,
         :studios => studios,
         :name => name,
         :username => username,
