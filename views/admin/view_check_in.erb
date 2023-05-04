@@ -9,6 +9,7 @@
                 <% studios.each do |studio| %>
                     <th><%= studio %></th>
                 <% end %>
+                <th>Total</th>
             </tr>
         </thead>
         <tbody>
@@ -16,7 +17,7 @@
                 <% studios.each do |studio| %>
                     <th><%= counts[studio] || 0 %></th>
                 <% end %>
-            </tr>
+                <th><%= total %></th>
         </tbody>
     </table>
 </div>
