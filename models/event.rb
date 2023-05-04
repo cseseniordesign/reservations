@@ -30,7 +30,7 @@ class Event < ActiveRecord::Base
         }
     end
 
-    EVENT_TYPES_NOT_ALLOWED_FOR_SIGNUP = [EVENT_TYPE_ID_CREATION_WORKSHOP]
+    EVENT_TYPES_NOT_ALLOWED_FOR_SIGNUP = []
 
 	scope :in_day, ->(time) {
 		today = time.in_time_zone.midnight

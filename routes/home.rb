@@ -2,6 +2,7 @@ require 'models/reservation'
 require 'models/event'
 require 'routes/admin/events'
 require 'models/alert'
+require 'models/announcements'
 
 get '/home/?' do
 	require_login
@@ -22,6 +23,10 @@ get '/home/?' do
 		where('end_time >= ?', Time.now).
 		order(:start_time).all
 	user_alerts = AlertSignup.joins(:alert).where('user_id = ?', @user.id)
+
+	if Announcements.count > 0
+		flash(:info, 'Announcement', Announcements.first.text)
+	end
 
 	erb :home, :layout => :fixed, :locals => {
 		:reservations => reservations,
