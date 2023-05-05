@@ -285,22 +285,25 @@
 
     // sets AM/PM radio buttons and mods the time passed if necessary
     function setAMPM(time) {
-        if (time % 12 != 0) {
+        if (time % 12 != 0 && time <= 12) {
             time = time % 12;
             if ($('input[name="start_time_am_pm"]:checked').val() === 'pm') {
-                $('#end-time-am-pm-pm').attr('checked', true);
-                $('#end-time-am-pm-am').attr('checked', false);
+                $('#end-time-am-pm-pm').prop('checked', true);
+                $('#end-time-am-pm-am').prop('checked', false);
             } else {
-                $('#end-time-am-pm-am').attr('checked', true);
-                $('#end-time-am-pm-pm').attr('checked', false);
+                $('#end-time-am-pm-am').prop('checked', true);
+                $('#end-time-am-pm-pm').prop('checked', false);
             }
         } else {
+            if (time % 12 != 0) {
+                time = time % 12;
+            }
             if ($('input[name="start_time_am_pm"]:checked').val() === 'am') {
-                $('#end-time-am-pm-pm').attr('checked', true);
-                $('#end-time-am-pm-am').attr('checked', false);
+                $('#end-time-am-pm-pm').prop('checked', true);
+                $('#end-time-am-pm-am').prop('checked', false);
             } else {
-                $('#end-time-am-pm-am').attr('checked', true);
-                $('#end-time-am-pm-pm').attr('checked', false);
+                $('#end-time-am-pm-am').prop('checked', true);
+                $('#end-time-am-pm-pm').prop('checked', false);
             }
         }
         return time;
