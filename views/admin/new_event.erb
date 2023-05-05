@@ -285,7 +285,7 @@
 
     // sets AM/PM radio buttons and mods the time passed if necessary
     function setAMPM(time) {
-        if (time % 12 != 0 && time <= 12) {
+        if (time % 12 != 0 && time < 12) {
             time = time % 12;
             if ($('input[name="start_time_am_pm"]:checked').val() === 'pm') {
                 $('#end-time-am-pm-pm').prop('checked', true);
